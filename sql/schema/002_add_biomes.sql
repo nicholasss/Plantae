@@ -11,9 +11,12 @@ create table biomes (
 );
 
 alter table plants
-	add constraint fk_biomes
-	foreign key (biomes_id)
+	add constraint fk_biome
+	foreign key (biome_id)
 	references biomes(id);
 
 -- +goose Down
+alter table plants
+	drop constraint fk_biome;
+
 drop table biomes;
