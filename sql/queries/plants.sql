@@ -12,7 +12,7 @@ insert into plants (
 	avg_ideal_temp_c, avg_ideal_humid,
 	ideal_light_hours, ideal_light_intensity
 ) values (
-	$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+	$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
 ) returning *;
 
 -- name: GetPlantByName :one
