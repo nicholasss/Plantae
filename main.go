@@ -8,6 +8,8 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/nicholasss/plantdata/internal/database"
+
+	_ "github.com/lib/pq"
 )
 
 // === Global Types ===
@@ -20,7 +22,7 @@ type apiConfig struct {
 
 func (cfg *apiConfig) logMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("%s %s", r.Method, r.URL.Path)
+		log.Printf("Request: %s %s", r.Method, r.URL.Path)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -41,13 +43,15 @@ func main() {
 	// setting up connection to the database
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatalln("Unable to load '.env'.")
+		log.Fatalf("Unable to load '.env'.\n")
 	}
 
 	dbURL := os.Getenv("GOOSE_DBSTRING")
+	log.Printf("Database URL: %s\n", dbURL)
+
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatal("Unable to open connection to database.")
+		log.Fatalf("Unable to open connection to database: %s", err)
 	}
 
 	dbQueries := database.New(db)
@@ -60,6 +64,6 @@ func main() {
 
 	mux.Handle("GET /health", cfg.logMW(http.HandlerFunc(healthHandler)))
 
-	log.Printf("Server is available\n")
+	log.Printf("Server is now online.\n")
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
