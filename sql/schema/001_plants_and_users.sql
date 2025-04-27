@@ -1,13 +1,13 @@
 -- +goose Up
 create table plant_species (
 	id uuid primary key,
-  created_at timestamp with time zone not null,
-  updated_at timestamp with time zone not null,
-  deleted_at timestamp with time zone,
+  created_at timestampz not null,
+  updated_at timestampz not null,
+  deleted_at timestampz,
   --
-  created_by timestamp with time zone not null,
-  updated_by timestamp with time zone not null,
-  deleted_by timestamp with time zone,
+  created_by timestampz not null,
+  updated_by timestampz not null,
+  deleted_by timestampz,
   --
   --
 	species_name text not null unique,
@@ -19,13 +19,13 @@ create table plant_species (
 
 create table users (
   id uuid primary key,
-  created_at timestamp with time zone not null,
-  updated_at timestamp with time zone not null,
-  deleted_at timestamp with time zone,
+  created_at timestampz not null,
+  updated_at timestampz not null,
+  deleted_at timestampz,
   --
-  created_by timestamp with time zone not null,
-  updated_by timestamp with time zone not null,
-  deleted_by timestamp with time zone,
+  created_by timestampz not null,
+  updated_by timestampz not null,
+  deleted_by timestampz,
   --
   --
   join_date timestamp with time zone not null,
