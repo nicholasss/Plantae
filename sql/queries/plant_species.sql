@@ -1,11 +1,11 @@
 -- name: CreatePlantSpecies :one
 insert into plant_species (
-	id, created_at, updated_at, deleted_at,
-	created_by, updated_by, deleted_by, species_name,
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
 	human_poison_toxic, pet_poison_toxic,
 	human_edible, pet_edible
 ) values (
-	gen_random_uuid(), now(), now(), now(), $1, $2, $3, $4, $5, $6, $7, $8
+	gen_random_uuid(), now(), now(), $1, $2, $3, $4, $5, $6, $7
 ) returning *;
 
 -- name: GetPlantSpeciesByName :one
