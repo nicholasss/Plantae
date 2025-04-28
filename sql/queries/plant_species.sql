@@ -26,7 +26,7 @@ select * from plant_species
 select * from plant_species
   order by created_at desc;
 
--- name: UpdatePlantSpeciesByID :exec
+-- name: UpdatePlantSpeciesMetadataByID :exec
 update plant_species
   set human_poison_toxic = $2,
 	pet_poison_toxic = $3,
