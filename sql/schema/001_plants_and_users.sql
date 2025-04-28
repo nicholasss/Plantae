@@ -4,6 +4,7 @@ create table plant_species (
   created_at timestampz not null,
   updated_at timestampz not null,
   deleted_at timestampz,
+  is_deleted boolean default 'false' not null,
   --
   created_by timestampz not null,
   updated_by timestampz not null,
