@@ -28,7 +28,7 @@ create table users (
   deleted_by timestampz,
   --
   --
-  join_date timestamp with time zone not null,
+  join_date timestampz not null,
   is_admin boolean not null,
   email text not null,
   hashed_password text
