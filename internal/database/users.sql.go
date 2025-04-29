@@ -57,17 +57,17 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
-const getAllUserWithoutPasswordByUpdated = `-- name: GetAllUserWithoutPasswordByUpdated :many
+const getAllUsersWithoutPasswordByJoinDate = `-- name: GetAllUsersWithoutPasswordByJoinDate :many
 select
   id, created_at, updated_at,
   created_by, updated_by,
   is_admin, email
 from users
   where deleted_at is null
-  order by updated_at desc
+  order by join_date asc
 `
 
-type GetAllUserWithoutPasswordByUpdatedRow struct {
+type GetAllUsersWithoutPasswordByJoinDateRow struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -77,15 +77,66 @@ type GetAllUserWithoutPasswordByUpdatedRow struct {
 	Email     string
 }
 
-func (q *Queries) GetAllUserWithoutPasswordByUpdated(ctx context.Context) ([]GetAllUserWithoutPasswordByUpdatedRow, error) {
-	rows, err := q.db.QueryContext(ctx, getAllUserWithoutPasswordByUpdated)
+func (q *Queries) GetAllUsersWithoutPasswordByJoinDate(ctx context.Context) ([]GetAllUsersWithoutPasswordByJoinDateRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllUsersWithoutPasswordByJoinDate)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetAllUserWithoutPasswordByUpdatedRow
+	var items []GetAllUsersWithoutPasswordByJoinDateRow
 	for rows.Next() {
-		var i GetAllUserWithoutPasswordByUpdatedRow
+		var i GetAllUsersWithoutPasswordByJoinDateRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.CreatedBy,
+			&i.UpdatedBy,
+			&i.IsAdmin,
+			&i.Email,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAllUsersWithoutPasswordByUpdated = `-- name: GetAllUsersWithoutPasswordByUpdated :many
+select
+  id, created_at, updated_at,
+  created_by, updated_by,
+  is_admin, email
+from users
+  where deleted_at is null
+  order by updated_at desc
+`
+
+type GetAllUsersWithoutPasswordByUpdatedRow struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	CreatedBy time.Time
+	UpdatedBy sql.NullTime
+	IsAdmin   bool
+	Email     string
+}
+
+func (q *Queries) GetAllUsersWithoutPasswordByUpdated(ctx context.Context) ([]GetAllUsersWithoutPasswordByUpdatedRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllUsersWithoutPasswordByUpdated)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllUsersWithoutPasswordByUpdatedRow
+	for rows.Next() {
+		var i GetAllUsersWithoutPasswordByUpdatedRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.CreatedAt,

@@ -45,7 +45,7 @@ type User struct {
 	CreatedBy      time.Time
 	UpdatedBy      sql.NullTime
 	DeletedBy      sql.NullTime
-	JoinDate       interface{}
+	JoinDate       time.Time
 	IsAdmin        bool
 	Email          string
 	HashedPassword sql.NullString
