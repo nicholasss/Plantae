@@ -24,12 +24,12 @@ type Biome struct {
 
 type PlantSpecy struct {
 	ID               uuid.UUID
-	CreatedAt        interface{}
-	UpdatedAt        interface{}
-	DeletedAt        interface{}
-	CreatedBy        interface{}
-	UpdatedBy        interface{}
-	DeletedBy        interface{}
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        sql.NullTime
+	CreatedBy        time.Time
+	UpdatedBy        sql.NullTime
+	DeletedBy        sql.NullTime
 	SpeciesName      string
 	HumanPoisonToxic sql.NullBool
 	PetPoisonToxic   sql.NullBool
@@ -39,13 +39,13 @@ type PlantSpecy struct {
 
 type User struct {
 	ID             uuid.UUID
-	CreatedAt      interface{}
-	UpdatedAt      interface{}
-	DeletedAt      interface{}
-	CreatedBy      interface{}
-	UpdatedBy      interface{}
-	DeletedBy      interface{}
-	JoinDate       time.Time
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      sql.NullTime
+	CreatedBy      time.Time
+	UpdatedBy      sql.NullTime
+	DeletedBy      sql.NullTime
+	JoinDate       interface{}
 	IsAdmin        bool
 	Email          string
 	HashedPassword sql.NullString

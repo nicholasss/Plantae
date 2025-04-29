@@ -8,25 +8,25 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 const createPlantSpecies = `-- name: CreatePlantSpecies :one
 insert into plant_species (
-	id, created_at, updated_at, deleted_at,
-	created_by, updated_by, deleted_by, species_name,
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
 	human_poison_toxic, pet_poison_toxic,
 	human_edible, pet_edible
 ) values (
-	gen_random_uuid(), now(), now(), now(), $1, $2, $3, $4, $5, $6, $7, $8
+	gen_random_uuid(), now(), now(), $1, $2, $3, $4, $5, $6, $7
 ) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible
 `
 
 type CreatePlantSpeciesParams struct {
-	CreatedBy        interface{}
-	UpdatedBy        interface{}
-	DeletedBy        interface{}
+	CreatedBy        time.Time
+	UpdatedBy        sql.NullTime
 	SpeciesName      string
 	HumanPoisonToxic sql.NullBool
 	PetPoisonToxic   sql.NullBool
@@ -38,7 +38,6 @@ func (q *Queries) CreatePlantSpecies(ctx context.Context, arg CreatePlantSpecies
 	row := q.db.QueryRowContext(ctx, createPlantSpecies,
 		arg.CreatedBy,
 		arg.UpdatedBy,
-		arg.DeletedBy,
 		arg.SpeciesName,
 		arg.HumanPoisonToxic,
 		arg.PetPoisonToxic,
@@ -65,6 +64,7 @@ func (q *Queries) CreatePlantSpecies(ctx context.Context, arg CreatePlantSpecies
 
 const getAllPlantSpeciesOrderedByCreated = `-- name: GetAllPlantSpeciesOrderedByCreated :many
 select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible from plant_species
+  where deleted_at is null
   order by created_at desc
 `
 
@@ -106,6 +106,7 @@ func (q *Queries) GetAllPlantSpeciesOrderedByCreated(ctx context.Context) ([]Pla
 
 const getAllPlantSpeciesOrderedByUpdated = `-- name: GetAllPlantSpeciesOrderedByUpdated :many
 select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible from plant_species
+  where deleted_at is null
   order by updated_at desc
 `
 
@@ -148,6 +149,7 @@ func (q *Queries) GetAllPlantSpeciesOrderedByUpdated(ctx context.Context) ([]Pla
 const getPlantSpeciesByID = `-- name: GetPlantSpeciesByID :one
 select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible from plant_species
   where id = $1
+  and deleted_at is null
   limit 1
 `
 
@@ -174,6 +176,7 @@ func (q *Queries) GetPlantSpeciesByID(ctx context.Context, id uuid.UUID) (PlantS
 const getPlantSpeciesByName = `-- name: GetPlantSpeciesByName :one
 select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible from plant_species
 	where species_name like $1
+  and deleted_at is null
   limit 1
 `
 
@@ -206,7 +209,7 @@ where id = $1
 
 type MarkAsDeletedPlantSpeciesByIDParams struct {
 	ID        uuid.UUID
-	DeletedBy interface{}
+	DeletedBy sql.NullTime
 }
 
 func (q *Queries) MarkAsDeletedPlantSpeciesByID(ctx context.Context, arg MarkAsDeletedPlantSpeciesByIDParams) error {
@@ -214,16 +217,17 @@ func (q *Queries) MarkAsDeletedPlantSpeciesByID(ctx context.Context, arg MarkAsD
 	return err
 }
 
-const updatePlantSpeciesByID = `-- name: UpdatePlantSpeciesByID :exec
+const updatePlantSpeciesMetadataByID = `-- name: UpdatePlantSpeciesMetadataByID :exec
 update plant_species
   set human_poison_toxic = $2,
 	pet_poison_toxic = $3,
 	human_edible = $4,
   pet_edible = $5
 where id = $1
+  and deleted_at is null
 `
 
-type UpdatePlantSpeciesByIDParams struct {
+type UpdatePlantSpeciesMetadataByIDParams struct {
 	ID               uuid.UUID
 	HumanPoisonToxic sql.NullBool
 	PetPoisonToxic   sql.NullBool
@@ -231,8 +235,8 @@ type UpdatePlantSpeciesByIDParams struct {
 	PetEdible        sql.NullBool
 }
 
-func (q *Queries) UpdatePlantSpeciesByID(ctx context.Context, arg UpdatePlantSpeciesByIDParams) error {
-	_, err := q.db.ExecContext(ctx, updatePlantSpeciesByID,
+func (q *Queries) UpdatePlantSpeciesMetadataByID(ctx context.Context, arg UpdatePlantSpeciesMetadataByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updatePlantSpeciesMetadataByID,
 		arg.ID,
 		arg.HumanPoisonToxic,
 		arg.PetPoisonToxic,
