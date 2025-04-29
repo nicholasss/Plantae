@@ -11,19 +11,23 @@ insert into plant_species (
 -- name: GetPlantSpeciesByName :one
 select * from plant_species
 	where species_name like $1
+  and deleted_at is null
   limit 1;
 
 -- name: GetPlantSpeciesByID :one
 select * from plant_species
   where id = $1
+  and deleted_at is null
   limit 1;
 
 -- name: GetAllPlantSpeciesOrderedByUpdated :many
 select * from plant_species
+  where deleted_at is null
   order by updated_at desc;
 
 -- name: GetAllPlantSpeciesOrderedByCreated :many
 select * from plant_species
+  where deleted_at is null
   order by created_at desc;
 
 -- name: UpdatePlantSpeciesMetadataByID :exec
@@ -32,7 +36,8 @@ update plant_species
 	pet_poison_toxic = $3,
 	human_edible = $4,
   pet_edible = $5
-where id = $1;
+where id = $1
+  and deleted_at is null;
 
 -- name: MarkAsDeletedPlantSpeciesByID :exec
 update plant_species

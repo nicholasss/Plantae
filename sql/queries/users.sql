@@ -8,17 +8,35 @@ insert into users (
   $1, $2, $3, $4, $5
 ) returning *;
 
--- name: GetUserByEmailSafe :one
+-- name: GetUserByEmailWithoutPassword :one
 select 
-  id, created_at, updated_at, deleted_at,
-  created_by, updated_by, deleted_by,
+  id, created_at, updated_at,
+  created_by, updated_by,
   is_admin, email
 from users
   where email like $1
+  and deleted_at is null
   limit 1;
 
--- name: GetUsersByIDAll :one
+-- name: GetUserByIDWithoutPassword :one
+select 
+  id, created_at, updated_at,
+  created_by, updated_by,
+  is_admin, email
+from users
+  where id like $1
+  and deleted_at is null
+  limit 1;
+
+-- name: GetUserByEmailWithPassword :one
+select * from users
+  where email like $1
+  and deleted_at is null
+  limit 1;
+
+-- name: GetUserByIDWithPassword :one
 select * from users
   where id like $1
+  and deleted_at is null
   limit 1;
 
