@@ -40,3 +40,13 @@ select * from users
   and deleted_at is null
   limit 1;
 
+-- name: GetAllUserWithoutPasswordByUpdated :many
+select
+  id, created_at, updated_at,
+  created_by, updated_by,
+  is_admin, email
+from users
+  where deleted_at is null
+  order by updated_at desc;
+
+-- name: GetAll
