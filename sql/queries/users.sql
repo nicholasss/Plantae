@@ -2,11 +2,20 @@
 insert into users (
   id, created_at, updated_at,
   created_by, updated_by,
+  join_date,
   is_admin, email, hashed_password
 ) values (
   gen_random_uuid(), now(), now(),
-  $1, $2, $3, $4, $5
+  $1, $2, now(),
+  $3, $4, $5
 ) returning *;
+
+-- name: UpdateUserPasswordByID :exec
+update users
+set
+  hashed_password = $2
+where
+  id = $1;
 
 -- name: GetUserByEmailWithoutPassword :one
 select 
