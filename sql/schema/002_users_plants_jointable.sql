@@ -9,10 +9,11 @@ create table users_plants (
   updated_by timestamp with time zone not null,
   deleted_by timestamp with time zone,
   --
+  -- foreign keys
   plant_species_id uuid,
   user_id uuid,
   --
-  --
+  -- table data
   adoption_date timestamp with time zone,
   name text
 );

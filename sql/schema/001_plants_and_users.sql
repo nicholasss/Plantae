@@ -9,7 +9,7 @@ create table plant_species (
   updated_by timestamp with time zone null,
   deleted_by timestamp with time zone,
   --
-  --
+  -- table data
 	species_name text not null unique,
 	human_poison_toxic boolean,
 	pet_poison_toxic boolean,
@@ -27,7 +27,7 @@ create table users (
   updated_by timestamp with time zone null,
   deleted_by timestamp with time zone,
   --
-  --
+  -- table data
   join_date timestamp with time zone not null,
   is_admin boolean not null,
   email text not null,
