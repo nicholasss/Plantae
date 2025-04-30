@@ -17,10 +17,12 @@ const createUser = `-- name: CreateUser :one
 insert into users (
   id, created_at, updated_at,
   created_by, updated_by,
+  join_date,
   is_admin, email, hashed_password
 ) values (
   gen_random_uuid(), now(), now(),
-  $1, $2, $3, $4, $5
+  $1, $2, now(),
+  $3, $4, $5
 ) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, join_date, is_admin, email, hashed_password
 `
 
@@ -281,4 +283,22 @@ func (q *Queries) GetUserByIDWithoutPassword(ctx context.Context, id uuid.UUID) 
 		&i.Email,
 	)
 	return i, err
+}
+
+const updateUserPasswordByID = `-- name: UpdateUserPasswordByID :exec
+update users
+set
+  hashed_password = $2
+where
+  id = $1
+`
+
+type UpdateUserPasswordByIDParams struct {
+	ID             uuid.UUID
+	HashedPassword sql.NullString
+}
+
+func (q *Queries) UpdateUserPasswordByID(ctx context.Context, arg UpdateUserPasswordByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserPasswordByID, arg.ID, arg.HashedPassword)
+	return err
 }
