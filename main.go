@@ -19,7 +19,7 @@ type apiConfig struct {
 	db *database.Queries
 }
 
-// response types
+// request types
 
 type createUserRequest struct {
 	CreatedBy   string `json:"createdBy"`
@@ -27,6 +27,12 @@ type createUserRequest struct {
 	IsAdmin     bool   `json:"isAdmin"`
 	Email       string `json:"email"`
 	RawPassword string `json:"rawPassword"`
+}
+
+// response types
+
+type errorResponse struct {
+	ErrorMessage string `json:"errorMessage"`
 }
 
 // === Middleware Functions ===
@@ -40,7 +46,19 @@ func (cfg *apiConfig) logMW(next http.Handler) http.Handler {
 
 // === Utility Response Handlers ===
 
-func respondWithError(err error, w http.ResponseWriter) {
+func respondWithError(error error, code int, w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+
+	errorString := error.Error()
+	errorResponse := errorResponse{ErrorMessage: errorString}
+	errorData, err := json.Marshal(errorResponse)
+	if err != nil {
+		log.Printf("Error occured marshaling error response: %q", err)
+		return
+	}
+
+	w.Write(errorData)
 }
 
 // === Handler Functions ===
