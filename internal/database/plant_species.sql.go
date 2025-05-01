@@ -8,7 +8,6 @@ package database
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -25,8 +24,8 @@ insert into plant_species (
 `
 
 type CreatePlantSpeciesParams struct {
-	CreatedBy        time.Time
-	UpdatedBy        sql.NullTime
+	CreatedBy        string
+	UpdatedBy        string
 	SpeciesName      string
 	HumanPoisonToxic sql.NullBool
 	PetPoisonToxic   sql.NullBool
@@ -209,7 +208,7 @@ where id = $1
 
 type MarkAsDeletedPlantSpeciesByIDParams struct {
 	ID        uuid.UUID
-	DeletedBy sql.NullTime
+	DeletedBy sql.NullString
 }
 
 func (q *Queries) MarkAsDeletedPlantSpeciesByID(ctx context.Context, arg MarkAsDeletedPlantSpeciesByIDParams) error {

@@ -27,9 +27,9 @@ type PlantSpecy struct {
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	DeletedAt        sql.NullTime
-	CreatedBy        time.Time
-	UpdatedBy        sql.NullTime
-	DeletedBy        sql.NullTime
+	CreatedBy        string
+	UpdatedBy        string
+	DeletedBy        sql.NullString
 	SpeciesName      string
 	HumanPoisonToxic sql.NullBool
 	PetPoisonToxic   sql.NullBool
@@ -42,9 +42,9 @@ type User struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	DeletedAt      sql.NullTime
-	CreatedBy      time.Time
-	UpdatedBy      sql.NullTime
-	DeletedBy      sql.NullTime
+	CreatedBy      string
+	UpdatedBy      string
+	DeletedBy      sql.NullString
 	JoinDate       time.Time
 	IsAdmin        bool
 	Email          string

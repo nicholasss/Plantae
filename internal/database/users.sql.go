@@ -27,8 +27,8 @@ insert into users (
 `
 
 type CreateUserParams struct {
-	CreatedBy      time.Time
-	UpdatedBy      sql.NullTime
+	CreatedBy      string
+	UpdatedBy      string
 	IsAdmin        bool
 	Email          string
 	HashedPassword sql.NullString
@@ -73,8 +73,8 @@ type GetAllUsersWithoutPasswordByJoinDateRow struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	CreatedBy time.Time
-	UpdatedBy sql.NullTime
+	CreatedBy string
+	UpdatedBy string
 	IsAdmin   bool
 	Email     string
 }
@@ -124,8 +124,8 @@ type GetAllUsersWithoutPasswordByUpdatedRow struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	CreatedBy time.Time
-	UpdatedBy sql.NullTime
+	CreatedBy string
+	UpdatedBy string
 	IsAdmin   bool
 	Email     string
 }
@@ -202,8 +202,8 @@ type GetUserByEmailWithoutPasswordRow struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	CreatedBy time.Time
-	UpdatedBy sql.NullTime
+	CreatedBy string
+	UpdatedBy string
 	IsAdmin   bool
 	Email     string
 }
@@ -264,8 +264,8 @@ type GetUserByIDWithoutPasswordRow struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	CreatedBy time.Time
-	UpdatedBy sql.NullTime
+	CreatedBy string
+	UpdatedBy string
 	IsAdmin   bool
 	Email     string
 }

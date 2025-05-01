@@ -5,9 +5,9 @@ create table plant_species (
   updated_at timestamp with time zone not null,
   deleted_at timestamp with time zone,
   --
-  created_by timestamp with time zone not null,
-  updated_by timestamp with time zone null,
-  deleted_by timestamp with time zone,
+  created_by text not null,
+  updated_by text not null,
+  deleted_by text,
   --
   -- table data
 	species_name text not null unique,
@@ -23,9 +23,9 @@ create table users (
   updated_at timestamp with time zone not null,
   deleted_at timestamp with time zone,
   --
-  created_by timestamp with time zone not null,
-  updated_by timestamp with time zone null,
-  deleted_by timestamp with time zone,
+  created_by text not null,
+  updated_by text not null,
+  deleted_by text,
   --
   -- table data
   join_date timestamp with time zone not null,
