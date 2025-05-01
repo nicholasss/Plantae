@@ -50,15 +50,20 @@ func respondWithError(error error, code int, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 
-	errorString := error.Error()
-	errorResponse := errorResponse{ErrorMessage: errorString}
-	errorData, err := json.Marshal(errorResponse)
-	if err != nil {
-		log.Printf("Error occured marshaling error response: %q", err)
+	if error != nil {
+		errorString := error.Error()
+		errorResponse := errorResponse{ErrorMessage: errorString}
+		errorData, err := json.Marshal(errorResponse)
+		if err != nil {
+			log.Printf("Error occured marshaling error response: %q", err)
+			return
+		}
+
+		w.Write(errorData)
 		return
 	}
 
-	w.Write(errorData)
+	w.Write([]byte(`{"error":"internal error"}`))
 }
 
 // === Handler Functions ===
@@ -79,7 +84,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 
 	// check request params
 	if createUserRequest.Email == "" {
-		// respond with error
+		respondWithError(nil, http.StatusBadRequest, w)
 	}
 	if createUserRequest.RawPassword == "" {
 		// respond with error
