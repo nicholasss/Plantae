@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/nicholasss/plantdata/internal/auth"
 	"github.com/nicholasss/plantdata/internal/database"
 
 	_ "github.com/lib/pq"
@@ -85,16 +86,50 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	// check request params
 	if createUserRequest.Email == "" {
 		respondWithError(nil, http.StatusBadRequest, w)
+		return
 	}
-	if createUserRequest.RawPassword == "" {
-		// respond with error
+	if createUserRequest.RawPassword == "" { // may not need to check due to sql.NullString type
+		respondWithError(nil, http.StatusBadRequest, w)
+		return
 	}
 	if createUserRequest.CreatedBy == "" {
-		// respond with error
+		respondWithError(nil, http.StatusBadRequest, w)
+		return
 	}
 	if createUserRequest.UpdatedBy == "" {
-		// respond with error
+		respondWithError(nil, http.StatusBadRequest, w)
+		return
 	}
+
+	// hash password
+	hashedPassword, err := auth.HashPassword(createUserRequest.RawPassword)
+	createUserRequest.RawPassword = "" // GC collection
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+	validHashedPassword := sql.NullString{
+		String: hashedPassword,
+		Valid:  true,
+	}
+
+	// CreateUserParams struct
+	createUserParams := database.CreateUserParams{
+		CreatedBy:      createUserRequest.CreatedBy,
+		UpdatedBy:      createUserRequest.UpdatedBy,
+		IsAdmin:        createUserRequest.IsAdmin,
+		Email:          createUserRequest.Email,
+		HashedPassword: validHashedPassword,
+	}
+
+	// add user to database
+	userRecord, err := cfg.db.CreateUser(r.Context(), createUserParams)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// return the userRecord without password
 }
 
 // === Main Function ===
