@@ -8,7 +8,7 @@ insert into users (
   gen_random_uuid(), now(), now(),
   $1, $2, now(),
   $3, $4, $5
-) returning *;
+) returning id, created_at, updated_at, created_by, updated_by, join_date, is_admin, email;
 
 -- name: UpdateUserPasswordByID :exec
 update users
