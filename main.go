@@ -153,6 +153,9 @@ func main() {
 	}
 
 	dbURL := os.Getenv("GOOSE_DBSTRING")
+	if dbURL == "" {
+		log.Fatalf("Unable to find database string under: %q", "GOOSE_DBSTRING")
+	}
 	log.Printf("Database URL: %s\n", dbURL)
 
 	db, err := sql.Open("postgres", dbURL)
