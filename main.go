@@ -17,7 +17,8 @@ import (
 // === Global Types ===
 
 type apiConfig struct {
-	db *database.Queries
+	db        *database.Queries
+	localAddr string
 }
 
 // request types
@@ -154,9 +155,9 @@ func main() {
 
 	dbURL := os.Getenv("GOOSE_DBSTRING")
 	if dbURL == "" {
-		log.Fatalf("Unable to find database string under: %q", "GOOSE_DBSTRING")
+		log.Fatalf("Unable to find database string with: %q", "GOOSE_DBSTRING")
 	}
-	log.Printf("Database URL: %s\n", dbURL)
+	log.Print("Connected to database succesfully.")
 
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
@@ -166,7 +167,8 @@ func main() {
 	dbQueries := database.New(db)
 
 	cfg := &apiConfig{
-		db: dbQueries,
+		db:        dbQueries,
+		localAddr: os.Getenv("LOCAL_ADDRESS"),
 	}
 
 	mux := http.NewServeMux()
