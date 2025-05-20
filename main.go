@@ -19,6 +19,7 @@ import (
 type apiConfig struct {
 	db        *database.Queries
 	localAddr string
+	port      string
 }
 
 // request types
@@ -169,6 +170,7 @@ func main() {
 	cfg := &apiConfig{
 		db:        dbQueries,
 		localAddr: os.Getenv("LOCAL_ADDRESS"),
+		port:      ":" + os.Getenv("PORT"),
 	}
 
 	mux := http.NewServeMux()
@@ -179,6 +181,6 @@ func main() {
 	// user endpoints
 	mux.Handle("POST /api/v1/createuser", cfg.logMW(http.HandlerFunc(cfg.createUserHandler)))
 
-	log.Printf("Server is now online.\n")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Printf("Server is now online at http://%s%s.\n", cfg.localAddr, cfg.port)
+	log.Fatal(http.ListenAndServe(cfg.port, mux))
 }
