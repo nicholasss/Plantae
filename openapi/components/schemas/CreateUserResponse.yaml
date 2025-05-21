@@ -1,22 +1,32 @@
 type: object
 properties:
+  id:
+    type: string
+    format: uuid
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time
   createdBy:
     type: string
-    format: date-time
   updatedBy:
     type: string
-    format: date-time
+  joinDate:
+    type: string
+    format: date
   isAdmin:
     type: boolean
   email:
     type: string
     format: email
-  password:
-    type: string
-    format: password
 required:
+  - id
+  - createdAt
+  - updatedAt
   - createdBy
   - updatedBy
+  - joinDate
   - isAdmin
   - email
-  - password
