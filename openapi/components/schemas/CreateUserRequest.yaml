@@ -4,8 +4,6 @@ properties:
     type: string
   updatedBy:
     type: string
-  isAdmin:
-    type: boolean
   email:
     type: string
     format: email
@@ -15,6 +13,5 @@ properties:
 required:
   - createdBy
   - updatedBy
-  - isAdmin
   - email
   - password

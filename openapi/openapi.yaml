@@ -10,7 +10,7 @@ paths:
     get:
       tags:
         - General
-      summary: Check health of the server
+      summary: Check health of the server.
       description: >
         Returns a blank page with `OK` if the server is online.
       operationId: getServerHealth
@@ -23,16 +23,19 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/ErrorResponse.yaml"
-  /api/v1/createUser:
+  /api/v1/create-user:
     post:
       tags:
         - Users
-      summary: Creates a new user
+      summary: Creates a new user.
       description: >
         Used to register a new user on the server.
         Note: This does not issue an access token or refresh token.
       operationId: createUser
       requestBody:
+        description: >
+          Intended to be used by a frontend that provides a name and version.
+          Provides a raw password.
         required: true
         content:
           application/json:
@@ -40,27 +43,33 @@ paths:
               $ref: "./components/schemas/CreateUserRequest.yaml"
       responses:
         "201":
-          description: User created successfully
+          description: >
+            When user is created successfully.
+            Defaults to false for isAdmin.
           content:
             application/json:
               schema:
                 $ref: "./components/schemas/CreateUserResponse.yaml"
         "400":
-          description: Bad request
+          description: >
+            Bad request returned.
+            Issue with either password, or prexisting email.
           content:
             application/json:
               schema:
                 $ref: "./components/schemas/ErrorResponse.yaml"
-  /api/v1/loginUser:
+  /api/v1/login-user:
     post:
       tags:
         - Users
-      summary: Login with a user account
+      summary: Login with a user account.
       description: >
         Logs in with a pre-registered user account.
         Issues an access token and refresh token.
       operationId: loginUser
       requestBody:
+        description: >
+          Supply a valid email and password.
         required: true
         content:
           application/json:
