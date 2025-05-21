@@ -5,17 +5,17 @@ post:
     content:
       application/json:
         schema:
-          $ref: "./components/schemas/CreateUserRequest.yaml"
+          $ref: "../components/schemas/CreateUserRequest.yaml"
   responses:
     "201":
       description: User created successfully
       content:
         application/json:
           schema:
-            $ref: "./components/schemas/CreateUserResponse.yaml"
+            $ref: "../components/schemas/CreateUserResponse.yaml"
     "400":
       description: Bad request
       content:
         application/json:
           schema:
-            $ref: "./components/schemas/ErrorResponse.yaml"
+            $ref: "../components/schemas/ErrorResponse.yaml"

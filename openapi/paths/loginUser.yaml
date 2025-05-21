@@ -5,17 +5,17 @@ post:
     content:
       application/json:
         schema:
-          $ref: "./components/schemas/LoginUserRequest.yaml"
+          $ref: "../components/schemas/LoginUserRequest.yaml"
   responses:
     "200":
       description: Logs in successfully
       content:
         application/json:
           schema:
-            $ref: "./components/schemas/LoginUserResponse.yaml"
+            $ref: "../components/schemas/LoginUserResponse.yaml"
     "401":
       description: Wrong email or password
       content:
         application/json:
           schema:
-            $ref: "./components/schemas/ErrorResponse.yaml"
+            $ref: "../components/schemas/ErrorResponse.yaml"
