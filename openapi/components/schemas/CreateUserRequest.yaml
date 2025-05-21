@@ -1,0 +1,11 @@
+type: object
+required:
+  - createdBy
+  - updatedBy
+  - isAdmin
+  - email
+  - password
+properties:
+  email:
+    type: string
+    format: email

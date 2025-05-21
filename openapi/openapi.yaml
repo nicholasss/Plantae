@@ -1,0 +1,15 @@
+openapi: 3.1.0
+
+info:
+  title: Plantae
+  description: Plant Care Database
+  version: 0.1.0
+
+paths:
+  /api/v1/createUser:
+    $ref: "./paths/createUser.yaml"
+
+components:
+  schemas:
+    CreateUserRequest:
+      $ref: "./components/schemas/CreateUserRequest.yaml"
