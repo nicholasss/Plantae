@@ -1,2 +1,5 @@
 # ignore .env
 .env
+
+# vacuum (go tool) report
+openapi/report.html
