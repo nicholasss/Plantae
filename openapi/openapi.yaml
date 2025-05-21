@@ -6,6 +6,8 @@ info:
   version: 0.1.0
 
 paths:
+  /api/v1/health:
+    $ref: "./paths/health.yaml"
   /api/v1/createUser:
     $ref: "./paths/createUser.yaml"
   /api/v1/loginUser:
