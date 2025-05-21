@@ -1,0 +1,22 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: User ID
+  email:
+    type: string
+    format: email
+  token:
+    type: string
+    format: byte
+    description: Access Token, short term authentication
+  refreshToken:
+    type: string
+    format: byte
+    description: Refresh Token, used to get new access tokens
+required:
+  - id
+  - email
+  - accessToken
+  - refreshToken
