@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/nicholasss/plantdata/internal/auth"
-	"github.com/nicholasss/plantdata/internal/database"
+	"github.com/nicholasss/plantae/internal/auth"
+	"github.com/nicholasss/plantae/internal/database"
 )
 
 // request types

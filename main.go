@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/nicholasss/plantdata/internal/database"
+	"github.com/nicholasss/plantae/internal/database"
 
 	_ "github.com/lib/pq"
 )
