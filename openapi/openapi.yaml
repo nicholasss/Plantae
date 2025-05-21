@@ -7,21 +7,75 @@ info:
 
 paths:
   /api/v1/health:
-    $ref: "./paths/health.yaml"
+    get:
+      tags:
+        - General
+      summary: Check health of the server
+      description: >
+        Returns a blank page with `OK` if the server is online.
+      operationId: getServerHealth
+      responses:
+        "200":
+          description: Server is online
+        "503":
+          description: Server is still starting up, or temporarily offline
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
   /api/v1/createUser:
-    $ref: "./paths/createUser.yaml"
+    post:
+      tags:
+        - Users
+      summary: Creates a new user
+      description: >
+        Used to register a new user on the server.
+        Note: This does not issue an access token or refresh token.
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/CreateUserRequest.yaml"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/CreateUserResponse.yaml"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
   /api/v1/loginUser:
-    $ref: "./paths/loginUser.yaml"
-
-components:
-  schemas:
-    CreateUserRequest:
-      $ref: "./components/schemas/CreateUserRequest.yaml"
-    CreateUserResponse:
-      $ref: "./components/schemas/CreateUserResponse.yaml"
-    LoginUserRequest:
-      $ref: "./components/schemas/LoginUserRequest.yaml"
-    LoginUserResponse:
-      $ref: "./components/schemas/LoginUserResponse.yaml"
-    ErrorResponse:
-      $ref: "./components/schemas/ErrorResponse.yaml"
+    post:
+      tags:
+        - Users
+      summary: Login with a user account
+      description: >
+        Logs in with a pre-registered user account.
+        Issues an access token and refresh token.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/LoginUserRequest.yaml"
+      responses:
+        "200":
+          description: Logs in successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/LoginUserResponse.yaml"
+        "401":
+          description: Wrong email or password
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
