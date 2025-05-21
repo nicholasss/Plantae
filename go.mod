@@ -1,4 +1,4 @@
-module github.com/nicholasss/plantdata
+module github.com/nicholasss/plantae
 
 go 1.24.3
 
