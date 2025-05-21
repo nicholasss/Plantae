@@ -6,6 +6,17 @@ required:
   - email
   - password
 properties:
+  createdBy:
+    type: string
+    format: date-time
+  updatedBy:
+    type: string
+    format: date-time
+  isAdmin:
+    type: boolean
   email:
     type: string
     format: email
+  password:
+    type: string
+    format: password
