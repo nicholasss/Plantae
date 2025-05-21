@@ -8,6 +8,8 @@ info:
 paths:
   /api/v1/createUser:
     $ref: "./paths/createUser.yaml"
+  /api/v1/loginUser:
+    $ref: "./paths/loginUser.yaml"
 
 components:
   schemas:

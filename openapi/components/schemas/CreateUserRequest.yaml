@@ -2,10 +2,8 @@ type: object
 properties:
   createdBy:
     type: string
-    format: date-time
   updatedBy:
     type: string
-    format: date-time
   isAdmin:
     type: boolean
   email:
