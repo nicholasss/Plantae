@@ -15,3 +15,9 @@ components:
   schemas:
     CreateUserRequest:
       $ref: "./components/schemas/CreateUserRequest.yaml"
+    CreateUserResponse:
+      $ref: "./components/schemas/CreateUserResponse.yaml"
+    LoginUserRequest:
+      $ref: "./components/schemas/LoginUserRequest.yaml"
+    LoginUserResponse:
+      $ref: "./components/schemas/LoginUserResponse.yaml"
