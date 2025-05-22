@@ -28,9 +28,10 @@ func main() {
 	mux := http.NewServeMux()
 
 	// health endpoint
-	mux.Handle("GET /health", cfg.logMW(http.HandlerFunc(healthHandler)))
+	mux.Handle("GET /api/v1/health", cfg.logMW(http.HandlerFunc(healthHandler)))
 
 	// super-admin endpoints
+	mux.Handle("POST /api/v1/super-admin/reset-users", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.resetUsersHandler))))
 	mux.Handle("POST /api/v1/super-admin/promote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.promoteUserToAdminHandler))))
 	mux.Handle("POST /api/v1/super-admin/demote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.demoteUserToAdminHandler))))
 
