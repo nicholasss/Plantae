@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"crypto/hmac"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"log"
@@ -13,9 +15,15 @@ import (
 // === Admin Token Functions ===
 
 // check admin token
+// TODO: hash the superAdminToken for storage in memory and the requestToken
 func authorizeSuperAdmin(superAdminToken string, requestToken string) bool {
-	result := strings.Compare(superAdminToken, requestToken)
-	return result == 0 // true if same, false if not
+	token1, err1 := base64.StdEncoding.DecodeString(superAdminToken)
+	token2, err2 := base64.StdEncoding.DecodeString(requestToken)
+	if err1 != nil || err2 != nil {
+		return false
+	}
+
+	return hmac.Equal(token1, token2)
 }
 
 // === Token & Key Functions ===
