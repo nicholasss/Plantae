@@ -14,9 +14,10 @@ import (
 // === Global Types ===
 
 type apiConfig struct {
-	db        *database.Queries
-	localAddr string
-	port      string
+	db              *database.Queries
+	localAddr       string
+	port            string
+	superAdminToken string
 }
 
 // === Utilities Response Types ===
@@ -28,29 +29,32 @@ type errorResponse struct {
 // === Utility Functions ===
 
 func loadApiConfig() (*apiConfig, error) {
-	// setting up connection to the database
+	// loading vars from .env
 	err := godotenv.Load(".env")
 	if err != nil {
 		return nil, err
 	}
 
+	// connecting to database
 	dbURL := os.Getenv("GOOSE_DBSTRING")
 	if dbURL == "" {
 		return nil, err
 	}
-	log.Print("Connected to database succesfully.")
 
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		return nil, err
 	}
-
 	dbQueries := database.New(db)
+	log.Print("Connected to database succesfully.")
+
+	// additional vars, configuration, and return
 
 	cfg := &apiConfig{
-		db:        dbQueries,
-		localAddr: os.Getenv("LOCAL_ADDRESS"),
-		port:      ":" + os.Getenv("PORT"),
+		db:              dbQueries,
+		localAddr:       os.Getenv("LOCAL_ADDRESS"),
+		port:            ":" + os.Getenv("PORT"),
+		superAdminToken: os.Getenv("SUPER_ADMIN_TOKEN"),
 	}
 
 	return cfg, nil
