@@ -85,22 +85,22 @@ paths:
                   summary: Example of creating a user named Craig.
                   value:
                     id: 26a4983b-82cf-41ea-b447-8a4f34b271e2
-                    createdAt: "2006-01-02T15:04:05Z07:00"
-                    updatedAt: "2006-01-02T15:04:05Z07:00"
+                    createdAt: 2006-01-02T15:04:05Z+07:00
+                    updatedAt: 2006-01-02T15:04:05Z+07:00
                     createdBy: plantae-frontend v0.1.0
                     updatedBy: plantae-frontend v0.1.0
-                    joinDate: 2006-01-02
+                    joinDate: 2006-01-02T00:00:00Z+00:00
                     isAdmin: false
                     email: craig482@gmail.com
                 linda:
                   summary: Example of creating a user named Linda.
                   value:
                     id: 8def74e4-ae86-4139-a34a-dc58681bd0a0
-                    createdAt: "2006-01-02T15:04:05Z07:00"
-                    updatedAt: "2006-01-02T15:04:05Z07:00"
+                    createdAt: 2006-01-02T15:04:05Z+07:00
+                    updatedAt: 2006-01-02T15:04:05Z+07:00
                     createdBy: plantae-frontend v0.1.0
                     updatedBy: plantae-frontend v0.1.0
-                    joinDate: 2006-01-02
+                    joinDate: 2006-01-02T00:00:00Z+00:00
                     isAdmin: false
                     email: lindafisher@gmail.com
         "400":
