@@ -8,10 +8,13 @@ info:
 tags:
   - name: General
     description: >
-      These are general endpoints that do not have to do with a particular focus.
+      Endpoints that do not have to do with a particular focus.
+  - name: Super-Admin
+    description: >
+      Endpoints that are root administrative for the server. They are critical endpoints.
   - name: Users
     description: >
-      These endpoints have to do with managing users.
+      Endpoints that have to do with user management. Some may require admin authority and authentication..
 
 paths:
   /api/v1/health:
@@ -37,6 +40,85 @@ paths:
                   value:
                     error: Service Unavailable
                     message: Server is temporarily offline.
+
+  /api/v1/super-admin/promote-user:
+    post:
+      tags:
+        - Super-Admin
+      summary: Promote a user to admin.
+      description: >
+        Promotes a user to admin, using super-admin authority.
+      operationId: promoteUserToAdmin
+      requestBody:
+        description: >
+          Provide the id of a valid user account to manage.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminStatusRequest.yaml"
+      response:
+        "204":
+          description: >
+            Created successfully, no JSON response.
+        "400":
+          description: >
+            Bad request.
+            Either User ID does not exist or was already promoted.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
+        "500":
+          description: >
+            Internal Server issue with promoting user.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
+
+  /api/v1/super-admin/demote-user:
+    post:
+      tags:
+        - Super-Admin
+      summary: Demote a user from admin.
+      description: >
+        Demotes a user from admin, using super-admin authority.
+      operationId: demoteUserFromAdmin
+      requestBody:
+        description: >
+          Provide the id of a valid user account to manage.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminStatusRequest.yaml"
+      response:
+        "204":
+          description: >
+            Created successfully, no JSON response.
+        "400":
+          description: >
+            Bad request.
+            Either User ID does not exist, User was already demoted, or was never demoted in the first place.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
+        "403":
+          description: >
+            Request is not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
+        "500":
+          description: >
+            Internal Server issue with demoting user.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
 
   /api/v1/create-user:
     post:
@@ -141,13 +223,29 @@ paths:
               $ref: "./components/schemas/LoginUserRequest.yaml"
       responses:
         "200":
-          description: Logs in successfully
+          description: >
+            Logs in successfully
           content:
             application/json:
               schema:
                 $ref: "./components/schemas/LoginUserResponse.yaml"
+        "400":
+          description: >
+            Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
         "401":
-          description: Wrong email or password
+          description: >
+            Wrong email or password
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/ErrorResponse.yaml"
+        "500":
+          description: >
+            Internal Server issue with demoting user.
           content:
             application/json:
               schema:
