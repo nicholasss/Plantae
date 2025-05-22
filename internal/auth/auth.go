@@ -16,7 +16,7 @@ import (
 
 // check admin token
 // TODO: hash the superAdminToken for storage in memory and the requestToken
-func validateSuperAdmin(superAdminToken string, requestToken string) bool {
+func ValidateSuperAdmin(superAdminToken string, requestToken string) bool {
 	token1, err1 := base64.StdEncoding.DecodeString(superAdminToken)
 	token2, err2 := base64.StdEncoding.DecodeString(requestToken)
 	if err1 != nil || err2 != nil {
