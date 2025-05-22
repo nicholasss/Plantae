@@ -14,7 +14,6 @@ import (
 type createUserRequest struct {
 	CreatedBy   string `json:"createdBy"`
 	UpdatedBy   string `json:"updatedBy"`
-	IsAdmin     bool   `json:"isAdmin"`
 	Email       string `json:"email"`
 	RawPassword string `json:"rawPassword"`
 }
@@ -63,7 +62,6 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	createUserParams := database.CreateUserParams{
 		CreatedBy:      createUserRequest.CreatedBy,
 		UpdatedBy:      createUserRequest.UpdatedBy,
-		IsAdmin:        createUserRequest.IsAdmin,
 		Email:          createUserRequest.Email,
 		HashedPassword: validHashedPassword,
 	}
