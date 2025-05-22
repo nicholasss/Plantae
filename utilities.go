@@ -23,7 +23,7 @@ type apiConfig struct {
 // === Utilities Response Types ===
 
 type errorResponse struct {
-	ErrorMessage string `json:"errorMessage"`
+	Error string `json:"error"`
 }
 
 // === Utility Functions ===
@@ -68,7 +68,7 @@ func respondWithError(error error, code int, w http.ResponseWriter) {
 
 	if error != nil {
 		errorString := error.Error()
-		errorResponse := errorResponse{ErrorMessage: errorString}
+		errorResponse := errorResponse{Error: errorString}
 		errorData, err := json.Marshal(errorResponse)
 		if err != nil {
 			log.Printf("Error occured marshaling error response: %q", err)
