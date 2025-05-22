@@ -10,7 +10,7 @@ create table users_plants (
   deleted_by timestamp with time zone,
   --
   -- foreign keys
-  plant_species_id uuid,
+  plant_id uuid,
   user_id uuid,
   --
   -- table data
@@ -26,8 +26,8 @@ alter table users_plants
 
 alter table users_plants
   add constraint fk_plant_species
-  foreign key (plant_species_id)
-  references plant_species(id);
+  foreign key (plant_id)
+  references plants(id);
 
 -- +goose Down
 drop table users_plants;

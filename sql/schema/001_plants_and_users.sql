@@ -1,5 +1,5 @@
 -- +goose Up
-create table plant_species (
+create table plants (
 	id uuid primary key,
   created_at timestamp with time zone not null,
   updated_at timestamp with time zone not null,
@@ -8,6 +8,9 @@ create table plant_species (
   created_by text not null,
   updated_by text not null,
   deleted_by text,
+  --
+  -- foreign keys
+  biome_id uuid,
   --
   -- table data
 	species_name text not null unique,

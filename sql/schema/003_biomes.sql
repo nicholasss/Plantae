@@ -1,6 +1,15 @@
 -- +goose Up
 create table biomes (
-	id uuid primary key,
+  id uuid primary key,
+  created_at timestamp with time zone not null,
+  updated_at timestamp with time zone not null,
+  deleted_at timestamp with time zone,
+  --
+  created_by timestamp with time zone not null,
+  updated_by timestamp with time zone not null,
+  deleted_by timestamp with time zone,
+  --
+  -- table data
 	koppen_class text not null unique,
 	avg_summer_temp_c float,
 	avg_winter_temp_c float,
@@ -14,6 +23,7 @@ alter table plants
 	add constraint fk_biome
 	foreign key (biome_id)
 	references biomes(id);
+
 
 -- +goose Down
 alter table plants
