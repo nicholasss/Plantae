@@ -1,19 +1,32 @@
 -- name: CreateUser :one
 insert into users (
   id, created_at, updated_at,
-  created_by, updated_by,
-  join_date,
+  created_by, updated_by, join_date,
   is_admin, email, hashed_password
 ) values (
   gen_random_uuid(), now(), now(),
   $1, $2, now(),
-  $3, $4, $5
+  false, $3, $4
 ) returning id, created_at, updated_at, created_by, updated_by, join_date, is_admin, email;
 
 -- name: UpdateUserPasswordByID :exec
 update users
 set
   hashed_password = $2
+where
+  id = $1;
+
+-- name: PromoteUserToAdminByID :exec
+update users
+set
+  is_admin = true
+where
+  id = $1;
+
+-- name: DemoteUserFromAdminByID :exec
+update users
+set
+  is_admin = false
 where
   id = $1;
 

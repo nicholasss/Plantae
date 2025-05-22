@@ -16,20 +16,18 @@ import (
 const createUser = `-- name: CreateUser :one
 insert into users (
   id, created_at, updated_at,
-  created_by, updated_by,
-  join_date,
+  created_by, updated_by, join_date,
   is_admin, email, hashed_password
 ) values (
   gen_random_uuid(), now(), now(),
   $1, $2, now(),
-  $3, $4, $5
+  false, $3, $4
 ) returning id, created_at, updated_at, created_by, updated_by, join_date, is_admin, email
 `
 
 type CreateUserParams struct {
 	CreatedBy      string         `json:"created_by"`
 	UpdatedBy      string         `json:"updated_by"`
-	IsAdmin        bool           `json:"is_admin"`
 	Email          string         `json:"email"`
 	HashedPassword sql.NullString `json:"hashed_password"`
 }
@@ -49,7 +47,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.CreatedBy,
 		arg.UpdatedBy,
-		arg.IsAdmin,
 		arg.Email,
 		arg.HashedPassword,
 	)
@@ -65,6 +62,19 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 		&i.Email,
 	)
 	return i, err
+}
+
+const demoteUserFromAdminByID = `-- name: DemoteUserFromAdminByID :exec
+update users
+set
+  is_admin = false
+where
+  id = $1
+`
+
+func (q *Queries) DemoteUserFromAdminByID(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, demoteUserFromAdminByID, id)
+	return err
 }
 
 const getAllUsersWithoutPasswordByJoinDate = `-- name: GetAllUsersWithoutPasswordByJoinDate :many
@@ -291,6 +301,19 @@ func (q *Queries) GetUserByIDWithoutPassword(ctx context.Context, id uuid.UUID) 
 		&i.Email,
 	)
 	return i, err
+}
+
+const promoteUserToAdminByID = `-- name: PromoteUserToAdminByID :exec
+update users
+set
+  is_admin = true
+where
+  id = $1
+`
+
+func (q *Queries) PromoteUserToAdminByID(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, promoteUserToAdminByID, id)
+	return err
 }
 
 const updateUserPasswordByID = `-- name: UpdateUserPasswordByID :exec
