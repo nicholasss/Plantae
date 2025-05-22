@@ -20,7 +20,7 @@ type CreateUserRequest struct {
 	RawPassword string `json:"rawPassword"`
 }
 
-type adminStatusUserRequest struct {
+type AdminStatusRequest struct {
 	ID uuid.UUID `json:"id"`
 }
 
@@ -92,16 +92,16 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
-	var adminStatusUserRequest adminStatusUserRequest
+	var adminStatusRequest AdminStatusRequest
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&adminStatusUserRequest)
+	err := decoder.Decode(&adminStatusRequest)
 	if err != nil {
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
 
 	// validate that id is a users id
-	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusUserRequest.ID)
+	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusRequest.ID)
 	if err != nil {
 		respondWithError(err, http.StatusBadRequest, w)
 		return
@@ -114,7 +114,7 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 	}
 
 	// make user admin
-	err = cfg.db.PromoteUserToAdminByID(r.Context(), adminStatusUserRequest.ID)
+	err = cfg.db.PromoteUserToAdminByID(r.Context(), adminStatusRequest.ID)
 	if err != nil {
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
@@ -125,16 +125,16 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 }
 
 func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
-	var adminStatusUserRequest adminStatusUserRequest
+	var adminStatusRequest AdminStatusRequest
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&adminStatusUserRequest)
+	err := decoder.Decode(&adminStatusRequest)
 	if err != nil {
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
 
 	// validate that id is a users id
-	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusUserRequest.ID)
+	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusRequest.ID)
 	if err != nil {
 		respondWithError(err, http.StatusBadRequest, w)
 		return
@@ -147,7 +147,7 @@ func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	// demote user
-	err = cfg.db.DemoteUserFromAdminByID(r.Context(), adminStatusUserRequest.ID)
+	err = cfg.db.DemoteUserFromAdminByID(r.Context(), adminStatusRequest.ID)
 	if err != nil {
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
