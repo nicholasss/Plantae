@@ -221,7 +221,7 @@ func (q *Queries) MarkPlantAsDeletedByID(ctx context.Context, arg MarkPlantAsDel
 	return err
 }
 
-const updatePlantsMetadataByID = `-- name: UpdatePlantsMetadataByID :exec
+const updatePlantsPropertiesByID = `-- name: UpdatePlantsPropertiesByID :exec
 update plants
   set human_poison_toxic = $2,
 	pet_poison_toxic = $3,
@@ -231,7 +231,7 @@ where id = $1
   and deleted_at is null
 `
 
-type UpdatePlantsMetadataByIDParams struct {
+type UpdatePlantsPropertiesByIDParams struct {
 	ID               uuid.UUID    `json:"id"`
 	HumanPoisonToxic sql.NullBool `json:"human_poison_toxic"`
 	PetPoisonToxic   sql.NullBool `json:"pet_poison_toxic"`
@@ -239,8 +239,8 @@ type UpdatePlantsMetadataByIDParams struct {
 	PetEdible        sql.NullBool `json:"pet_edible"`
 }
 
-func (q *Queries) UpdatePlantsMetadataByID(ctx context.Context, arg UpdatePlantsMetadataByIDParams) error {
-	_, err := q.db.ExecContext(ctx, updatePlantsMetadataByID,
+func (q *Queries) UpdatePlantsPropertiesByID(ctx context.Context, arg UpdatePlantsPropertiesByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updatePlantsPropertiesByID,
 		arg.ID,
 		arg.HumanPoisonToxic,
 		arg.PetPoisonToxic,

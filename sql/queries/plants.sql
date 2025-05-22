@@ -30,7 +30,7 @@ select * from plants
   where deleted_at is null
   order by created_at desc;
 
--- name: UpdatePlantsMetadataByID :exec
+-- name: UpdatePlantsPropertiesByID :exec
 update plants
   set human_poison_toxic = $2,
 	pet_poison_toxic = $3,
