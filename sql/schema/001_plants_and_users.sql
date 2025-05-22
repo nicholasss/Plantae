@@ -38,6 +38,6 @@ create table users (
 );
 
 -- +goose Down
-drop table plant_species;
+drop table plants;
 
 drop table users;
