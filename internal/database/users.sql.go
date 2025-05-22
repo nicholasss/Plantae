@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,10 +25,10 @@ insert into users (
 `
 
 type CreateUserParams struct {
-	CreatedBy      string         `json:"created_by"`
-	UpdatedBy      string         `json:"updated_by"`
-	Email          string         `json:"email"`
-	HashedPassword sql.NullString `json:"hashed_password"`
+	CreatedBy      string `json:"created_by"`
+	UpdatedBy      string `json:"updated_by"`
+	Email          string `json:"email"`
+	HashedPassword string `json:"hashed_password"`
 }
 
 type CreateUserRow struct {
@@ -325,8 +324,8 @@ where
 `
 
 type UpdateUserPasswordByIDParams struct {
-	ID             uuid.UUID      `json:"id"`
-	HashedPassword sql.NullString `json:"hashed_password"`
+	ID             uuid.UUID `json:"id"`
+	HashedPassword string    `json:"hashed_password"`
 }
 
 func (q *Queries) UpdateUserPasswordByID(ctx context.Context, arg UpdateUserPasswordByIDParams) error {

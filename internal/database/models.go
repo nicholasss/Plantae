@@ -68,7 +68,7 @@ type User struct {
 	JoinDate       time.Time      `json:"join_date"`
 	IsAdmin        bool           `json:"is_admin"`
 	Email          string         `json:"email"`
-	HashedPassword sql.NullString `json:"hashed_password"`
+	HashedPassword string         `json:"hashed_password"`
 }
 
 type UsersPlant struct {

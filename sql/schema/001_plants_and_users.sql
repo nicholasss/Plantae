@@ -34,7 +34,7 @@ create table users (
   join_date timestamp with time zone not null,
   is_admin boolean not null,
   email text not null,
-  hashed_password text
+  hashed_password text not null
 );
 
 -- +goose Down
