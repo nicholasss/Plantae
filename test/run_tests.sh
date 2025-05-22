@@ -17,8 +17,8 @@ fi
 # source .env variables
 source .env
 
-# create secrets and variabes
-hurl test/user.hurl \
-  --variable super-admin-token=$SUPER_ADMIN_TOKEN \
-  --secret super-admin-token \
-  --test
+# run tests with admin token for testing
+hurl \
+  --secret super-admin-token=$SUPER_ADMIN_TOKEN \
+  --test \
+  test/users.hurl
