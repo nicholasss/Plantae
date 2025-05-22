@@ -13,6 +13,10 @@ import (
 
 // request types
 
+type AdminStatusRequest struct {
+	ID uuid.UUID `json:"id"`
+}
+
 type CreateUserRequest struct {
 	CreatedBy   string `json:"createdBy"`
 	UpdatedBy   string `json:"updatedBy"`
@@ -20,8 +24,16 @@ type CreateUserRequest struct {
 	RawPassword string `json:"rawPassword"`
 }
 
-type AdminStatusRequest struct {
-	ID uuid.UUID `json:"id"`
+// login endpoint
+type UserLoginRequest struct {
+	Email       string `json:"email"`
+	RawPassword string `json:"password"`
+}
+type UserLoginResponse struct {
+	ID           uuid.UUID `json:"id"`
+	IsAdmin      bool      `json:"is_admin"`
+	AccessToken  string    `json:"token"`
+	RefreshToken string    `json:"refresh_token"`
 }
 
 // === User Handler Functions ===
@@ -91,14 +103,25 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	w.Write(userData)
 }
 
-func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
-	var adminStatusRequest AdminStatusRequest
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&adminStatusRequest)
+// logs in user and provides tokens
+func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
+	var userLoginRequest UserLoginRequest
+	err := json.NewDecoder(r.Body).Decode(&userLoginRequest)
 	if err != nil {
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
+}
+
+// promotes user to admin
+func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
+	var adminStatusRequest AdminStatusRequest
+	err := json.NewDecoder(r.Body).Decode(&adminStatusRequest)
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+	defer r.Body.Close()
 
 	// validate that id is a users id
 	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusRequest.ID)
@@ -124,6 +147,7 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// demotes user from admin
 func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
 	var adminStatusRequest AdminStatusRequest
 	decoder := json.NewDecoder(r.Body)
