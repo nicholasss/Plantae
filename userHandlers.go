@@ -1,10 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/nicholasss/plantae/internal/auth"
@@ -71,17 +72,13 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
-	validHashedPassword := sql.NullString{
-		String: hashedPassword,
-		Valid:  true,
-	}
 
 	// CreateUserParams struct
 	createUserParams := database.CreateUserParams{
 		CreatedBy:      createUserRequest.CreatedBy,
 		UpdatedBy:      createUserRequest.UpdatedBy,
 		Email:          createUserRequest.Email,
-		HashedPassword: validHashedPassword,
+		HashedPassword: hashedPassword,
 	}
 
 	// add user to database
@@ -111,6 +108,38 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
+
+	// ensure login items arent empty
+	if userLoginRequest.Email == "" || userLoginRequest.RawPassword == "" {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	userRecord, err := cfg.db.GetUserByEmailWithPassword(r.Context(), userLoginRequest.Email)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// hash & check password
+	err = auth.CheckPasswordHash(userLoginRequest.RawPassword, userRecord.HashedPassword)
+	if err != nil {
+		respondWithError(err, http.StatusForbidden, w)
+		return
+	}
+	// password checked, removing from memory
+	userLoginRequest.RawPassword = ""
+
+	// check email
+	userLoginRequest.Email = strings.ToLower(userLoginRequest.Email)
+	userRecord.Email = strings.ToLower(userRecord.Email)
+	if userRecord.Email != userLoginRequest.Email {
+		respondWithError(err, http.StatusForbidden, w)
+		return
+	}
+
+	// user can log in, generate tokens
+	log.Printf("Successfully logged in user: %q", userLoginRequest.Email)
 }
 
 // promotes user to admin
