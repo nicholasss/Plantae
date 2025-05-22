@@ -35,16 +35,19 @@ func ValidateSuperAdmin(superAdminToken string, requestToken string) bool {
 
 // api key retrieval
 // also used for super_admin_token
-func GetAPIKey(headers http.Header) (string, error) {
+func GetAuthKeysValue(headers http.Header, prefix string) (string, error) {
 	// value will look like:
 	//   ApiKey <key string>
+	if prefix == "" {
+		prefix = "ApiKey"
+	}
 
 	authHeader := headers.Get("Authorization")
 	if authHeader == "" {
-		return "", fmt.Errorf("header field 'authorization' is absent")
+		return "", fmt.Errorf("header field 'Authorization' is absent")
 	}
 
-	keyString, ok := strings.CutPrefix(authHeader, "ApiKey ")
+	keyString, ok := strings.CutPrefix(authHeader, prefix+" ")
 	if !ok {
 		log.Printf("Unable to cut prefix off. Before: '%s' After: '%s'", authHeader, keyString)
 		return "", errors.New("unable to find key in headers")
