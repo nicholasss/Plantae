@@ -20,7 +20,7 @@ func (cfg *apiConfig) authenticateAdminMiddleware(next http.Handler) http.Handle
 
 		// authenticate request
 		if ok := auth.ValidateSuperAdmin(cfg.superAdminToken, requestToken); !ok {
-			respondWithError(err, http.StatusBadRequest, w)
+			respondWithError(err, http.StatusForbidden, w)
 			return
 		}
 
