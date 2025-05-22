@@ -1,5 +1,8 @@
-# ignore .env
+# .env
 .env
+
+# sqlc.yaml now includes password
+sqlc.yaml
 
 # vacuum (go tool) report
 openapi/report.html
