@@ -39,6 +39,35 @@ type UserLoginResponse struct {
 
 // === User Handler Functions ===
 
+func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) {
+	// ensure development platform
+	if cfg.platform != "development" {
+		log.Printf("unable to reset: %q", cfg.platform)
+		respondWithError(nil, http.StatusForbidden, w)
+		return
+	} else if cfg.platform != "testing" {
+		respondWithError(nil, http.StatusForbidden, w)
+		return
+	}
+
+	log.Printf("Headers: %+v", r.Header)
+
+	// check for super-admin token
+	requestToken, err := auth.GetAuthKeysValue(r.Header, "SuperAdminToken")
+	if err != nil {
+		respondWithError(nil, http.StatusForbidden, w)
+		return
+	}
+	ok := auth.ValidateSuperAdmin(cfg.superAdminToken, requestToken)
+	if !ok {
+		respondWithError(nil, http.StatusForbidden, w)
+		return
+	}
+
+	// drop records from db
+	log.Println("Continue coding to run db query...")
+}
+
 func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) {
 	var createUserRequest CreateUserRequest
 	decoder := json.NewDecoder(r.Body)
