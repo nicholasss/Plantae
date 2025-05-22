@@ -16,6 +16,7 @@ import (
 type apiConfig struct {
 	db              *database.Queries
 	localAddr       string
+	platform        string
 	port            string
 	superAdminToken string
 }
@@ -53,6 +54,7 @@ func loadApiConfig() (*apiConfig, error) {
 	cfg := &apiConfig{
 		db:              dbQueries,
 		localAddr:       os.Getenv("LOCAL_ADDRESS"),
+		platform:        os.Getenv("PLATFORM"),
 		port:            ":" + os.Getenv("PORT"),
 		superAdminToken: os.Getenv("SUPER_ADMIN_TOKEN"),
 	}
