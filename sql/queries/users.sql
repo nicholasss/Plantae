@@ -33,7 +33,7 @@ select
   created_by, updated_by,
   is_admin, email
 from users
-  where id like $1
+  where id = $1
   and deleted_at is null
   limit 1;
 
@@ -45,7 +45,7 @@ select * from users
 
 -- name: GetUserByIDWithPassword :one
 select * from users
-  where id like $1
+  where id = $1
   and deleted_at is null
   limit 1;
 

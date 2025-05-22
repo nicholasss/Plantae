@@ -1,5 +1,5 @@
--- name: CreatePlantSpecies :one
-insert into plant_species (
+-- name: CreatePlant :one
+insert into plants (
 	id, created_at, updated_at,
 	created_by, updated_by, species_name,
 	human_poison_toxic, pet_poison_toxic,
@@ -8,30 +8,30 @@ insert into plant_species (
 	gen_random_uuid(), now(), now(), $1, $2, $3, $4, $5, $6, $7
 ) returning *;
 
--- name: GetPlantSpeciesByName :one
-select * from plant_species
+-- name: GetPlantByName :one
+select * from plants
 	where species_name like $1
   and deleted_at is null
   limit 1;
 
--- name: GetPlantSpeciesByID :one
-select * from plant_species
+-- name: GetPlantByID :one
+select * from plants
   where id = $1
   and deleted_at is null
   limit 1;
 
--- name: GetAllPlantSpeciesOrderedByUpdated :many
-select * from plant_species
+-- name: GetAllPlantsOrderedByUpdated :many
+select * from plants
   where deleted_at is null
   order by updated_at desc;
 
--- name: GetAllPlantSpeciesOrderedByCreated :many
-select * from plant_species
+-- name: GetAllPlantsOrderedByCreated :many
+select * from plants
   where deleted_at is null
   order by created_at desc;
 
--- name: UpdatePlantSpeciesMetadataByID :exec
-update plant_species
+-- name: UpdatePlantsMetadataByID :exec
+update plants
   set human_poison_toxic = $2,
 	pet_poison_toxic = $3,
 	human_edible = $4,
@@ -39,8 +39,8 @@ update plant_species
 where id = $1
   and deleted_at is null;
 
--- name: MarkAsDeletedPlantSpeciesByID :exec
-update plant_species
+-- name: MarkPlantAsDeletedByID :exec
+update plants
   set deleted_at = now(),
   deleted_by = $2
 where id = $1;
