@@ -1,15 +1,59 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/nicholasss/plantae/internal/database"
 )
 
-// response types
+// === Global Types ===
+
+type apiConfig struct {
+	db        *database.Queries
+	localAddr string
+	port      string
+}
+
+// === Utilities Response Types ===
 
 type errorResponse struct {
 	ErrorMessage string `json:"errorMessage"`
+}
+
+// === Utility Functions ===
+
+func loadApiConfig() (*apiConfig, error) {
+	// setting up connection to the database
+	err := godotenv.Load(".env")
+	if err != nil {
+		return nil, err
+	}
+
+	dbURL := os.Getenv("GOOSE_DBSTRING")
+	if dbURL == "" {
+		return nil, err
+	}
+	log.Print("Connected to database succesfully.")
+
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		return nil, err
+	}
+
+	dbQueries := database.New(db)
+
+	cfg := &apiConfig{
+		db:        dbQueries,
+		localAddr: os.Getenv("LOCAL_ADDRESS"),
+		port:      ":" + os.Getenv("PORT"),
+	}
+
+	return cfg, nil
 }
 
 // === Utility Response Handlers ===

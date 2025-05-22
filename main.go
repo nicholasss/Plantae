@@ -1,24 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
-	"os"
-
-	"github.com/joho/godotenv"
-	"github.com/nicholasss/plantae/internal/database"
 
 	_ "github.com/lib/pq"
 )
-
-// === Global Types ===
-
-type apiConfig struct {
-	db        *database.Queries
-	localAddr string
-	port      string
-}
 
 // === Handler Functions ===
 
@@ -33,29 +20,9 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	log.Printf("Staring server\n")
 
-	// setting up connection to the database
-	err := godotenv.Load(".env")
+	cfg, err := loadApiConfig()
 	if err != nil {
-		log.Fatalf("Unable to load '.env'.\n")
-	}
-
-	dbURL := os.Getenv("GOOSE_DBSTRING")
-	if dbURL == "" {
-		log.Fatalf("Unable to find database string with: %q", "GOOSE_DBSTRING")
-	}
-	log.Print("Connected to database succesfully.")
-
-	db, err := sql.Open("postgres", dbURL)
-	if err != nil {
-		log.Fatalf("Unable to open connection to database: %s", err)
-	}
-
-	dbQueries := database.New(db)
-
-	cfg := &apiConfig{
-		db:        dbQueries,
-		localAddr: os.Getenv("LOCAL_ADDRESS"),
-		port:      ":" + os.Getenv("PORT"),
+		log.Fatalf("Issue loading config: %q", err)
 	}
 
 	mux := http.NewServeMux()
