@@ -56,6 +56,21 @@ paths:
           application/json:
             schema:
               $ref: "./components/schemas/CreateUserRequest.yaml"
+            examples:
+              craig:
+                summary: Example of creating a user named Craig.
+                value:
+                  createdBy: plantae-frontend v0.1.0
+                  updatedBy: plantae-frontend v0.1.0
+                  email: craig482@gmail.com
+                  password: "@ssword123"
+              linda:
+                summary: Exmaple of creating a user named Linda.
+                value:
+                  createdBy: plantae-frontend v0.1.0
+                  updatedBy: plantae-frontend v0.1.0
+                  email: lindafisher@gmail.com
+                  password: "catsarefriends123"
       responses:
         "201":
           description: >
@@ -65,6 +80,29 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/CreateUserResponse.yaml"
+              examples:
+                craig:
+                  summary: Example of creating a user named Craig.
+                  value:
+                    id: 26a4983b-82cf-41ea-b447-8a4f34b271e2
+                    createdAt: "2006-01-02T15:04:05Z07:00"
+                    updatedAt: "2006-01-02T15:04:05Z07:00"
+                    createdBy: plantae-frontend v0.1.0
+                    updatedBy: plantae-frontend v0.1.0
+                    joinDate: 2006-01-02
+                    isAdmin: false
+                    email: craig482@gmail.com
+                linda:
+                  summary: Example of creating a user named Linda.
+                  value:
+                    id: 8def74e4-ae86-4139-a34a-dc58681bd0a0
+                    createdAt: "2006-01-02T15:04:05Z07:00"
+                    updatedAt: "2006-01-02T15:04:05Z07:00"
+                    createdBy: plantae-frontend v0.1.0
+                    updatedBy: plantae-frontend v0.1.0
+                    joinDate: 2006-01-02
+                    isAdmin: false
+                    email: lindafisher@gmail.com
         "400":
           description: >
             Bad request returned.
@@ -73,6 +111,17 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/ErrorResponse.yaml"
+              examples:
+                genericError:
+                  summary: Generic error
+                  value:
+                    error: Bad Request
+                    message: Unable to create user. Please try again.
+                emailAlreadyExists:
+                  summary: Email is already registered
+                  value:
+                    error: Bad Request
+                    message: Email is already registered with a user.
   /api/v1/login-user:
     post:
       tags:
