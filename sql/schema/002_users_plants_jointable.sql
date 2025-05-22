@@ -5,9 +5,9 @@ create table users_plants (
   updated_at timestamp with time zone not null,
   deleted_at timestamp with time zone,
   --
-  created_by timestamp with time zone not null,
-  updated_by timestamp with time zone not null,
-  deleted_by timestamp with time zone,
+  created_by text not null,
+  updated_by text not null,
+  deleted_by text,
   --
   -- foreign keys
   plant_id uuid,

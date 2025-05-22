@@ -5,9 +5,9 @@ create table biomes (
   updated_at timestamp with time zone not null,
   deleted_at timestamp with time zone,
   --
-  created_by timestamp with time zone not null,
-  updated_by timestamp with time zone not null,
-  deleted_by timestamp with time zone,
+  created_by text not null,
+  updated_by text not null,
+  deleted_by text,
   --
   -- table data
 	koppen_class text not null unique,
@@ -23,7 +23,6 @@ alter table plants
 	add constraint fk_biome
 	foreign key (biome_id)
 	references biomes(id);
-
 
 -- +goose Down
 alter table plants
