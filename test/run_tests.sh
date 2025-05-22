@@ -19,6 +19,6 @@ source .env
 
 # run tests with admin token for testing
 hurl \
-  --secret super-admin-token=$SUPER_ADMIN_TOKEN \
+  --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/users.hurl
