@@ -5,23 +5,28 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/nicholasss/plantae/internal/auth"
 	"github.com/nicholasss/plantae/internal/database"
 )
 
 // request types
 
-type createUserRequest struct {
+type CreateUserRequest struct {
 	CreatedBy   string `json:"createdBy"`
 	UpdatedBy   string `json:"updatedBy"`
 	Email       string `json:"email"`
 	RawPassword string `json:"rawPassword"`
 }
 
+type adminStatusUserRequest struct {
+	ID uuid.UUID `json:"id"`
+}
+
 // === User Handler Functions ===
 
 func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) {
-	var createUserRequest createUserRequest
+	var createUserRequest CreateUserRequest
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&createUserRequest)
 	if err != nil {
@@ -83,4 +88,31 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(userData)
+}
+
+func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
+	requestToken, err := auth.GetAPIKey(r.Header)
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	if ok := auth.ValidateSuperAdmin(cfg.superAdminToken, requestToken); !ok {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// request is now validated from an admin
+	var adminStatusUserRequest adminStatusUserRequest
+	decoder := json.NewDecoder(r.Body)
+	err = decoder.Decode(&adminStatusUserRequest)
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// cont..
+}
+
+func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
 }
