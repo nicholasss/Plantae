@@ -12,55 +12,75 @@ import (
 )
 
 type Biome struct {
-	ID             uuid.UUID
-	KoppenClass    string
-	AvgSummerTempC sql.NullFloat64
-	AvgWinterTempC sql.NullFloat64
-	AvgSummerHumid sql.NullFloat64
-	AvgWinterHumid sql.NullFloat64
-	AnnualRainMm   sql.NullInt32
-	AnnualSunHours sql.NullInt32
+	ID             uuid.UUID       `json:"id"`
+	CreatedAt      time.Time       `json:"created_at"`
+	UpdatedAt      time.Time       `json:"updated_at"`
+	DeletedAt      sql.NullTime    `json:"deleted_at"`
+	CreatedBy      string          `json:"created_by"`
+	UpdatedBy      string          `json:"updated_by"`
+	DeletedBy      sql.NullString  `json:"deleted_by"`
+	KoppenClass    string          `json:"koppen_class"`
+	AvgSummerTempC sql.NullFloat64 `json:"avg_summer_temp_c"`
+	AvgWinterTempC sql.NullFloat64 `json:"avg_winter_temp_c"`
+	AvgSummerHumid sql.NullFloat64 `json:"avg_summer_humid"`
+	AvgWinterHumid sql.NullFloat64 `json:"avg_winter_humid"`
+	AnnualRainMm   sql.NullInt32   `json:"annual_rain_mm"`
+	AnnualSunHours sql.NullInt32   `json:"annual_sun_hours"`
 }
 
-type PlantSpecy struct {
-	ID               uuid.UUID
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
-	DeletedAt        sql.NullTime
-	CreatedBy        string
-	UpdatedBy        string
-	DeletedBy        sql.NullString
-	SpeciesName      string
-	HumanPoisonToxic sql.NullBool
-	PetPoisonToxic   sql.NullBool
-	HumanEdible      sql.NullBool
-	PetEdible        sql.NullBool
+type Plant struct {
+	ID               uuid.UUID      `json:"id"`
+	CreatedAt        time.Time      `json:"created_at"`
+	UpdatedAt        time.Time      `json:"updated_at"`
+	DeletedAt        sql.NullTime   `json:"deleted_at"`
+	CreatedBy        string         `json:"created_by"`
+	UpdatedBy        string         `json:"updated_by"`
+	DeletedBy        sql.NullString `json:"deleted_by"`
+	BiomeID          uuid.NullUUID  `json:"biome_id"`
+	SpeciesName      string         `json:"species_name"`
+	HumanPoisonToxic sql.NullBool   `json:"human_poison_toxic"`
+	PetPoisonToxic   sql.NullBool   `json:"pet_poison_toxic"`
+	HumanEdible      sql.NullBool   `json:"human_edible"`
+	PetEdible        sql.NullBool   `json:"pet_edible"`
+}
+
+type PlantName struct {
+	ID         uuid.UUID      `json:"id"`
+	CreatedAt  time.Time      `json:"created_at"`
+	UpdatedAt  time.Time      `json:"updated_at"`
+	DeletedAt  sql.NullTime   `json:"deleted_at"`
+	CreatedBy  string         `json:"created_by"`
+	UpdatedBy  string         `json:"updated_by"`
+	DeletedBy  sql.NullString `json:"deleted_by"`
+	PlantID    uuid.NullUUID  `json:"plant_id"`
+	LangCode   sql.NullString `json:"lang_code"`
+	CommonName sql.NullString `json:"common_name"`
 }
 
 type User struct {
-	ID             uuid.UUID
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedAt      sql.NullTime
-	CreatedBy      string
-	UpdatedBy      string
-	DeletedBy      sql.NullString
-	JoinDate       time.Time
-	IsAdmin        bool
-	Email          string
-	HashedPassword sql.NullString
+	ID             uuid.UUID      `json:"id"`
+	CreatedAt      time.Time      `json:"created_at"`
+	UpdatedAt      time.Time      `json:"updated_at"`
+	DeletedAt      sql.NullTime   `json:"deleted_at"`
+	CreatedBy      string         `json:"created_by"`
+	UpdatedBy      string         `json:"updated_by"`
+	DeletedBy      sql.NullString `json:"deleted_by"`
+	JoinDate       time.Time      `json:"join_date"`
+	IsAdmin        bool           `json:"is_admin"`
+	Email          string         `json:"email"`
+	HashedPassword sql.NullString `json:"hashed_password"`
 }
 
 type UsersPlant struct {
-	ID             uuid.UUID
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedAt      sql.NullTime
-	CreatedBy      time.Time
-	UpdatedBy      time.Time
-	DeletedBy      sql.NullTime
-	PlantSpeciesID uuid.NullUUID
-	UserID         uuid.NullUUID
-	AdoptionDate   sql.NullTime
-	Name           sql.NullString
+	ID           uuid.UUID      `json:"id"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+	DeletedAt    sql.NullTime   `json:"deleted_at"`
+	CreatedBy    string         `json:"created_by"`
+	UpdatedBy    string         `json:"updated_by"`
+	DeletedBy    sql.NullString `json:"deleted_by"`
+	PlantID      uuid.NullUUID  `json:"plant_id"`
+	UserID       uuid.NullUUID  `json:"user_id"`
+	AdoptionDate sql.NullTime   `json:"adoption_date"`
+	Name         sql.NullString `json:"name"`
 }
