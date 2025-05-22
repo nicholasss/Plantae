@@ -10,6 +10,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// === Admin Token Functions ===
+
+// check admin token
+func authorizeSuperAdmin(superAdminToken string, requestToken string) bool {
+	result := strings.Compare(superAdminToken, requestToken)
+	return result == 0 // true if same, false if not
+}
+
+// === Token & Key Functions ===
+
+// api key retrieval
+// also used for super_admin_token
 func GetAPIKey(headers http.Header) (string, error) {
 	// value will look like:
 	//   ApiKey <key string>
@@ -28,6 +40,7 @@ func GetAPIKey(headers http.Header) (string, error) {
 	return keyString, nil
 }
 
+// user access token or refresh token retrieval
 func GetBearerToken(headers http.Header) (string, error) {
 	// value will look like
 	//   Bearer <token_string>
@@ -46,6 +59,8 @@ func GetBearerToken(headers http.Header) (string, error) {
 	log.Printf("Returned the JWT successfuly from headers.\n")
 	return tokenString, nil
 }
+
+// === User Password Functions ===
 
 // hashes password using the bcrypt golang library
 func HashPassword(rawPassword string) (string, error) {
