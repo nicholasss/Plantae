@@ -315,6 +315,15 @@ func (q *Queries) PromoteUserToAdminByID(ctx context.Context, id uuid.UUID) erro
 	return err
 }
 
+const resetUsersTable = `-- name: ResetUsersTable :exec
+delete from users
+`
+
+func (q *Queries) ResetUsersTable(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, resetUsersTable)
+	return err
+}
+
 const updateUserPasswordByID = `-- name: UpdateUserPasswordByID :exec
 update users
 set
