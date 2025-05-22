@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -91,28 +92,67 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
-	requestToken, err := auth.GetAPIKey(r.Header)
-	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
-		return
-	}
-
-	if ok := auth.ValidateSuperAdmin(cfg.superAdminToken, requestToken); !ok {
-		respondWithError(err, http.StatusBadRequest, w)
-		return
-	}
-
-	// request is now validated from an admin
 	var adminStatusUserRequest adminStatusUserRequest
 	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&adminStatusUserRequest)
+	err := decoder.Decode(&adminStatusUserRequest)
 	if err != nil {
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
 
-	// cont..
+	// validate that id is a users id
+	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusUserRequest.ID)
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// check that user is not already admin
+	if userRecord.IsAdmin {
+		respondWithError(fmt.Errorf("user is already admin"), http.StatusBadRequest, w)
+		return
+	}
+
+	// make user admin
+	err = cfg.db.PromoteUserToAdminByID(r.Context(), adminStatusUserRequest.ID)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// successful
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
+	var adminStatusUserRequest adminStatusUserRequest
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&adminStatusUserRequest)
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// validate that id is a users id
+	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusUserRequest.ID)
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// check that user is not demoted was never promoted
+	if !userRecord.IsAdmin {
+		respondWithError(fmt.Errorf("user is already not-admin"), http.StatusBadRequest, w)
+		return
+	}
+
+	// demote user
+	err = cfg.db.DemoteUserFromAdminByID(r.Context(), adminStatusUserRequest.ID)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// successful
+	w.WriteHeader(http.StatusNoContent)
 }

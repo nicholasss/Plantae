@@ -30,12 +30,12 @@ func main() {
 	// health endpoint
 	mux.Handle("GET /health", cfg.logMW(http.HandlerFunc(healthHandler)))
 
+	// super-admin endpoints
+	mux.Handle("POST /api/v1/super-admin/promote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.promoteUserToAdminHandler))))
+	mux.Handle("POST /api/v1/super-admin/demote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.demoteUserToAdminHandler))))
+
 	// user endpoints
 	mux.Handle("POST /api/v1/create-user", cfg.logMW(http.HandlerFunc(cfg.createUserHandler)))
-
-	// admin endpoints
-	mux.Handle("POST /api/v1/promote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.promoteUserToAdminHandler))))
-	mux.Handle("POST /api/v1/demote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.demoteUserToAdminHandler))))
 
 	log.Printf("Server is now online at http://%s%s.\n", cfg.localAddr, cfg.port)
 	log.Fatal(http.ListenAndServe(cfg.port, mux))
