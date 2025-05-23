@@ -15,13 +15,14 @@ import (
 // === Global Types ===
 
 type apiConfig struct {
-	accessTokenDuration time.Duration
-	db                  *database.Queries
-	localAddr           string
-	platform            string
-	port                string
-	JWTSecret           string
-	superAdminToken     string
+	accessTokenDuration  time.Duration
+	refreshTokenDuration time.Duration
+	db                   *database.Queries
+	localAddr            string
+	platform             string
+	port                 string
+	JWTSecret            string
+	superAdminToken      string
 }
 
 // === Utilities Response Types ===
@@ -55,13 +56,14 @@ func loadApiConfig() (*apiConfig, error) {
 	// additional vars, configuration, and return
 
 	cfg := &apiConfig{
-		accessTokenDuration: time.Hour * 2,
-		db:                  dbQueries,
-		localAddr:           os.Getenv("LOCAL_ADDRESS"),
-		platform:            os.Getenv("PLATFORM"),
-		port:                ":" + os.Getenv("PORT"),
-		JWTSecret:           os.Getenv("JWT_SECRET"),
-		superAdminToken:     os.Getenv("SUPER_ADMIN_TOKEN"),
+		accessTokenDuration:  time.Hour * 2,
+		refreshTokenDuration: time.Hour * 24 * 30,
+		db:                   dbQueries,
+		localAddr:            os.Getenv("LOCAL_ADDRESS"),
+		platform:             os.Getenv("PLATFORM"),
+		port:                 ":" + os.Getenv("PORT"),
+		JWTSecret:            os.Getenv("JWT_SECRET"),
+		superAdminToken:      os.Getenv("SUPER_ADMIN_TOKEN"),
 	}
 
 	return cfg, nil
