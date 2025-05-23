@@ -19,6 +19,8 @@ source .env
 
 # run tests with admin token for testing
 hurl \
+  --variable craig_email=craig@gmail.com \
+  --variable craig_password=@ssword472 \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/users.hurl

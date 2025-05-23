@@ -17,8 +17,8 @@ Content-Type: application/json; charset=UTF-8
 {
   "createdBy": "hurl-project-test",
   "updatedBy": "hurl-project-test",
-  "email": "craig@gmail.com",
-  "password": "@assword123"
+  "email": "{{craig_email}}",
+  "password": "{{craig_password}}"
 }
 ```
 HTTP 201
@@ -27,4 +27,4 @@ Content-Type: application/json
 craig_id: jsonpath "$.id"
 [Asserts]
 jsonpath "$.isAdmin" == false
-jsonpath "$.email" == "craig@gmail.com"
+jsonpath "$.email" == "{{craig_email}}"
