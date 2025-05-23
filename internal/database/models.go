@@ -13,74 +13,74 @@ import (
 
 type Biome struct {
 	ID             uuid.UUID       `json:"id"`
-	CreatedAt      time.Time       `json:"created_at"`
-	UpdatedAt      time.Time       `json:"updated_at"`
-	DeletedAt      sql.NullTime    `json:"deleted_at"`
-	CreatedBy      string          `json:"created_by"`
-	UpdatedBy      string          `json:"updated_by"`
-	DeletedBy      sql.NullString  `json:"deleted_by"`
-	KoppenClass    string          `json:"koppen_class"`
-	AvgSummerTempC sql.NullFloat64 `json:"avg_summer_temp_c"`
-	AvgWinterTempC sql.NullFloat64 `json:"avg_winter_temp_c"`
-	AvgSummerHumid sql.NullFloat64 `json:"avg_summer_humid"`
-	AvgWinterHumid sql.NullFloat64 `json:"avg_winter_humid"`
-	AnnualRainMm   sql.NullInt32   `json:"annual_rain_mm"`
-	AnnualSunHours sql.NullInt32   `json:"annual_sun_hours"`
+	CreatedAt      time.Time       `json:"createdAt"`
+	UpdatedAt      time.Time       `json:"updatedAt"`
+	DeletedAt      sql.NullTime    `json:"deletedAt"`
+	CreatedBy      string          `json:"createdBy"`
+	UpdatedBy      string          `json:"updatedBy"`
+	DeletedBy      sql.NullString  `json:"deletedBy"`
+	KoppenClass    string          `json:"koppenClass"`
+	AvgSummerTempC sql.NullFloat64 `json:"avgSummerTempC"`
+	AvgWinterTempC sql.NullFloat64 `json:"avgWinterTempC"`
+	AvgSummerHumid sql.NullFloat64 `json:"avgSummerHumid"`
+	AvgWinterHumid sql.NullFloat64 `json:"avgWinterHumid"`
+	AnnualRainMm   sql.NullInt32   `json:"annualRainMm"`
+	AnnualSunHours sql.NullInt32   `json:"annualSunHours"`
 }
 
 type Plant struct {
 	ID               uuid.UUID      `json:"id"`
-	CreatedAt        time.Time      `json:"created_at"`
-	UpdatedAt        time.Time      `json:"updated_at"`
-	DeletedAt        sql.NullTime   `json:"deleted_at"`
-	CreatedBy        string         `json:"created_by"`
-	UpdatedBy        string         `json:"updated_by"`
-	DeletedBy        sql.NullString `json:"deleted_by"`
-	BiomeID          uuid.NullUUID  `json:"biome_id"`
-	SpeciesName      string         `json:"species_name"`
-	HumanPoisonToxic sql.NullBool   `json:"human_poison_toxic"`
-	PetPoisonToxic   sql.NullBool   `json:"pet_poison_toxic"`
-	HumanEdible      sql.NullBool   `json:"human_edible"`
-	PetEdible        sql.NullBool   `json:"pet_edible"`
+	CreatedAt        time.Time      `json:"createdAt"`
+	UpdatedAt        time.Time      `json:"updatedAt"`
+	DeletedAt        sql.NullTime   `json:"deletedAt"`
+	CreatedBy        string         `json:"createdBy"`
+	UpdatedBy        string         `json:"updatedBy"`
+	DeletedBy        sql.NullString `json:"deletedBy"`
+	BiomeID          uuid.NullUUID  `json:"biomeId"`
+	SpeciesName      string         `json:"speciesName"`
+	HumanPoisonToxic sql.NullBool   `json:"humanPoisonToxic"`
+	PetPoisonToxic   sql.NullBool   `json:"petPoisonToxic"`
+	HumanEdible      sql.NullBool   `json:"humanEdible"`
+	PetEdible        sql.NullBool   `json:"petEdible"`
 }
 
 type PlantName struct {
 	ID         uuid.UUID      `json:"id"`
-	CreatedAt  time.Time      `json:"created_at"`
-	UpdatedAt  time.Time      `json:"updated_at"`
-	DeletedAt  sql.NullTime   `json:"deleted_at"`
-	CreatedBy  string         `json:"created_by"`
-	UpdatedBy  string         `json:"updated_by"`
-	DeletedBy  sql.NullString `json:"deleted_by"`
-	PlantID    uuid.NullUUID  `json:"plant_id"`
-	LangCode   sql.NullString `json:"lang_code"`
-	CommonName sql.NullString `json:"common_name"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
+	DeletedAt  sql.NullTime   `json:"deletedAt"`
+	CreatedBy  string         `json:"createdBy"`
+	UpdatedBy  string         `json:"updatedBy"`
+	DeletedBy  sql.NullString `json:"deletedBy"`
+	PlantID    uuid.NullUUID  `json:"plantId"`
+	LangCode   sql.NullString `json:"langCode"`
+	CommonName sql.NullString `json:"commonName"`
 }
 
 type User struct {
 	ID             uuid.UUID      `json:"id"`
-	CreatedAt      time.Time      `json:"created_at"`
-	UpdatedAt      time.Time      `json:"updated_at"`
-	DeletedAt      sql.NullTime   `json:"deleted_at"`
-	CreatedBy      string         `json:"created_by"`
-	UpdatedBy      string         `json:"updated_by"`
-	DeletedBy      sql.NullString `json:"deleted_by"`
-	JoinDate       time.Time      `json:"join_date"`
-	IsAdmin        bool           `json:"is_admin"`
+	CreatedAt      time.Time      `json:"createdAt"`
+	UpdatedAt      time.Time      `json:"updatedAt"`
+	DeletedAt      sql.NullTime   `json:"deletedAt"`
+	CreatedBy      string         `json:"createdBy"`
+	UpdatedBy      string         `json:"updatedBy"`
+	DeletedBy      sql.NullString `json:"deletedBy"`
+	JoinDate       time.Time      `json:"joinDate"`
+	IsAdmin        bool           `json:"isAdmin"`
 	Email          string         `json:"email"`
-	HashedPassword string         `json:"hashed_password"`
+	HashedPassword string         `json:"hashedPassword"`
 }
 
 type UsersPlant struct {
 	ID           uuid.UUID      `json:"id"`
-	CreatedAt    time.Time      `json:"created_at"`
-	UpdatedAt    time.Time      `json:"updated_at"`
-	DeletedAt    sql.NullTime   `json:"deleted_at"`
-	CreatedBy    string         `json:"created_by"`
-	UpdatedBy    string         `json:"updated_by"`
-	DeletedBy    sql.NullString `json:"deleted_by"`
-	PlantID      uuid.NullUUID  `json:"plant_id"`
-	UserID       uuid.NullUUID  `json:"user_id"`
-	AdoptionDate sql.NullTime   `json:"adoption_date"`
+	CreatedAt    time.Time      `json:"createdAt"`
+	UpdatedAt    time.Time      `json:"updatedAt"`
+	DeletedAt    sql.NullTime   `json:"deletedAt"`
+	CreatedBy    string         `json:"createdBy"`
+	UpdatedBy    string         `json:"updatedBy"`
+	DeletedBy    sql.NullString `json:"deletedBy"`
+	PlantID      uuid.NullUUID  `json:"plantId"`
+	UserID       uuid.NullUUID  `json:"userId"`
+	AdoptionDate sql.NullTime   `json:"adoptionDate"`
 	Name         sql.NullString `json:"name"`
 }
