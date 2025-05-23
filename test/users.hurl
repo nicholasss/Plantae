@@ -12,6 +12,7 @@ HTTP 204
 
 # create account
 POST http://localhost:8080/api/v1/create-user
+Content-Type: application/json; charset=UTF-8
 ```json
 {
   "createdBy": "hurl-project-test",
@@ -20,4 +21,10 @@ POST http://localhost:8080/api/v1/create-user
   "password": "@assword123"
 }
 ```
-
+HTTP 201
+Content-Type: application/json
+[Captures]
+craig_id: jsonpath "$.id"
+[Asserts]
+jsonpath "$.isAdmin" == false
+jsonpath "$.email" == "craig@gmail.com"

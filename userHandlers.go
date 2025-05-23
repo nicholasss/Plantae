@@ -22,7 +22,7 @@ type CreateUserRequest struct {
 	CreatedBy   string `json:"createdBy"`
 	UpdatedBy   string `json:"updatedBy"`
 	Email       string `json:"email"`
-	RawPassword string `json:"rawPassword"`
+	RawPassword string `json:"password"`
 }
 
 // login endpoint
@@ -32,9 +32,9 @@ type UserLoginRequest struct {
 }
 type UserLoginResponse struct {
 	ID           uuid.UUID `json:"id"`
-	IsAdmin      bool      `json:"is_admin"`
+	IsAdmin      bool      `json:"isAdmin"`
 	AccessToken  string    `json:"token"`
-	RefreshToken string    `json:"refresh_token"`
+	RefreshToken string    `json:"refreshToken"`
 }
 
 // === User Handler Functions ===
@@ -68,21 +68,26 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		// respond with error
 	}
+	log.Print("Decoded create user request...")
 
 	// check request params
 	if createUserRequest.Email == "" {
+		log.Print("Email received was empty.")
 		respondWithError(nil, http.StatusBadRequest, w)
 		return
 	}
-	if createUserRequest.RawPassword == "" { // may not need to check due to sql.NullString type
+	if createUserRequest.RawPassword == "" {
+		log.Print("Password received was empty.")
 		respondWithError(nil, http.StatusBadRequest, w)
 		return
 	}
 	if createUserRequest.CreatedBy == "" {
+		log.Print("createdBy received was empty.")
 		respondWithError(nil, http.StatusBadRequest, w)
 		return
 	}
 	if createUserRequest.UpdatedBy == "" {
+		log.Print("updatedBy received was empty.")
 		respondWithError(nil, http.StatusBadRequest, w)
 		return
 	}
@@ -91,9 +96,11 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	hashedPassword, err := auth.HashPassword(createUserRequest.RawPassword)
 	createUserRequest.RawPassword = "" // GC collection
 	if err != nil {
+		log.Printf("Error hashing password for creating a user: %q", err)
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
+	log.Print("Hashed a password for creating a user.")
 
 	// CreateUserParams struct
 	createUserParams := database.CreateUserParams{
@@ -117,6 +124,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	log.Print("New user successfully created.")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(userData)
