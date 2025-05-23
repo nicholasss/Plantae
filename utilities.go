@@ -18,6 +18,7 @@ type apiConfig struct {
 	localAddr       string
 	platform        string
 	port            string
+	JWTSecret       string
 	superAdminToken string
 }
 
@@ -56,6 +57,7 @@ func loadApiConfig() (*apiConfig, error) {
 		localAddr:       os.Getenv("LOCAL_ADDRESS"),
 		platform:        os.Getenv("PLATFORM"),
 		port:            ":" + os.Getenv("PORT"),
+		JWTSecret:       os.Getenv("JWT_SECRET"),
 		superAdminToken: os.Getenv("SUPER_ADMIN_TOKEN"),
 	}
 
