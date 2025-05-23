@@ -154,6 +154,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	// hash & check password
 	err = auth.CheckPasswordHash(userLoginRequest.RawPassword, userRecord.HashedPassword)
 	if err != nil {
+		log.Print("Login attempt failed with mis-matching password hashes.")
 		respondWithError(err, http.StatusForbidden, w)
 		return
 	}
@@ -164,12 +165,29 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	userLoginRequest.Email = strings.ToLower(userLoginRequest.Email)
 	userRecord.Email = strings.ToLower(userRecord.Email)
 	if userRecord.Email != userLoginRequest.Email {
+		log.Printf("Login attempt failed for %q with email %q", userRecord.Email, userLoginRequest.Email)
 		respondWithError(err, http.StatusForbidden, w)
 		return
 	}
 
-	// user can log in, generate tokens
-	log.Printf("Successfully logged in user: %q", userLoginRequest.Email)
+	// user logged in, generate tokens
+	log.Printf("Successfully logged in user: %q\nGenerating tokens...", userLoginRequest.Email)
+
+	// access token
+	userToken, err := auth.MakeJWT(userRecord.ID, cfg.JWTSecret, cfg.accessTokenDuration)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// refresh token
+	userRefreshToken, err := auth.MakeRefreshToken()
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// store userRefreshToken in database
 }
 
 // promotes user to admin
