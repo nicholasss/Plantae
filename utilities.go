@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/nicholasss/plantae/internal/database"
@@ -14,12 +15,13 @@ import (
 // === Global Types ===
 
 type apiConfig struct {
-	db              *database.Queries
-	localAddr       string
-	platform        string
-	port            string
-	JWTSecret       string
-	superAdminToken string
+	accessTokenDuration time.Duration
+	db                  *database.Queries
+	localAddr           string
+	platform            string
+	port                string
+	JWTSecret           string
+	superAdminToken     string
 }
 
 // === Utilities Response Types ===
@@ -53,12 +55,13 @@ func loadApiConfig() (*apiConfig, error) {
 	// additional vars, configuration, and return
 
 	cfg := &apiConfig{
-		db:              dbQueries,
-		localAddr:       os.Getenv("LOCAL_ADDRESS"),
-		platform:        os.Getenv("PLATFORM"),
-		port:            ":" + os.Getenv("PORT"),
-		JWTSecret:       os.Getenv("JWT_SECRET"),
-		superAdminToken: os.Getenv("SUPER_ADMIN_TOKEN"),
+		accessTokenDuration: time.Hour * 2,
+		db:                  dbQueries,
+		localAddr:           os.Getenv("LOCAL_ADDRESS"),
+		platform:            os.Getenv("PLATFORM"),
+		port:                ":" + os.Getenv("PORT"),
+		JWTSecret:           os.Getenv("JWT_SECRET"),
+		superAdminToken:     os.Getenv("SUPER_ADMIN_TOKEN"),
 	}
 
 	return cfg, nil
