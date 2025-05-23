@@ -223,6 +223,12 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(userLoginResponseData)
 }
 
+func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request) {
+	// take refresh token with "Bearer: <token>"
+
+	// other steps to issue a new access token using a refresh token
+}
+
 // promotes user to admin
 func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
 	var adminStatusRequest AdminStatusRequest
