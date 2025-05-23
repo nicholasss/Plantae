@@ -25,6 +25,7 @@ func ValidateSuperAdmin(superAdminToken string, requestToken string) bool {
 	token1, err1 := base64.StdEncoding.DecodeString(superAdminToken)
 	token2, err2 := base64.StdEncoding.DecodeString(requestToken)
 	if err1 != nil || err2 != nil {
+		log.Print("Could not authenticate Super Admin.")
 		return false
 	}
 
