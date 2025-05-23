@@ -37,6 +37,7 @@ func main() {
 
 	// user endpoints
 	mux.Handle("POST /api/v1/create-user", cfg.logMW(http.HandlerFunc(cfg.createUserHandler)))
+	mux.Handle("POST /api/v1/login-user", cfg.logMW(http.HandlerFunc(cfg.loginUserHandler)))
 
 	log.Printf("Server is now online at http://%s%s.\n", cfg.localAddr, cfg.port)
 	log.Fatal(http.ListenAndServe(cfg.port, mux))
