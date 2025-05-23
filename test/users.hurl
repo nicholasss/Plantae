@@ -18,8 +18,7 @@ POST http://localhost:8080/api/v1/create-user
 Content-Type: application/json; charset=UTF-8
 ```json
 {
-  "createdBy": "hurl-project-test",
-  "updatedBy": "hurl-project-test",
+  "client": "hurl-project-test",
   "email": "{{craig_email}}",
   "password": "{{craig_password}}"
 }
@@ -38,6 +37,7 @@ POST http://localhost:8080/api/v1/login-user
 Content-Type: application/json; charset=UTF-8
 ```json
 {
+  "client": "hurl-project-test",
   "email": "{{craig_email}}",
   "password": "{{craig_password}}"
 }
