@@ -40,32 +40,25 @@ type UserLoginResponse struct {
 // === User Handler Functions ===
 
 func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) {
+	// super-admin pre-authenticated before the handler is used
 	// ensure development platform
-	if cfg.platform != "development" {
-		log.Printf("unable to reset: %q", cfg.platform)
-		respondWithError(nil, http.StatusForbidden, w)
-		return
-	} else if cfg.platform != "testing" {
-		respondWithError(nil, http.StatusForbidden, w)
-		return
-	}
-
-	log.Printf("Headers: %+v", r.Header)
-
-	// check for super-admin token
-	requestToken, err := auth.GetAuthKeysValue(r.Header, "SuperAdminToken")
-	if err != nil {
-		respondWithError(nil, http.StatusForbidden, w)
-		return
-	}
-	ok := auth.ValidateSuperAdmin(cfg.superAdminToken, requestToken)
-	if !ok {
+	if cfg.platform == "production" || cfg.platform == "" {
+		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
 	}
 
 	// drop records from db
-	log.Println("Continue coding to run db query...")
+	err := cfg.db.ResetUsersTable(r.Context())
+	if err != nil {
+		log.Printf("Unable to reset user table due to error: %q", err)
+		respondWithError(nil, http.StatusInternalServerError, w)
+		return
+	}
+
+	// reset successfully
+	log.Print("Reset users table successfully.")
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) {
