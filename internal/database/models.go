@@ -57,6 +57,20 @@ type PlantName struct {
 	CommonName sql.NullString `json:"commonName"`
 }
 
+type RefreshToken struct {
+	RefreshToken string         `json:"refreshToken"`
+	CreatedAt    time.Time      `json:"createdAt"`
+	UpdatedAt    time.Time      `json:"updatedAt"`
+	DeletedAt    sql.NullTime   `json:"deletedAt"`
+	CreatedBy    string         `json:"createdBy"`
+	UpdatedBy    string         `json:"updatedBy"`
+	DeletedBy    sql.NullString `json:"deletedBy"`
+	RevokedAt    sql.NullTime   `json:"revokedAt"`
+	RevokedBy    sql.NullString `json:"revokedBy"`
+	ExpiresAt    time.Time      `json:"expiresAt"`
+	UserID       uuid.UUID      `json:"userId"`
+}
+
 type User struct {
 	ID             uuid.UUID      `json:"id"`
 	CreatedAt      time.Time      `json:"createdAt"`
