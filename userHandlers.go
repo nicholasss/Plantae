@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/nicholasss/plantae/internal/auth"
@@ -19,22 +20,24 @@ type AdminStatusRequest struct {
 }
 
 type CreateUserRequest struct {
-	CreatedBy   string `json:"createdBy"`
-	UpdatedBy   string `json:"updatedBy"`
+	Client      string `json:"client"`
 	Email       string `json:"email"`
 	RawPassword string `json:"password"`
 }
 
 // login endpoint
 type UserLoginRequest struct {
+	Client      string `json:"client"`
 	Email       string `json:"email"`
 	RawPassword string `json:"password"`
 }
 type UserLoginResponse struct {
-	ID           uuid.UUID `json:"id"`
-	IsAdmin      bool      `json:"isAdmin"`
-	AccessToken  string    `json:"token"`
-	RefreshToken string    `json:"refreshToken"`
+	ID                    uuid.UUID `json:"id"`
+	IsAdmin               bool      `json:"isAdmin"`
+	AccessToken           string    `json:"token"`
+	AccessTokenExpiresAt  time.Time `json:"tokenExpiresAt"`
+	RefreshToken          string    `json:"refreshToken"`
+	RefreshTokenExpiresAt time.Time `json:"refreshTokenExpiresAt"`
 }
 
 // === User Handler Functions ===
@@ -81,12 +84,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		respondWithError(nil, http.StatusBadRequest, w)
 		return
 	}
-	if createUserRequest.CreatedBy == "" {
-		log.Print("createdBy received was empty.")
-		respondWithError(nil, http.StatusBadRequest, w)
-		return
-	}
-	if createUserRequest.UpdatedBy == "" {
+	if createUserRequest.Client == "" {
 		log.Print("updatedBy received was empty.")
 		respondWithError(nil, http.StatusBadRequest, w)
 		return
@@ -104,8 +102,8 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 
 	// CreateUserParams struct
 	createUserParams := database.CreateUserParams{
-		CreatedBy:      createUserRequest.CreatedBy,
-		UpdatedBy:      createUserRequest.UpdatedBy,
+		CreatedBy:      createUserRequest.Client,
+		UpdatedBy:      createUserRequest.Client,
 		Email:          createUserRequest.Email,
 		HashedPassword: hashedPassword,
 	}
@@ -173,13 +171,6 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	// user logged in, generate tokens
 	log.Printf("Successfully logged in user: %q\nGenerating tokens...", userLoginRequest.Email)
 
-	// access token
-	userToken, err := auth.MakeJWT(userRecord.ID, cfg.JWTSecret, cfg.accessTokenDuration)
-	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
-		return
-	}
-
 	// refresh token
 	userRefreshToken, err := auth.MakeRefreshToken()
 	if err != nil {
@@ -188,6 +179,47 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// store userRefreshToken in database
+	refreshTokenExpiresAt := time.Now().Add(cfg.refreshTokenDuration)
+	createRefreshToken := database.CreateRefreshTokenParams{
+		RefreshToken: userRefreshToken,
+		CreatedBy:    userLoginRequest.Client,
+		UpdatedBy:    userLoginRequest.Client,
+		ExpiresAt:    refreshTokenExpiresAt,
+		UserID:       userRecord.ID,
+	}
+	_, err = cfg.db.CreateRefreshToken(r.Context(), createRefreshToken)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// access token
+	accessTokenExpiresAt := time.Now().Add(cfg.accessTokenDuration)
+	userAccessToken, err := auth.MakeJWT(userRecord.ID, cfg.JWTSecret, cfg.accessTokenDuration)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// json response
+	userLoginResponse := UserLoginResponse{
+		ID:                    userRecord.ID,
+		IsAdmin:               userRecord.IsAdmin,
+		AccessToken:           userAccessToken,
+		AccessTokenExpiresAt:  accessTokenExpiresAt,
+		RefreshToken:          userRefreshToken,
+		RefreshTokenExpiresAt: refreshTokenExpiresAt,
+	}
+	userLoginResponseData, err := json.Marshal(userLoginResponse)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Print("User successfully logged in.")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(userLoginResponseData)
 }
 
 // promotes user to admin
