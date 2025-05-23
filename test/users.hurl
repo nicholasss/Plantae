@@ -49,3 +49,5 @@ craig_token: jsonpath "$.token"
 craig_refresh_token: jsonpath "$.refreshToken"
 [Asserts]
 jsonpath "$.isAdmin" == false
+jsonpath "$.tokenExpiresAt" exists
+jsonpath "$.refreshTokenExpiresAt" exists
