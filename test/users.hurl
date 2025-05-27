@@ -60,3 +60,36 @@ HTTP 200
 Content-Type: application/json
 [Captures]
 craig_token: jsonpath "$.token"
+
+#
+# Revoke token
+POST http://localhost:8080/api/v1/auth/revoke
+Authorization: Bearer {{craig_refresh_token}}
+Content-Type: application/json; charset=UTF-8
+```json
+{
+  "client": "hurl-project-test"
+}
+```
+HTTP 204
+
+#
+# Login back in to user account for new refresh token
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json; charset=UTF-8
+```json
+{
+  "client": "hurl-project-test",
+  "email": "{{craig_email}}",
+  "password": "{{craig_password}}"
+}
+```
+HTTP 200
+Content-Type: application/json
+[Captures]
+craig_token: jsonpath "$.token"
+craig_refresh_token: jsonpath "$.refreshToken"
+[Asserts]
+jsonpath "$.isAdmin" == false
+jsonpath "$.tokenExpiresAt" exists
+jsonpath "$.refreshTokenExpiresAt" exists
