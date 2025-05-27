@@ -39,7 +39,7 @@ func main() {
 	mux.Handle("POST /api/v1/auth/register", cfg.logMW(http.HandlerFunc(cfg.createUserHandler)))
 	mux.Handle("POST /api/v1/auth/login", cfg.logMW(http.HandlerFunc(cfg.loginUserHandler)))
 	mux.Handle("POST /api/v1/auth/refresh", cfg.logMW(http.HandlerFunc(cfg.refreshUserHandler)))
-	// /auth/revoke
+	mux.Handle("POST /api/v1/auth/revoke", cfg.logMW(http.HandlerFunc(cfg.revokeUserHandler)))
 
 	// === user data endpoints
 	//

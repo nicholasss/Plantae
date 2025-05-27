@@ -47,6 +47,11 @@ type AuthRefreshResponse struct {
 	AccessTokenExpiresAt time.Time `json:"tokenExpiresAt"`
 }
 
+// revoke endpoint
+type AuthRevokeRequest struct {
+	Client `json:"client"`
+}
+
 // === User Handler Functions ===
 
 func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -291,6 +296,38 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(refreshResponseData)
+}
+
+// accepts refresh token as authentication
+// responds with 204 No Content if successfully revoked
+func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) {
+	providedRefreshToken, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	var revokeRequest AuthRevokeRequest
+	err = json.NewDecoder(r.Body).Decode(&revokeRequest)
+	defer r.Body.Close()
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	revokeRefreshTokenParams := database.RevokeRefreshTokenWithTokenParams{
+		RefreshToken: providedRefreshToken,
+		UpdatedBy:    revokeRequest.Client,
+		RevokedBy:    revokeRequest.Client,
+	}
+	err = cfg.db.RevokeRefreshTokenWithToken(r.Context(), revokeRefreshTokenParams)
+	if err != nil {
+		respondWithError(err, http.StatusUnauthorized, w)
+		return
+	}
+
+	// token was revoked
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // promotes user to admin
