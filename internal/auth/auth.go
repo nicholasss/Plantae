@@ -74,7 +74,7 @@ func GetBearerToken(headers http.Header) (string, error) {
 		return "", errors.New("unable to find token in headers")
 	}
 
-	log.Printf("Returned the JWT successfuly from headers.\n")
+	// log.Printf("Returned the JWT successfuly from headers.\n")
 	return tokenString, nil
 }
 

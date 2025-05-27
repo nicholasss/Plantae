@@ -182,8 +182,8 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// user logged in, generate tokens
-	log.Printf("Successfully logged in user: %q", userRecord.ID)
-	log.Printf("Generating tokens for user.")
+	// log.Printf("Successfully logged in user: %q", userRecord.ID)
+	log.Printf("Generating tokens for user...")
 
 	// refresh token
 	userRefreshToken, err := auth.MakeRefreshToken()
