@@ -15,3 +15,8 @@ Project to track your house plants. This is the server portion of the project.
 - [ ] Implement basic plant tracking.
 - [ ] Begin entering plant information into plant table.
 - [ ] Create a backup scheme for the universal plant data.
+
+### Cleanup efforts
+
+- [ ] Fix respondWithError utility function to not reveal the error value to client
+- [ ] Replace all fmt.Errorf with errors.New where formatting or wrapping is not needed
