@@ -35,9 +35,27 @@ func main() {
 	mux.Handle("POST /api/v1/super-admin/promote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.promoteUserToAdminHandler))))
 	mux.Handle("POST /api/v1/super-admin/demote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.demoteUserToAdminHandler))))
 
-	// user endpoints
-	mux.Handle("POST /api/v1/create-user", cfg.logMW(http.HandlerFunc(cfg.createUserHandler)))
-	mux.Handle("POST /api/v1/login-user", cfg.logMW(http.HandlerFunc(cfg.loginUserHandler)))
+	// user auth endpoints
+	mux.Handle("POST /api/v1/auth/register", cfg.logMW(http.HandlerFunc(cfg.createUserHandler)))
+	mux.Handle("POST /api/v1/auth/login", cfg.logMW(http.HandlerFunc(cfg.loginUserHandler)))
+	// /auth/refresh
+	// /auth/revoke
+
+	// === user data endpoints
+	//
+	// /my/plants
+	// /my/plants/{plant id}
+	//
+	// /my/rooms
+	// /my/rooms/{room id}
+	//
+	// === data endpoints
+	//
+	// /biomes
+	// /biomes/{biome id}
+	//
+	// /plants
+	// /plants/{plant id}
 
 	log.Printf("Server is now online at http://%s%s.\n", cfg.localAddr, cfg.port)
 	log.Fatal(http.ListenAndServe(cfg.port, mux))
