@@ -70,6 +70,11 @@ func GetBearerToken(headers http.Header) (string, error) {
 
 	tokenString, ok := strings.CutPrefix(authHeader, "Bearer ")
 	if !ok {
+		if strings.Contains(authHeader, "SuperAdminToken") {
+			log.Println("Super-admin token supplied where admin's access token is required.")
+			return "", errors.New("super-admin token provided, please provide admin's access token instead")
+		}
+
 		log.Printf("Unable to cut prefix off. Before: '%s' After: '%s'\n", authHeader, tokenString)
 		return "", errors.New("unable to find token in headers")
 	}
