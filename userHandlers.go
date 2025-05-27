@@ -84,7 +84,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		// respond with error
 	}
-	log.Print("Decoded create user request...")
+	// log.Print("Decoded create user request...")
 
 	// check request params
 	if createUserRequest.Email == "" {
@@ -111,7 +111,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
-	log.Print("Hashed a password for creating a user.")
+	// log.Print("Hashed a password for creating a user.")
 
 	// CreateUserParams struct
 	createUserParams := database.CreateUserParams{
@@ -135,7 +135,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	log.Print("New user successfully created.")
+	log.Printf("User %q was registered successfully.", userRecord.ID)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(userData)
