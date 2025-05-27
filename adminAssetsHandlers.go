@@ -45,6 +45,7 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	if len(plantSpeciesRecords) <= 0 {
+		log.Printf("Admin listed empty plant species list successfully.")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
@@ -55,7 +56,7 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	log.Printf("Admin listed all plant species successfully.")
+	log.Printf("Admin listed plant species list successfully.")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(plantSpeciesData)
