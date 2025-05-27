@@ -14,7 +14,7 @@ import (
 	"github.com/nicholasss/plantae/internal/database"
 )
 
-// === request types
+// === request response types
 
 // promote / demote request
 type AdminStatusRequest struct {
