@@ -93,8 +93,8 @@ type UsersPlant struct {
 	CreatedBy    string         `json:"createdBy"`
 	UpdatedBy    string         `json:"updatedBy"`
 	DeletedBy    sql.NullString `json:"deletedBy"`
-	PlantID      uuid.NullUUID  `json:"plantId"`
-	UserID       uuid.NullUUID  `json:"userId"`
+	PlantID      uuid.UUID      `json:"plantId"`
+	UserID       uuid.UUID      `json:"userId"`
 	AdoptionDate sql.NullTime   `json:"adoptionDate"`
 	Name         sql.NullString `json:"name"`
 }

@@ -10,8 +10,8 @@ create table users_plants (
   deleted_by text,
   --
   -- foreign keys
-  plant_id uuid,
-  user_id uuid,
+  plant_id uuid not null,
+  user_id uuid not null,
   --
   -- table data
   adoption_date timestamp with time zone,

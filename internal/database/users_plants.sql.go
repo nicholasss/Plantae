@@ -17,7 +17,7 @@ select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_b
   order by created_at desc
 `
 
-func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context, userID uuid.NullUUID) ([]UsersPlant, error) {
+func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context, userID uuid.UUID) ([]UsersPlant, error) {
 	rows, err := q.db.QueryContext(ctx, getAllUsersPlantsOrderedByCreated, userID)
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_b
   order by updated_at desc
 `
 
-func (q *Queries) GetAllUsersPlantsOrderedByUpdated(ctx context.Context, userID uuid.NullUUID) ([]UsersPlant, error) {
+func (q *Queries) GetAllUsersPlantsOrderedByUpdated(ctx context.Context, userID uuid.UUID) ([]UsersPlant, error) {
 	rows, err := q.db.QueryContext(ctx, getAllUsersPlantsOrderedByUpdated, userID)
 	if err != nil {
 		return nil, err
