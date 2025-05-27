@@ -17,7 +17,15 @@ fi
 # source .env variables
 source .env
 
-# run tests with admin token for testing
+# run admin tests with admin token for testing
+hurl \
+  --variable lisa_email=lisa@gmail.com \
+  --variable lisa_password=Growl1ng! \
+  --secret super_admin_token=$SUPER_ADMIN_TOKEN \
+  --test \
+  test/admin.hurl
+
+# run user tests with admin token for testing
 hurl \
   --variable craig_email=craig@gmail.com \
   --variable craig_password=@ssword472 \
