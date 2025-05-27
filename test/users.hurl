@@ -14,7 +14,7 @@ HTTP 204
 
 #
 # Create user account
-POST http://localhost:8080/api/v1/create-user
+POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json; charset=UTF-8
 ```json
 {
@@ -33,7 +33,7 @@ jsonpath "$.email" == "{{craig_email}}"
 
 #
 # Login to user account
-POST http://localhost:8080/api/v1/login-user
+POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json; charset=UTF-8
 ```json
 {
