@@ -42,7 +42,8 @@ func main() {
 	mux.Handle("POST /api/v1/auth/revoke", cfg.logMW(http.HandlerFunc(cfg.revokeUserHandler)))
 
 	// === user data endpoints
-	//
+	mux.Handle("GET /api/v1/my/plants", cfg.logMW(http.HandlerFunc(cfg.usersPlantsListHandler)))
+
 	// /my/plants
 	// /my/plants/{plant id}
 	//
