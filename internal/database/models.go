@@ -28,7 +28,20 @@ type Biome struct {
 	AnnualSunHours sql.NullInt32   `json:"annualSunHours"`
 }
 
-type Plant struct {
+type PlantName struct {
+	ID         uuid.UUID      `json:"id"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
+	DeletedAt  sql.NullTime   `json:"deletedAt"`
+	CreatedBy  string         `json:"createdBy"`
+	UpdatedBy  string         `json:"updatedBy"`
+	DeletedBy  sql.NullString `json:"deletedBy"`
+	PlantID    uuid.NullUUID  `json:"plantId"`
+	LangCode   sql.NullString `json:"langCode"`
+	CommonName sql.NullString `json:"commonName"`
+}
+
+type PlantSpecy struct {
 	ID               uuid.UUID      `json:"id"`
 	CreatedAt        time.Time      `json:"createdAt"`
 	UpdatedAt        time.Time      `json:"updatedAt"`
@@ -42,19 +55,6 @@ type Plant struct {
 	PetPoisonToxic   sql.NullBool   `json:"petPoisonToxic"`
 	HumanEdible      sql.NullBool   `json:"humanEdible"`
 	PetEdible        sql.NullBool   `json:"petEdible"`
-}
-
-type PlantName struct {
-	ID         uuid.UUID      `json:"id"`
-	CreatedAt  time.Time      `json:"createdAt"`
-	UpdatedAt  time.Time      `json:"updatedAt"`
-	DeletedAt  sql.NullTime   `json:"deletedAt"`
-	CreatedBy  string         `json:"createdBy"`
-	UpdatedBy  string         `json:"updatedBy"`
-	DeletedBy  sql.NullString `json:"deletedBy"`
-	PlantID    uuid.NullUUID  `json:"plantId"`
-	LangCode   sql.NullString `json:"langCode"`
-	CommonName sql.NullString `json:"commonName"`
 }
 
 type RefreshToken struct {

@@ -27,7 +27,7 @@ alter table users_plants
 alter table users_plants
   add constraint fk_plant_species
   foreign key (plant_id)
-  references plants(id);
+  references plant_species(id);
 
 -- +goose Down
 drop table users_plants;

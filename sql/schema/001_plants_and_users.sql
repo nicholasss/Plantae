@@ -1,5 +1,5 @@
 -- +goose Up
-create table plants (
+create table plant_species (
 	id uuid primary key,
   created_at timestamp with time zone not null,
   updated_at timestamp with time zone not null,
@@ -38,6 +38,6 @@ create table users (
 );
 
 -- +goose Down
-drop table plants;
+drop table plant_species;
 
 drop table users;

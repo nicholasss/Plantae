@@ -19,13 +19,13 @@ create table biomes (
 	annual_sun_hours int
 );
 
-alter table plants
+alter table plant_species
 	add constraint fk_biome
 	foreign key (biome_id)
 	references biomes(id);
 
 -- +goose Down
-alter table plants
+alter table plant_species
 	drop constraint fk_biome;
 
 drop table biomes;

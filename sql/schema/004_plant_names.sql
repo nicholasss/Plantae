@@ -20,7 +20,7 @@ create table plant_names (
 alter table plant_names
   add constraint fk_plants
   foreign key (plant_id)
-  references plants(id)
+  references plant_species(id)
   on delete cascade;
 
 -- +goose Down
