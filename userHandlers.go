@@ -325,13 +325,14 @@ func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) 
 		UpdatedBy:    revokeRequest.Client,
 		RevokedBy:    nullableClient,
 	}
-	err = cfg.db.RevokeRefreshTokenWithToken(r.Context(), revokeRefreshTokenParams)
+	revokeRecordUserID, err := cfg.db.RevokeRefreshTokenWithToken(r.Context(), revokeRefreshTokenParams)
 	if err != nil {
 		respondWithError(err, http.StatusUnauthorized, w)
 		return
 	}
 
 	// token was revoked
+	log.Printf("User %q revoked their refresh token successfully.", revokeRecordUserID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
