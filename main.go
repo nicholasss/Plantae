@@ -36,9 +36,9 @@ func main() {
 	mux.Handle("POST /api/v1/super-admin/demote-user", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.demoteUserToAdminHandler))))
 
 	// admin endpoints
+	mux.Handle("GET /api/v1/admin/plants", cfg.logMW(http.HandlerFunc(cfg.adminPlantsViewHandler)))
 
 	// POST /admin/plants
-	// GET /admin/plants
 	// PUT /admin/plants/{plant species id}
 	// DELETE /admin/plants/{plant species id}
 
