@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -49,7 +50,7 @@ type AuthRefreshResponse struct {
 
 // revoke endpoint
 type AuthRevokeRequest struct {
-	Client `json:"client"`
+	Client string `json:"client"`
 }
 
 // === User Handler Functions ===
@@ -315,10 +316,14 @@ func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	nullableClient := sql.NullString{
+		String: revokeRequest.Client,
+		Valid:  true,
+	}
 	revokeRefreshTokenParams := database.RevokeRefreshTokenWithTokenParams{
 		RefreshToken: providedRefreshToken,
 		UpdatedBy:    revokeRequest.Client,
-		RevokedBy:    revokeRequest.Client,
+		RevokedBy:    nullableClient,
 	}
 	err = cfg.db.RevokeRefreshTokenWithToken(r.Context(), revokeRefreshTokenParams)
 	if err != nil {
