@@ -8,6 +8,12 @@ import (
 )
 
 // requires access token in auth header
+// creates a user_plant
+func (cfg *apiConfig) usersPlantsCreateHandler(w http.ResponseWriter, r *http.Request) {
+	// todo
+}
+
+// requires access token in auth header
 // returns the users list of plants
 func (cfg *apiConfig) usersPlantsListHandler(w http.ResponseWriter, r *http.Request) {
 	accessTokenProvided, err := auth.GetBearerToken(r.Header)
