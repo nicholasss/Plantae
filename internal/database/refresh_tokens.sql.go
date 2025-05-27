@@ -94,7 +94,7 @@ func (q *Queries) GetUserFromRefreshToken(ctx context.Context, refreshToken stri
 	return i, err
 }
 
-const revokeRefreshTokenWithToken = `-- name: RevokeRefreshTokenWithToken :exec
+const revokeRefreshTokenWithToken = `-- name: RevokeRefreshTokenWithToken :one
 update refresh_tokens
 set
   updated_at = now(),
@@ -111,7 +111,9 @@ type RevokeRefreshTokenWithTokenParams struct {
 	RevokedBy    sql.NullString `json:"revokedBy"`
 }
 
-func (q *Queries) RevokeRefreshTokenWithToken(ctx context.Context, arg RevokeRefreshTokenWithTokenParams) error {
-	_, err := q.db.ExecContext(ctx, revokeRefreshTokenWithToken, arg.RefreshToken, arg.UpdatedBy, arg.RevokedBy)
-	return err
+func (q *Queries) RevokeRefreshTokenWithToken(ctx context.Context, arg RevokeRefreshTokenWithTokenParams) (uuid.UUID, error) {
+	row := q.db.QueryRowContext(ctx, revokeRefreshTokenWithToken, arg.RefreshToken, arg.UpdatedBy, arg.RevokedBy)
+	var user_id uuid.UUID
+	err := row.Scan(&user_id)
+	return user_id, err
 }

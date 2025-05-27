@@ -19,7 +19,7 @@ insert into refresh_tokens (
 select * from refresh_tokens
 where refresh_token = $1;
 
--- name: RevokeRefreshTokenWithToken :exec
+-- name: RevokeRefreshTokenWithToken :one
 update refresh_tokens
 set
   updated_at = now(),
