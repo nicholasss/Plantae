@@ -51,3 +51,12 @@ craig_refresh_token: jsonpath "$.refreshToken"
 jsonpath "$.isAdmin" == false
 jsonpath "$.tokenExpiresAt" exists
 jsonpath "$.refreshTokenExpiresAt" exists
+
+#
+# Refresh token
+POST http://localhost:8080/api/v1/auth/refresh
+Authorization: Bearer {{craig_refresh_token}}
+HTTP 200
+Content-Type: application/json
+[Captures]
+craig_token: jsonpath "$.token"
