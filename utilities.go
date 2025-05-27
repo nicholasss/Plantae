@@ -71,13 +71,16 @@ func loadApiConfig() (*apiConfig, error) {
 
 // === Utility Response Handlers ===
 
-// TODO: log the error, and send out generic error to client
-func respondWithError(error error, code int, w http.ResponseWriter) {
+// TODO: send out a more generic error to client
+func respondWithError(err error, code int, w http.ResponseWriter) {
+	log.Printf("Sending error to client: %q", err)
+
+	// response side
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 
-	if error != nil {
-		errorString := error.Error()
+	if err != nil {
+		errorString := err.Error()
 		errorResponse := errorResponse{Error: errorString}
 		errorData, err := json.Marshal(errorResponse)
 		if err != nil {
