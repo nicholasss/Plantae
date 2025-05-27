@@ -26,4 +26,5 @@ set
   updated_by = $2,
   revoked_at = now(),
   revoked_by = $3
-where refresh_token = $1;
+where refresh_token = $1
+returning user_id;
