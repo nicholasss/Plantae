@@ -34,8 +34,9 @@ func ValidateSuperAdmin(superAdminToken string, requestToken string) bool {
 
 // === Token & Key Functions ===
 
-// api key retrieval
-// also used for super_admin_token
+// api or superAdminToken key retrieval.
+// if prefix is not provided (""), then it will use "ApiKey" as the prefix.
+// "unable to find key in headers", may mean the prefix is either wrong or mispelled.
 func GetAuthKeysValue(headers http.Header, prefix string) (string, error) {
 	// value will look like:
 	//   ApiKey <key string>
