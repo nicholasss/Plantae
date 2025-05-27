@@ -7,16 +7,18 @@ package database
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const getAllUsersPlantsOrderedByCreated = `-- name: GetAllUsersPlantsOrderedByCreated :many
 select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, plant_id, user_id, adoption_date, name from users_plants
-  where deleted_at is null
+  where deleted_at is null and user_id = $1
   order by created_at desc
 `
 
-func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context) ([]UsersPlant, error) {
-	rows, err := q.db.QueryContext(ctx, getAllUsersPlantsOrderedByCreated)
+func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context, userID uuid.NullUUID) ([]UsersPlant, error) {
+	rows, err := q.db.QueryContext(ctx, getAllUsersPlantsOrderedByCreated, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -52,12 +54,12 @@ func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context) ([]User
 
 const getAllUsersPlantsOrderedByUpdated = `-- name: GetAllUsersPlantsOrderedByUpdated :many
 select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, plant_id, user_id, adoption_date, name from users_plants
-  where deleted_at is null
+  where deleted_at is null and user_id = $1
   order by updated_at desc
 `
 
-func (q *Queries) GetAllUsersPlantsOrderedByUpdated(ctx context.Context) ([]UsersPlant, error) {
-	rows, err := q.db.QueryContext(ctx, getAllUsersPlantsOrderedByUpdated)
+func (q *Queries) GetAllUsersPlantsOrderedByUpdated(ctx context.Context, userID uuid.NullUUID) ([]UsersPlant, error) {
+	rows, err := q.db.QueryContext(ctx, getAllUsersPlantsOrderedByUpdated, userID)
 	if err != nil {
 		return nil, err
 	}
