@@ -14,12 +14,14 @@ import (
 	"github.com/nicholasss/plantae/internal/database"
 )
 
-// request types
+// === request types
 
+// promote / demote request
 type AdminStatusRequest struct {
 	ID uuid.UUID `json:"id"`
 }
 
+// register endpoint
 type CreateUserRequest struct {
 	Client      string `json:"client"`
 	Email       string `json:"email"`
