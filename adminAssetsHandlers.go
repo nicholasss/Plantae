@@ -1,11 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/nicholasss/plantae/internal/auth"
 )
+
+// === request response types
 
 // requires that a admin access token be in the auth header
 func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +34,29 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 
 	if !userRecord.IsAdmin {
 		respondWithError(fmt.Errorf("unauthorized"), http.StatusUnauthorized, w)
+		return
+	}
+	// user is now authenticated below here
+
+	plantSpeciesRecords, err := cfg.db.GetAllPlantSpeciesOrderedByCreated(r.Context())
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
 	}
 
-	// user is now authenticated below here
+	if len(plantSpeciesRecords) <= 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	plantSpeciesData, err := json.Marshal(plantSpeciesRecords)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin listed all plant species successfully.")
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(plantSpeciesData)
 }
