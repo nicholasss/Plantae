@@ -71,6 +71,7 @@ func loadApiConfig() (*apiConfig, error) {
 
 // === Utility Response Handlers ===
 
+// TODO: log the error, and send out generic error to client
 func respondWithError(error error, code int, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
