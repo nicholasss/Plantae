@@ -7,6 +7,12 @@ Content-Type: text/html; charset=UTF-8
 xpath "string(/html/body)" contains "OK"
 
 #
+# Reset user table
+POST http://localhost:8080/api/v1/super-admin/reset-users
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
 # Create user account
 POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json; charset=UTF-8
