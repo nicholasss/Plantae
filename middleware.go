@@ -9,7 +9,7 @@ import (
 
 // === Middleware Functions ===
 
-func (cfg *apiConfig) authenticateAdminMiddleware(next http.Handler) http.Handler {
+func (cfg *apiConfig) authSuperAdminMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// get token from header
 		// log.Print("Getting SuperAdmin authentication token...")

@@ -31,9 +31,26 @@ func main() {
 	mux.Handle("GET /api/v1/health", cfg.logMW(http.HandlerFunc(healthHandler)))
 
 	// super-admin endpoints
-	mux.Handle("POST /api/v1/super-admin/reset-users", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.resetUsersHandler))))
-	mux.Handle("POST /api/v1/super-admin/promote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.promoteUserToAdminHandler))))
-	mux.Handle("POST /api/v1/super-admin/demote-user", cfg.logMW(cfg.authenticateAdminMiddleware(http.HandlerFunc(cfg.demoteUserToAdminHandler))))
+	mux.Handle("POST /api/v1/super-admin/reset-users", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetUsersHandler))))
+	mux.Handle("POST /api/v1/super-admin/promote-user", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.promoteUserToAdminHandler))))
+	mux.Handle("POST /api/v1/super-admin/demote-user", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.demoteUserToAdminHandler))))
+
+	// admin endpoints
+
+	// POST /admin/plants
+	// GET /admin/plants
+	// PUT /admin/plants/{plant species id}
+	// DELETE /admin/plants/{plant species id}
+
+	// POST /admin/plant-names
+	// GET /admin/plant-names
+	// PUT /admin/plant-names/{plant name id}
+	// DELETE /admin/plant-names/{plant name id}
+
+	// POST /admin/biomes
+	// GET /admin/biomes
+	// PUT /admin/biomes/{biome id}
+	// DELETE /admin/biomes/{biome id}
 
 	// user auth endpoints
 	mux.Handle("POST /api/v1/auth/register", cfg.logMW(http.HandlerFunc(cfg.createUserHandler)))
@@ -44,8 +61,10 @@ func main() {
 	// === user data endpoints
 	mux.Handle("GET /api/v1/my/plants", cfg.logMW(http.HandlerFunc(cfg.usersPlantsListHandler)))
 
-	// /my/plants
-	// /my/plants/{plant id}
+	// POST /my/plants
+	// GET /my/plants
+	// PUT /my/plants/{plant id}
+	// DELETE /my/plants/{plant id}
 	//
 	// /my/rooms
 	// /my/rooms/{room id}
