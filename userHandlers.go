@@ -40,6 +40,13 @@ type UserLoginResponse struct {
 	RefreshTokenExpiresAt time.Time `json:"refreshTokenExpiresAt"`
 }
 
+// refresh endpoint
+type AuthRefreshResponse struct {
+	ID                   uuid.UUID `json:"id"`
+	AccessToken          string    `json:"token"`
+	AccessTokenExpiresAt time.Time `json:"tokenExpiresAt"`
+}
+
 // === User Handler Functions ===
 
 func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -188,6 +195,8 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 		ExpiresAt:    refreshTokenExpiresAt,
 		UserID:       userRecord.ID,
 	}
+
+	// TODO: check for prexisting token, if exists then revoke it and replace
 	_, err = cfg.db.CreateRefreshToken(r.Context(), createRefreshToken)
 	if err != nil {
 		respondWithError(err, http.StatusInternalServerError, w)
@@ -217,16 +226,71 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Print("User successfully logged in.")
+	log.Printf("User %q successfully logged in.", userRecord.ID)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(userLoginResponseData)
 }
 
+// accepts refresh token as authentication
+// responds with a new access token if authorized
 func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request) {
-	// take refresh token with "Bearer: <token>"
+	providedRefreshToken, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
 
-	// other steps to issue a new access token using a refresh token
+	refreshTokenRecord, err := cfg.db.GetUserFromRefreshToken(r.Context(), providedRefreshToken)
+	if err != nil {
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	if refreshTokenRecord.RevokedAt.Valid {
+		// is marked as revoked
+		if time.Now().After(refreshTokenRecord.RevokedAt.Time) {
+			log.Print("Refresh token sent to POST /api/v1/auth/refresh was revoked.")
+			respondWithError(err, http.StatusUnauthorized, w)
+			return
+		}
+
+		// has been marked as revoked but in the future
+		// these tokens should not be accepted
+		// this may present a bug
+		log.Print("!!! potential bug, check POST /api/refresh handler")
+		log.Print("Refresh token will be revoked in the future.")
+		respondWithError(fmt.Errorf("potential error in refresh token database. token revoked in the future"), http.StatusInternalServerError, w)
+		return
+	}
+
+	if time.Now().UTC().After(refreshTokenRecord.ExpiresAt) {
+		respondWithError(fmt.Errorf("bad request"), http.StatusBadRequest, w)
+		return
+	}
+
+	accessTokenExpiresAt := time.Now().UTC().Add(cfg.accessTokenDuration)
+	newAccessToken, err := auth.MakeJWT(refreshTokenRecord.UserID, cfg.JWTSecret, cfg.accessTokenDuration)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	refreshResponse := &AuthRefreshResponse{
+		ID:                   refreshTokenRecord.UserID,
+		AccessToken:          newAccessToken,
+		AccessTokenExpiresAt: accessTokenExpiresAt,
+	}
+	refreshResponseData, err := json.Marshal(refreshResponse)
+	if err != nil {
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("User %q	refreshed their access token successfully.", refreshTokenRecord.UserID)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(refreshResponseData)
 }
 
 // promotes user to admin
