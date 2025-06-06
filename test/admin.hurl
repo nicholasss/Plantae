@@ -85,3 +85,11 @@ Authorization: Bearer {{lisa_token}}
 }
 ```
 HTTP 204
+
+#
+# Requesting list of plant species in the table
+POST http://localhost:8080/api/v1/admin/plants
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Captures]
+plant_species_id: jsonpath "$[0].id"
