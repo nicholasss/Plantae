@@ -69,3 +69,19 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plants
 Authorization: Bearer {{lisa_token}}
 HTTP 204
+
+#
+# Add a plant to the plant species table
+POST http://localhost:8080/api/v1/admin/plants
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "client": "hurl-project-test",
+  "species": "<species name>",
+  "humanPoisonToxic": "",
+  "petPoisonToxic": "",
+  "humanEdible": "",
+  "petEdible": ""
+}
+```
+HTTP 204
