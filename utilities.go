@@ -66,6 +66,23 @@ func loadApiConfig() (*apiConfig, error) {
 		superAdminToken:      os.Getenv("SUPER_ADMIN_TOKEN"),
 	}
 
+	// checking the config
+	if cfg.localAddr == "" {
+		log.Print("WARNING: 'LOCAL_ADDRESS' is empty, please check .env")
+	}
+	if cfg.platform == "" {
+		log.Print("WARNING: 'PLATFORM' is empty, please check .env")
+	}
+	if cfg.port == "" {
+		log.Print("WARNING: 'PORT' is empty, please check .env")
+	}
+	if cfg.JWTSecret == "" {
+		log.Print("WARNING: 'JWT_SECRET' is empty, please check .env")
+	}
+	if cfg.superAdminToken == "" {
+		log.Print("WARNING: 'SUPER_ADMIN_TOKEN' is empty, please check .env")
+	}
+
 	return cfg, nil
 }
 
