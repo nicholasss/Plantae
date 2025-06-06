@@ -6,3 +6,6 @@ sqlc.yaml
 
 # vacuum (go tool) report
 openapi/report.html
+
+# other ignores
+.DS_Store
