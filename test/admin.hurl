@@ -77,11 +77,11 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "client": "hurl-project-test",
-  "species": "<species name>",
-  "humanPoisonToxic": "",
-  "petPoisonToxic": "",
-  "humanEdible": "",
-  "petEdible": ""
+  "species": "{{plant_species}}",
+  "humanPoisonToxic": {human_poison_toxic},
+  "petPoisonToxic": {{pet_poison_toxic}},
+  "humanEdible": {{human_edible}},
+  "petEdible": {{pet_edible}}
 }
 ```
 HTTP 204

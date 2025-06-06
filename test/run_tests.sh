@@ -21,6 +21,11 @@ source .env
 hurl \
   --variable lisa_email=lisa@gmail.com \
   --variable lisa_password=Growl1ng! \
+  --variable plant_species="Pilea peperomioides" \
+  --variable human_poison_toxic=false \
+  --variable pet_poison_toxic=false \
+  --variable human_edible=false \
+  --variable pet_edible=false \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/admin.hurl
