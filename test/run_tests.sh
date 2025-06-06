@@ -21,7 +21,7 @@ source .env
 hurl \
   --variable lisa_email=lisa@gmail.com \
   --variable lisa_password=Growl1ng! \
-  --variable plant_species="Pilea peperomioides" \
+  --variable species_name="Pilea peperomioides" \
   --variable human_poison_toxic=false \
   --variable pet_poison_toxic=false \
   --variable human_edible=false \
