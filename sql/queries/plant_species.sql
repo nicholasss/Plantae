@@ -8,6 +8,9 @@ insert into plant_species (
 	gen_random_uuid(), now(), now(), $1, $2, $3, $4, $5, $6, $7
 ) returning *;
 
+-- name: ResetPlantSpeciesTable :exec
+delete from plant_species;
+
 -- name: GetPlantSpeciesByName :one
 select * from plant_species
 	where species_name like $1

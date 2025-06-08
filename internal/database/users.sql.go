@@ -25,20 +25,20 @@ insert into users (
 `
 
 type CreateUserParams struct {
-	CreatedBy      string `json:"createdBy"`
-	UpdatedBy      string `json:"updatedBy"`
+	CreatedBy      string `json:"created_by"`
+	UpdatedBy      string `json:"updated_by"`
 	Email          string `json:"email"`
-	HashedPassword string `json:"hashedPassword"`
+	HashedPassword string `json:"hashed_password"`
 }
 
 type CreateUserRow struct {
 	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
-	JoinDate  time.Time `json:"joinDate"`
-	IsAdmin   bool      `json:"isAdmin"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedBy string    `json:"updated_by"`
+	JoinDate  time.Time `json:"join_date"`
+	IsAdmin   bool      `json:"is_admin"`
 	Email     string    `json:"email"`
 }
 
@@ -88,11 +88,11 @@ from users
 
 type GetAllUsersWithoutPasswordByJoinDateRow struct {
 	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
-	IsAdmin   bool      `json:"isAdmin"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedBy string    `json:"updated_by"`
+	IsAdmin   bool      `json:"is_admin"`
 	Email     string    `json:"email"`
 }
 
@@ -139,11 +139,11 @@ from users
 
 type GetAllUsersWithoutPasswordByUpdatedRow struct {
 	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
-	IsAdmin   bool      `json:"isAdmin"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedBy string    `json:"updated_by"`
+	IsAdmin   bool      `json:"is_admin"`
 	Email     string    `json:"email"`
 }
 
@@ -217,11 +217,11 @@ from users
 
 type GetUserByEmailWithoutPasswordRow struct {
 	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
-	IsAdmin   bool      `json:"isAdmin"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedBy string    `json:"updated_by"`
+	IsAdmin   bool      `json:"is_admin"`
 	Email     string    `json:"email"`
 }
 
@@ -279,11 +279,11 @@ from users
 
 type GetUserByIDWithoutPasswordRow struct {
 	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
-	IsAdmin   bool      `json:"isAdmin"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedBy string    `json:"updated_by"`
+	IsAdmin   bool      `json:"is_admin"`
 	Email     string    `json:"email"`
 }
 
@@ -334,7 +334,7 @@ where
 
 type UpdateUserPasswordByIDParams struct {
 	ID             uuid.UUID `json:"id"`
-	HashedPassword string    `json:"hashedPassword"`
+	HashedPassword string    `json:"hashed_password"`
 }
 
 func (q *Queries) UpdateUserPasswordByID(ctx context.Context, arg UpdateUserPasswordByIDParams) error {
