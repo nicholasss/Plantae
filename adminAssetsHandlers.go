@@ -27,7 +27,7 @@ type AdminPlantsCreateRequest struct {
 // === helper functions ===
 
 // check header for admin access token
-func (cfg *apiConfig) authorizeAdmin(r *http.Request) (uuid.UUID, error) {
+func (cfg *apiConfig) authorizeNormalAdmin(r *http.Request) (uuid.UUID, error) {
 	requestAccessToken, err := auth.GetBearerToken(r.Header)
 	if err != nil {
 		return uuid.UUID{}, err
@@ -68,7 +68,7 @@ func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Re
 
 // GET json
 func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Request) {
-	requestUserID, err := cfg.authorizeAdmin(r)
+	requestUserID, err := cfg.authorizeNormalAdmin(r)
 	if err != nil {
 		respondWithError(err, http.StatusBadRequest, w)
 		return
@@ -115,7 +115,7 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 // POST json to create plant
 func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *http.Request) {
 	// check header for admin access token
-	requestUserID, err := cfg.authorizeAdmin(r)
+	requestUserID, err := cfg.authorizeNormalAdmin(r)
 	if err != nil {
 		respondWithError(err, http.StatusBadRequest, w)
 		return
