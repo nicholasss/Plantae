@@ -88,6 +88,9 @@ func loadApiConfig() (*apiConfig, error) {
 
 // === Utility Response Handlers ===
 
+// TODO: function to respond due to a wrong platform for action
+// some kind of enum for action? reset, promote, etc.
+
 // TODO: send out a more generic error to client
 func respondWithError(err error, code int, w http.ResponseWriter) {
 	log.Printf("Sending error to client: %q", err)
