@@ -77,7 +77,7 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "client": "hurl-project-test",
-  "species_name": "{{species_name}}",
+  "speciesName": "{{species_name}}",
   "humanPoisonToxic": {{human_poison_toxic}},
   "petPoisonToxic": {{pet_poison_toxic}},
   "humanEdible": {{human_edible}},

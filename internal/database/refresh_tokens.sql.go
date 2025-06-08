@@ -32,21 +32,21 @@ insert into refresh_tokens (
 `
 
 type CreateRefreshTokenParams struct {
-	RefreshToken string    `json:"refresh_token"`
-	CreatedBy    string    `json:"created_by"`
-	UpdatedBy    string    `json:"updated_by"`
-	ExpiresAt    time.Time `json:"expires_at"`
-	UserID       uuid.UUID `json:"user_id"`
+	RefreshToken string    `json:"refreshToken"`
+	CreatedBy    string    `json:"createdBy"`
+	UpdatedBy    string    `json:"updatedBy"`
+	ExpiresAt    time.Time `json:"expiresAt"`
+	UserID       uuid.UUID `json:"userId"`
 }
 
 type CreateRefreshTokenRow struct {
-	RefreshToken string    `json:"refresh_token"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
-	CreatedBy    string    `json:"created_by"`
-	UpdatedBy    string    `json:"updated_by"`
-	ExpiresAt    time.Time `json:"expires_at"`
-	UserID       uuid.UUID `json:"user_id"`
+	RefreshToken string    `json:"refreshToken"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+	CreatedBy    string    `json:"createdBy"`
+	UpdatedBy    string    `json:"updatedBy"`
+	ExpiresAt    time.Time `json:"expiresAt"`
+	UserID       uuid.UUID `json:"userId"`
 }
 
 func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error) {
@@ -106,9 +106,9 @@ returning user_id
 `
 
 type RevokeRefreshTokenWithTokenParams struct {
-	RefreshToken string         `json:"refresh_token"`
-	UpdatedBy    string         `json:"updated_by"`
-	RevokedBy    sql.NullString `json:"revoked_by"`
+	RefreshToken string         `json:"refreshToken"`
+	UpdatedBy    string         `json:"updatedBy"`
+	RevokedBy    sql.NullString `json:"revokedBy"`
 }
 
 func (q *Queries) RevokeRefreshTokenWithToken(ctx context.Context, arg RevokeRefreshTokenWithTokenParams) (uuid.UUID, error) {

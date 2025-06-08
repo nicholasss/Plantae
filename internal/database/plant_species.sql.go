@@ -24,13 +24,13 @@ insert into plant_species (
 `
 
 type CreatePlantSpeciesParams struct {
-	CreatedBy        string       `json:"created_by"`
-	UpdatedBy        string       `json:"updated_by"`
-	SpeciesName      string       `json:"species_name"`
-	HumanPoisonToxic sql.NullBool `json:"human_poison_toxic"`
-	PetPoisonToxic   sql.NullBool `json:"pet_poison_toxic"`
-	HumanEdible      sql.NullBool `json:"human_edible"`
-	PetEdible        sql.NullBool `json:"pet_edible"`
+	CreatedBy        string       `json:"createdBy"`
+	UpdatedBy        string       `json:"updatedBy"`
+	SpeciesName      string       `json:"speciesName"`
+	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
+	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
+	HumanEdible      sql.NullBool `json:"humanEdible"`
+	PetEdible        sql.NullBool `json:"petEdible"`
 }
 
 func (q *Queries) CreatePlantSpecies(ctx context.Context, arg CreatePlantSpeciesParams) (PlantSpecy, error) {
@@ -213,7 +213,7 @@ where id = $1
 
 type MarkPlantSpeciesAsDeletedByIDParams struct {
 	ID        uuid.UUID      `json:"id"`
-	DeletedBy sql.NullString `json:"deleted_by"`
+	DeletedBy sql.NullString `json:"deletedBy"`
 }
 
 func (q *Queries) MarkPlantSpeciesAsDeletedByID(ctx context.Context, arg MarkPlantSpeciesAsDeletedByIDParams) error {
@@ -242,10 +242,10 @@ where id = $1
 
 type UpdatePlantSpeciesPropertiesByIDParams struct {
 	ID               uuid.UUID    `json:"id"`
-	HumanPoisonToxic sql.NullBool `json:"human_poison_toxic"`
-	PetPoisonToxic   sql.NullBool `json:"pet_poison_toxic"`
-	HumanEdible      sql.NullBool `json:"human_edible"`
-	PetEdible        sql.NullBool `json:"pet_edible"`
+	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
+	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
+	HumanEdible      sql.NullBool `json:"humanEdible"`
+	PetEdible        sql.NullBool `json:"petEdible"`
 }
 
 func (q *Queries) UpdatePlantSpeciesPropertiesByID(ctx context.Context, arg UpdatePlantSpeciesPropertiesByIDParams) error {

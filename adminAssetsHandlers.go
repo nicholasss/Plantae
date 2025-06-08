@@ -17,11 +17,11 @@ import (
 
 type AdminPlantsCreateRequest struct {
 	Client           string `json:"client"`
-	SpeciesName      string `json:"species_name"`
-	HumanPoisonToxic *bool  `json:"human_poison_toxic"`
-	PetPoisonToxic   *bool  `json:"pet_poison_toxic"`
-	HumanEdible      *bool  `json:"human_edible"`
-	PetEdible        *bool  `json:"pet_edible"`
+	SpeciesName      string `json:"speciesName"`
+	HumanPoisonToxic *bool  `json:"humanPoisonToxic"`
+	PetPoisonToxic   *bool  `json:"petPoisonToxic"`
+	HumanEdible      *bool  `json:"humanEdible"`
+	PetEdible        *bool  `json:"petEdible"`
 }
 
 // === helper functions ===

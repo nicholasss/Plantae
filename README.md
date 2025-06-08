@@ -2,6 +2,11 @@
 
 Project to track your house plants. This is the server portion of the project.
 
+## Style
+
+JSON is camelCase.
+Endpoints are kebab-case.
+
 ## Goals
 
 - Track each house plant.
