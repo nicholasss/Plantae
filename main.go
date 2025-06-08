@@ -35,7 +35,10 @@ func main() {
 	mux.Handle("POST /api/v1/super-admin/promote-user", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.promoteUserToAdminHandler))))
 	mux.Handle("POST /api/v1/super-admin/demote-user", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.demoteUserToAdminHandler))))
 
-	// admin endpoints
+	// reset plants
+	mux.Handle("POST /api/v1/super-admin/reset-plant-species", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetPlantSpeciesHandler))))
+
+	// admin plants endpoints
 	mux.Handle("GET /api/v1/admin/plants", cfg.logMW(http.HandlerFunc(cfg.adminPlantsViewHandler)))
 	mux.Handle("POST /api/v1/admin/plants", cfg.logMW(http.HandlerFunc(cfg.adminAllInfoPlantsCreateHandler)))
 

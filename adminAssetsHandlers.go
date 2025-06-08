@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -42,6 +43,29 @@ func (cfg *apiConfig) authorizeAdmin(r *http.Request) (uuid.UUID, error) {
 
 // === handler functions ===
 
+// POST no request?
+func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Request) {
+	// super-admin pre-authenticated before the handler is used
+	// ensure development platform
+	if cfg.platform == "production" || cfg.platform == "" {
+		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
+		respondWithError(nil, http.StatusForbidden, w)
+		return
+	}
+
+	// drop records from db
+	err := cfg.db.ResetPlantSpeciesTable(r.Context())
+	if err != nil {
+		log.Printf("Unable to reset plant_species table due to error: %q", err)
+		respondWithError(nil, http.StatusInternalServerError, w)
+		return
+	}
+
+	// reset successfully
+	log.Print("Reset plant_species table successfully.")
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // GET json
 func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Request) {
 	requestUserID, err := cfg.authorizeAdmin(r)
@@ -67,6 +91,8 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
+
+	// log.Printf("plants list: %#v", plantSpeciesRecords)
 
 	if len(plantSpeciesRecords) <= 0 {
 		log.Printf("Admin listed empty plant species list successfully.")
@@ -105,11 +131,11 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 
 	// check all of the request properties
 	if createRequest.Client == "" {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(errors.New("no client name provided"), http.StatusBadRequest, w)
 		return
 	}
 	if createRequest.SpeciesName == "" {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(errors.New("no species name provided"), http.StatusBadRequest, w)
 		return
 	}
 
