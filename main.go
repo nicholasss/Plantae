@@ -42,6 +42,7 @@ func main() {
 	mux.Handle("GET /api/v1/admin/plants", cfg.logMW(http.HandlerFunc(cfg.adminPlantsViewHandler)))
 	mux.Handle("POST /api/v1/admin/plants", cfg.logMW(http.HandlerFunc(cfg.adminAllInfoPlantsCreateHandler)))
 	mux.Handle("PUT /api/v1/admin/plants/{plant_species_id}", cfg.logMW(http.HandlerFunc(cfg.adminReplacePlantInfoHandler)))
+	mux.Handle("DELETE /api/v1/admin/plants/{plant_species_id}", cfg.logMW(http.HandlerFunc(cfg.adminDeletePlantHandler)))
 
 	// POST /admin/plants
 	// PUT /admin/plants/{plant species id}
