@@ -60,15 +60,21 @@ func (cfg *apiConfig) authorizeNormalAdmin(r *http.Request) (uuid.UUID, error) {
 // POST no request?
 func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
-	// ensure development platform
-	if cfg.platform == "production" || cfg.platform == "" {
+	isProduction, err := platformProduction(cfg)
+	if err != nil {
+		log.Printf("error checking platform due to: %q", err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	if isProduction {
 		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
 	}
 
 	// drop records from db
-	err := cfg.db.ResetPlantSpeciesTable(r.Context())
+	err = cfg.db.ResetPlantSpeciesTable(r.Context())
 	if err != nil {
 		log.Printf("Unable to reset plant_species table due to error: %q", err)
 		respondWithError(nil, http.StatusInternalServerError, w)
