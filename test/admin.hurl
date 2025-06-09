@@ -24,7 +24,6 @@ POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json; charset=UTF-8
 ```json
 {
-  "client": "hurl-project-test",
   "email": "{{lisa_email}}",
   "password": "{{lisa_password}}"
 }
@@ -43,7 +42,6 @@ POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json; charset=UTF-8
 ```json
 {
-  "client": "hurl-project-test",
   "email": "{{lisa_email}}",
   "password": "{{lisa_password}}"
 }
@@ -83,7 +81,6 @@ POST http://localhost:8080/api/v1/admin/plants
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "client": "hurl-project-test",
   "speciesName": "{{1_species_name}}",
   "humanPoisonToxic": {{1_human_poison_toxic}},
   "petPoisonToxic": {{1_pet_poison_toxic}},
@@ -104,8 +101,8 @@ HTTP 200
 [Asserts]
 jsonpath "$[0].createdAt" isIsoDate
 jsonpath "$[0].updatedAt" isIsoDate
-jsonpath "$[0].createdBy" == "hurl-project-test"
-jsonpath "$[0].updatedBy" == "hurl-project-test"
+jsonpath "$[0].createdBy" == {{lisa_id}}
+jsonpath "$[0].updatedBy" == {{lisa_id}}
 jsonpath "$[0].speciesName" == "{{1_species_name}}"
 jsonpath "$[0].humanPoisonToxic" == {{1_human_poison_toxic}}
 jsonpath "$[0].petPoisonToxic" == {{1_pet_poison_toxic}}
@@ -119,7 +116,6 @@ POST http://localhost:8080/api/v1/admin/plants
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "client": "hurl-project-test",
   "speciesName": "{{2_species_name}}"
 }
 ```
@@ -146,7 +142,6 @@ PUT http://localhost:8080/api/v1/admin/plants/{{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "client": "hurl-project-test",
   "humanPoisonToxic": {{2_human_poison_toxic}},
   "petPoisonToxic": {{2_pet_poison_toxic}},
   "humanEdible": {{2_human_edible}},
@@ -158,6 +153,28 @@ HTTP 204
 #
 # Requesting list of plant species in the table
 # -- with one record updated after it was created
+GET http://localhost:8080/api/v1/admin/plants
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+jsonpath "$[0].speciesName" == "{{2_species_name}}"
+jsonpath "$[0].humanPoisonToxic" == {{2_human_poison_toxic}}
+jsonpath "$[0].petPoisonToxic" == {{2_pet_poison_toxic}}
+jsonpath "$[0].humanEdible" == {{2_human_edible}}
+jsonpath "$[0].petEdible" == {{2_pet_edible}}
+jsonpath "$[0].createdAt" isIsoDate
+jsonpath "$[0].updatedAt" isIsoDate
+jsonpath "$[0].createdBy" == "hurl-project-test"
+jsonpath "$[0].updatedBy" == "hurl-project-test"
+
+#
+# Requesting deletion of a plants species record
+DELETE http://localhost:8080/api/v1/admin/plants/{{1_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+# 
+# Requesting list of plants after deletion of 1_plant_species
 GET http://localhost:8080/api/v1/admin/plants
 Authorization: Bearer {{lisa_token}}
 HTTP 200

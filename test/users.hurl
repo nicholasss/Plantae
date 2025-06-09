@@ -18,7 +18,6 @@ POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json; charset=UTF-8
 ```json
 {
-  "client": "hurl-project-test",
   "email": "{{craig_email}}",
   "password": "{{craig_password}}"
 }
@@ -37,7 +36,6 @@ POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json; charset=UTF-8
 ```json
 {
-  "client": "hurl-project-test",
   "email": "{{craig_email}}",
   "password": "{{craig_password}}"
 }
@@ -66,11 +64,6 @@ craig_token: jsonpath "$.token"
 POST http://localhost:8080/api/v1/auth/revoke
 Authorization: Bearer {{craig_refresh_token}}
 Content-Type: application/json; charset=UTF-8
-```json
-{
-  "client": "hurl-project-test"
-}
-```
 HTTP 204
 
 #
@@ -79,7 +72,6 @@ POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json; charset=UTF-8
 ```json
 {
-  "client": "hurl-project-test",
   "email": "{{craig_email}}",
   "password": "{{craig_password}}"
 }
