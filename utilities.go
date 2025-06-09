@@ -35,18 +35,12 @@ type errorResponse struct {
 
 // returns true if the platform is production
 func platformProduction(cfg *apiConfig) bool {
-	if cfg.platform == "production" {
-		return true
-	}
-	return false
+	return cfg.platform == "production"
 }
 
 // returns true if the platform is not production
 func platformNotProduction(cfg *apiConfig) bool {
-	if cfg.platform == "production" {
-		return false
-	}
-	return true
+	return cfg.platform != "production"
 }
 
 func loadApiConfig() (*apiConfig, error) {
