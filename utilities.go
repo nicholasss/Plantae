@@ -82,6 +82,8 @@ func loadApiConfig() (*apiConfig, error) {
 	}
 	if cfg.platform == "" {
 		log.Panic("ERROR: 'PLATFORM' is empty, please check .env")
+	} else if cfg.platform != "production" && cfg.platform != "testing" && cfg.platform != "development" {
+		log.Panic("ERROR: 'PLATFORM' is unexpected value, please check .env")
 	}
 	if cfg.port == "" {
 		log.Panic("ERROR: 'PORT' is empty, please check .env")
