@@ -18,7 +18,6 @@ import (
 
 // create request for plant species
 type AdminPlantsCreateRequest struct {
-	Client           string `json:"client"`
 	SpeciesName      string `json:"speciesName"`
 	HumanPoisonToxic *bool  `json:"humanPoisonToxic,omitempty"`
 	PetPoisonToxic   *bool  `json:"petPoisonToxic,omitempty"`
@@ -28,19 +27,18 @@ type AdminPlantsCreateRequest struct {
 
 // only provides client and updatable information
 type AdminPlantsUpdateRequest struct {
-	Client           string `json:"client"`
-	HumanPoisonToxic *bool  `json:"humanPoisonToxic,omitempty"`
-	PetPoisonToxic   *bool  `json:"petPoisonToxic,omitempty"`
-	HumanEdible      *bool  `json:"humanEdible,omitempty"`
-	PetEdible        *bool  `json:"petEdible,omitempty"`
+	HumanPoisonToxic *bool `json:"humanPoisonToxic,omitempty"`
+	PetPoisonToxic   *bool `json:"petPoisonToxic,omitempty"`
+	HumanEdible      *bool `json:"humanEdible,omitempty"`
+	PetEdible        *bool `json:"petEdible,omitempty"`
 }
 
 type AdminPlantsViewResponse struct {
 	ID               uuid.UUID `json:"id"`
 	CreatedAt        time.Time `json:"createdAt"`
 	UpdatedAt        time.Time `json:"updatedAt"`
-	CreatedBy        string    `json:"createdBy"`
-	UpdatedBy        string    `json:"updatedBy"`
+	CreatedBy        uuid.UUID `json:"createdBy"`
+	UpdatedBy        uuid.UUID `json:"updatedBy"`
 	SpeciesName      string    `json:"speciesName"`
 	HumanPoisonToxic *bool     `json:"humanPoisonToxic,omitempty"`
 	PetPoisonToxic   *bool     `json:"petPoisonToxic,omitempty"`
@@ -118,8 +116,6 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
-
-	// log.Printf("plants list: %#v", plantSpeciesRecords)
 
 	if len(plantSpeciesRecords) <= 0 {
 		log.Print("Admin listed empty plant species list successfully.")
@@ -214,13 +210,6 @@ func (cfg *apiConfig) adminReplacePlantInfoHandler(w http.ResponseWriter, r *htt
 	}
 	defer r.Body.Close()
 
-	// check all of the request properties
-	if updateRequest.Client == "" {
-		log.Print("Request body was missing client field.")
-		respondWithError(errors.New("no client name provided"), http.StatusBadRequest, w)
-		return
-	}
-
 	// converting from bool reference to sql.NullBool
 	humanPT := sql.NullBool{}
 	petPT := sql.NullBool{}
@@ -254,7 +243,7 @@ func (cfg *apiConfig) adminReplacePlantInfoHandler(w http.ResponseWriter, r *htt
 
 	updateRequestParams := database.UpdatePlantSpeciesPropertiesByIDParams{
 		ID:               plantSpeciesID,
-		UpdatedBy:        updateRequest.Client,
+		UpdatedBy:        requestUserID,
 		HumanPoisonToxic: humanPT,
 		PetPoisonToxic:   petPT,
 		HumanEdible:      humanE,
@@ -330,11 +319,6 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 	defer r.Body.Close()
 
 	// check all of the request properties
-	if createRequest.Client == "" {
-		log.Print("Request body was missing client field.")
-		respondWithError(errors.New("no client name provided"), http.StatusBadRequest, w)
-		return
-	}
 	if createRequest.SpeciesName == "" {
 		log.Print("Request body was missing species name.")
 		respondWithError(errors.New("no species name provided"), http.StatusBadRequest, w)
@@ -381,8 +365,8 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 	}
 
 	createRequestParams := database.CreatePlantSpeciesParams{
-		CreatedBy:        createRequest.Client,
-		UpdatedBy:        createRequest.Client,
+		CreatedBy:        requestUserID,
+		UpdatedBy:        requestUserID,
 		SpeciesName:      createRequest.SpeciesName,
 		HumanPoisonToxic: humanPT,
 		PetPoisonToxic:   petPT,
