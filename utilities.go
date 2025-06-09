@@ -83,6 +83,8 @@ func loadApiConfig() (*apiConfig, error) {
 		log.Print("WARNING: 'SUPER_ADMIN_TOKEN' is empty, please check .env")
 	}
 
+	log.Printf("Platform loaded as %q.", cfg.platform)
+
 	return cfg, nil
 }
 
