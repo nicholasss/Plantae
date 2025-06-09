@@ -6,7 +6,7 @@ Project to track your house plants. This is the server portion of the project.
 
 JSON is camelCase.
 Endpoints are kebab-case.
-Scripting variables (Bash, Hurl) are in snake_case.
+Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snake_case.
 
 ## Goals
 
