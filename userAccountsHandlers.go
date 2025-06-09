@@ -234,7 +234,8 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if cfg.platform == "production" || cfg.platform == "" {
+	// logical and is needed
+	if cfg.platform != "production" && cfg.platform != "" {
 		log.Printf("User %q, accessToken: %q, refreshToken: %q", userLoginResponse.ID, userLoginResponse.AccessToken, userLoginResponse.RefreshToken)
 	}
 
