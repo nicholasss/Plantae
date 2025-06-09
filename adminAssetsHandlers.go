@@ -272,6 +272,44 @@ func (cfg *apiConfig) adminReplacePlantInfoHandler(w http.ResponseWriter, r *htt
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// DELETE /api/v1/admin/plants/{plant_species_id}
+func (cfg *apiConfig) adminDeletePlantHandler(w http.ResponseWriter, r *http.Request) {
+	plantSpeciesIDStr := r.PathValue("plant_species_id")
+	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant species id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// check header for admin access token
+	requestUserID, err := cfg.authorizeNormalAdmin(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+	requestUserNullUUID := uuid.NullUUID{
+		UUID:  requestUserID,
+		Valid: true,
+	}
+
+	deleteRequestParams := database.MarkPlantSpeciesAsDeletedByIDParams{
+		ID:        plantSpeciesID,
+		DeletedBy: requestUserNullUUID,
+	}
+
+	err = cfg.db.MarkPlantSpeciesAsDeletedByID(r.Context(), deleteRequestParams)
+	if err != nil {
+		log.Printf("Could not mark plant species %q as deleted due to: %q", plantSpeciesID, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q successfully marked plant species %q as deleted.", requestUserID, plantSpeciesID)
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // POST json to create plant
 func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *http.Request) {
 	// check header for admin access token
