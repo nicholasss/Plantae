@@ -60,7 +60,7 @@ type AuthRevokeRequest struct {
 func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	// ensure development platform
-	if cfg.platform == "production" || cfg.platform == "" {
+	if platformProduction(cfg) {
 		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
@@ -234,8 +234,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// logical and is needed
-	if cfg.platform != "production" && cfg.platform != "" {
+	if platformNotProduction(cfg) {
 		log.Printf("User %q, accessToken: %q, refreshToken: %q", userLoginResponse.ID, userLoginResponse.AccessToken, userLoginResponse.RefreshToken)
 	}
 
