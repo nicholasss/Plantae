@@ -27,6 +27,10 @@ hurl \
   --variable 1_human_edible=false \
   --variable 1_pet_edible=false \
   --variable 2_species_name="Crassula ovata" \
+  --variable 2_human_poison_toxic=true \
+  --variable 2_pet_poison_toxic=true \
+  --variable 2_human_edible=false \
+  --variable 2_pet_edible=false \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/admin.hurl
