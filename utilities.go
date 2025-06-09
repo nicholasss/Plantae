@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -35,29 +34,19 @@ type errorResponse struct {
 // === Utility Functions ===
 
 // returns true if the platform is production
-func platformProduction(cfg *apiConfig) (bool, error) {
-	if cfg.platform == "" {
-		return false, errors.New("platform variable is missing")
-	}
-
+func platformProduction(cfg *apiConfig) bool {
 	if cfg.platform == "production" {
-		return true, nil
+		return true
 	}
-
-	return false, nil
+	return false
 }
 
 // returns true if the platform is not production
-func platformNotProduction(cfg *apiConfig) (bool, error) {
-	if cfg.platform == "" {
-		return false, errors.New("platform variable is missing")
-	}
-
+func platformNotProduction(cfg *apiConfig) bool {
 	if cfg.platform == "production" {
-		return false, nil
+		return false
 	}
-
-	return true, nil
+	return true
 }
 
 func loadApiConfig() (*apiConfig, error) {
@@ -95,19 +84,19 @@ func loadApiConfig() (*apiConfig, error) {
 
 	// checking the config
 	if cfg.localAddr == "" {
-		log.Print("WARNING: 'LOCAL_ADDRESS' is empty, please check .env")
+		log.Panic("ERROR: 'LOCAL_ADDRESS' is empty, please check .env")
 	}
 	if cfg.platform == "" {
-		log.Print("WARNING: 'PLATFORM' is empty, please check .env")
+		log.Panic("ERROR: 'PLATFORM' is empty, please check .env")
 	}
 	if cfg.port == "" {
-		log.Print("WARNING: 'PORT' is empty, please check .env")
+		log.Panic("ERROR: 'PORT' is empty, please check .env")
 	}
 	if cfg.JWTSecret == "" {
-		log.Print("WARNING: 'JWT_SECRET' is empty, please check .env")
+		log.Panic("ERROR: 'JWT_SECRET' is empty, please check .env")
 	}
 	if cfg.superAdminToken == "" {
-		log.Print("WARNING: 'SUPER_ADMIN_TOKEN' is empty, please check .env")
+		log.Panic("ERROR: 'SUPER_ADMIN_TOKEN' is empty, please check .env")
 	}
 
 	log.Printf("Platform loaded as %q.", cfg.platform)
