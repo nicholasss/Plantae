@@ -18,10 +18,10 @@ import (
 type AdminPlantsCreateRequest struct {
 	Client           string `json:"client"`
 	SpeciesName      string `json:"speciesName"`
-	HumanPoisonToxic *bool  `json:"humanPoisonToxic"`
-	PetPoisonToxic   *bool  `json:"petPoisonToxic"`
-	HumanEdible      *bool  `json:"humanEdible"`
-	PetEdible        *bool  `json:"petEdible"`
+	HumanPoisonToxic *bool  `json:"humanPoisonToxic,omitempty"`
+	PetPoisonToxic   *bool  `json:"petPoisonToxic,omitempty"`
+	HumanEdible      *bool  `json:"humanEdible,omitempty"`
+	PetEdible        *bool  `json:"petEdible,omitempty"`
 }
 
 // === helper functions ===
@@ -191,6 +191,6 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 		return
 	}
 
-	log.Printf("User %q created a plant species %q", requestUserID, createRequest.SpeciesName)
+	log.Printf("Admin %q created a plant species %q.", requestUserID, createRequest.SpeciesName)
 	w.WriteHeader(http.StatusNoContent)
 }
