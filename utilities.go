@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -32,6 +33,32 @@ type errorResponse struct {
 }
 
 // === Utility Functions ===
+
+// returns true if the platform is production
+func platformProduction(cfg *apiConfig) (bool, error) {
+	if cfg.platform == "" {
+		return false, errors.New("platform variable is missing")
+	}
+
+	if cfg.platform == "production" {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+// returns true if the platform is not production
+func platformNotProduction(cfg *apiConfig) (bool, error) {
+	if cfg.platform == "" {
+		return false, errors.New("platform variable is missing")
+	}
+
+	if cfg.platform == "production" {
+		return false, nil
+	}
+
+	return true, nil
+}
 
 func loadApiConfig() (*apiConfig, error) {
 	// loading vars from .env
