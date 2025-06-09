@@ -13,6 +13,12 @@ Authorization: SuperAdminToken {{super_admin_token}}
 HTTP 204
 
 #
+# Reset plant_species table
+POST http://localhost:8080/api/v1/super-admin/reset-plant-species
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
 # Create user account
 POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json; charset=UTF-8
@@ -71,25 +77,57 @@ Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 #
-# Add a plant to the plant species table
+# Add a plant to the plant_species table
+# -- with all details
 POST http://localhost:8080/api/v1/admin/plants
 Authorization: Bearer {{lisa_token}}
 ```json
 {
   "client": "hurl-project-test",
-  "speciesName": "{{species_name}}",
-  "humanPoisonToxic": {{human_poison_toxic}},
-  "petPoisonToxic": {{pet_poison_toxic}},
-  "humanEdible": {{human_edible}},
-  "petEdible": {{pet_edible}}
+  "speciesName": "{{1_species_name}}",
+  "humanPoisonToxic": {{1_human_poison_toxic}},
+  "petPoisonToxic": {{1_pet_poison_toxic}},
+  "humanEdible": {{1_human_edible}},
+  "petEdible": {{1_pet_edible}}
 }
 ```
 HTTP 204
 
 #
 # Requesting list of plant species in the table
-POST http://localhost:8080/api/v1/admin/plants
+# -- with only one 
+GET http://localhost:8080/api/v1/admin/plants
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Captures]
-plant_species_id: jsonpath "$[0].id"
+1_plant_species_id: jsonpath "$[0].id"
+[Asserts]
+jsonpath "$[0].speciesName" == "{{1_species_name}}"
+jsonpath "$[0].humanPoisonToxic" == false
+jsonpath "$[0].petPoisonToxic" == false
+jsonpath "$[0].humanEdible" == false
+jsonpath "$[0].petEdible" == false
+
+#
+# Add a second plant to the plant_species
+# -- with required details
+POST http://localhost:8080/api/v1/admin/plants
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "client": "hurl-project-test",
+  "speciesName": "{{2_species_name}}"
+}
+```
+HTTP 204
+
+#
+# Requesting list of plant species in the table
+# -- with two records in table
+GET http://localhost:8080/api/v1/admin/plants
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Captures]
+2_plant_species_id: jsonpath "$[0].id"
+[Asserts]
+jsonpath "$[0].speciesName" == "{{2_species_name}}"
