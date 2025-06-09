@@ -16,6 +16,7 @@ import (
 
 // === request response types
 
+// create request for plant species
 type AdminPlantsCreateRequest struct {
 	Client           string `json:"client"`
 	SpeciesName      string `json:"speciesName"`
@@ -25,7 +26,7 @@ type AdminPlantsCreateRequest struct {
 	PetEdible        *bool  `json:"petEdible,omitempty"`
 }
 
-// only supply client performing update and updatable informatino
+// only provides client and updatable information
 type AdminPlantsUpdateRequest struct {
 	Client           string `json:"client"`
 	HumanPoisonToxic *bool  `json:"humanPoisonToxic,omitempty"`
@@ -126,30 +127,30 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	// NOTE: not the most effecient way to convert
 	plantSpeciesResponse := make([]AdminPlantsViewResponse, 0)
 	for _, oldRecord := range plantSpeciesRecords {
+		// converting sql.NullBool to bool reference
 		var humanPT *bool
+		var humanE *bool
+		var petPT *bool
+		var petE *bool
+
 		if oldRecord.HumanPoisonToxic.Valid {
 			humanPT = &oldRecord.HumanPoisonToxic.Bool
 		} else {
 			humanPT = nil
 		}
-
-		var humanE *bool
 		if oldRecord.HumanEdible.Valid {
 			humanE = &oldRecord.HumanEdible.Bool
 		} else {
 			humanE = nil
 		}
-
-		var petPT *bool
 		if oldRecord.PetPoisonToxic.Valid {
 			petPT = &oldRecord.PetPoisonToxic.Bool
 		} else {
 			petPT = nil
 		}
-
-		var petE *bool
 		if oldRecord.PetEdible.Valid {
 			petE = &oldRecord.PetEdible.Bool
 		} else {
@@ -220,43 +221,33 @@ func (cfg *apiConfig) adminReplacePlantInfoHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	// NOTE: convert to a warning if a single field is missing instead of individual?
+	// converting from bool reference to sql.NullBool
 	humanPT := sql.NullBool{}
+	petPT := sql.NullBool{}
+	humanE := sql.NullBool{}
+	petE := sql.NullBool{}
+
 	if updateRequest.HumanPoisonToxic == nil {
-		// log.Print("Warning: human_poison_toxic field missing.")
 		humanPT.Valid = false
 	} else {
-		// log.Print("Request body has human_poison_toxic is present.")
 		humanPT.Valid = true
 		humanPT.Bool = *updateRequest.HumanPoisonToxic
 	}
-
-	petPT := sql.NullBool{}
 	if updateRequest.PetPoisonToxic == nil {
-		// log.Print("Warning: pet_poison_toxic field missing.")
 		petPT.Valid = false
 	} else {
-		// log.Print("Request body has pet_poison_toxic is present.")
 		petPT.Valid = true
 		petPT.Bool = *updateRequest.PetPoisonToxic
 	}
-
-	humanE := sql.NullBool{}
 	if updateRequest.HumanEdible == nil {
-		// log.Print("Warning: human_edible field missing.")
 		humanE.Valid = false
 	} else {
-		// log.Print("Request body has human_edible is present.")
 		humanE.Valid = true
 		humanE.Bool = *updateRequest.HumanEdible
 	}
-
-	petE := sql.NullBool{}
 	if updateRequest.PetEdible == nil {
-		// log.Print("Warning: pet_edible field missing.")
 		petE.Valid = false
 	} else {
-		// log.Print("Request body has pet_edible is present.")
 		petE.Valid = true
 		petE.Bool = *updateRequest.PetEdible
 	}
@@ -312,8 +303,12 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 		return
 	}
 
-	// NOTE: convert to a warning if a single field is missing instead of individual?
+	// converting from bool reference to sql.NullBool
 	humanPT := sql.NullBool{}
+	petPT := sql.NullBool{}
+	humanE := sql.NullBool{}
+	petE := sql.NullBool{}
+
 	if createRequest.HumanPoisonToxic == nil {
 		// log.Print("Warning: human_poison_toxic field missing.")
 		humanPT.Valid = false
@@ -322,8 +317,6 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 		humanPT.Valid = true
 		humanPT.Bool = *createRequest.HumanPoisonToxic
 	}
-
-	petPT := sql.NullBool{}
 	if createRequest.PetPoisonToxic == nil {
 		// log.Print("Warning: pet_poison_toxic field missing.")
 		petPT.Valid = false
@@ -332,8 +325,6 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 		petPT.Valid = true
 		petPT.Bool = *createRequest.PetPoisonToxic
 	}
-
-	humanE := sql.NullBool{}
 	if createRequest.HumanEdible == nil {
 		// log.Print("Warning: human_edible field missing.")
 		humanE.Valid = false
@@ -342,8 +333,6 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 		humanE.Valid = true
 		humanE.Bool = *createRequest.HumanEdible
 	}
-
-	petE := sql.NullBool{}
 	if createRequest.PetEdible == nil {
 		// log.Print("Warning: pet_edible field missing.")
 		petE.Valid = false
