@@ -25,18 +25,18 @@ insert into users (
 `
 
 type CreateUserParams struct {
-	CreatedBy      string `json:"createdBy"`
-	UpdatedBy      string `json:"updatedBy"`
-	Email          string `json:"email"`
-	HashedPassword string `json:"hashedPassword"`
+	CreatedBy      uuid.UUID `json:"createdBy"`
+	UpdatedBy      uuid.UUID `json:"updatedBy"`
+	Email          string    `json:"email"`
+	HashedPassword string    `json:"hashedPassword"`
 }
 
 type CreateUserRow struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
+	CreatedBy uuid.UUID `json:"createdBy"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
 	JoinDate  time.Time `json:"joinDate"`
 	IsAdmin   bool      `json:"isAdmin"`
 	Email     string    `json:"email"`
@@ -90,8 +90,8 @@ type GetAllUsersWithoutPasswordByJoinDateRow struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
+	CreatedBy uuid.UUID `json:"createdBy"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
 	IsAdmin   bool      `json:"isAdmin"`
 	Email     string    `json:"email"`
 }
@@ -141,8 +141,8 @@ type GetAllUsersWithoutPasswordByUpdatedRow struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
+	CreatedBy uuid.UUID `json:"createdBy"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
 	IsAdmin   bool      `json:"isAdmin"`
 	Email     string    `json:"email"`
 }
@@ -219,8 +219,8 @@ type GetUserByEmailWithoutPasswordRow struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
+	CreatedBy uuid.UUID `json:"createdBy"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
 	IsAdmin   bool      `json:"isAdmin"`
 	Email     string    `json:"email"`
 }
@@ -281,8 +281,8 @@ type GetUserByIDWithoutPasswordRow struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy string    `json:"createdBy"`
-	UpdatedBy string    `json:"updatedBy"`
+	CreatedBy uuid.UUID `json:"createdBy"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
 	IsAdmin   bool      `json:"isAdmin"`
 	Email     string    `json:"email"`
 }

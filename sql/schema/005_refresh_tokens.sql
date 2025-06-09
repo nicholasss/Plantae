@@ -5,9 +5,9 @@ create table refresh_tokens (
   updated_at timestamp with time zone not null,
   deleted_at timestamp with time zone,
   --
-  created_by text not null,
-  updated_by text not null,
-  deleted_by text,
+  created_by uuid not null,
+  updated_by uuid not null,
+  deleted_by uuid,
   --
   -- table data
   revoked_at timestamp,

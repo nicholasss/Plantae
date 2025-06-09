@@ -5,9 +5,9 @@ create table plant_species (
   updated_at timestamp with time zone not null,
   deleted_at timestamp with time zone,
   --
-  created_by text not null,
-  updated_by text not null,
-  deleted_by text,
+  created_by uuid not null,
+  updated_by uuid not null,
+  deleted_by uuid,
   --
   -- foreign keys
   biome_id uuid,
@@ -26,9 +26,9 @@ create table users (
   updated_at timestamp with time zone not null,
   deleted_at timestamp with time zone,
   --
-  created_by text not null,
-  updated_by text not null,
-  deleted_by text,
+  created_by uuid not null,
+  updated_by uuid not null,
+  deleted_by uuid,
   --
   -- table data
   join_date timestamp with time zone not null,

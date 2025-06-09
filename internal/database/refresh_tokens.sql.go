@@ -33,8 +33,8 @@ insert into refresh_tokens (
 
 type CreateRefreshTokenParams struct {
 	RefreshToken string    `json:"refreshToken"`
-	CreatedBy    string    `json:"createdBy"`
-	UpdatedBy    string    `json:"updatedBy"`
+	CreatedBy    uuid.UUID `json:"createdBy"`
+	UpdatedBy    uuid.UUID `json:"updatedBy"`
 	ExpiresAt    time.Time `json:"expiresAt"`
 	UserID       uuid.UUID `json:"userId"`
 }
@@ -43,8 +43,8 @@ type CreateRefreshTokenRow struct {
 	RefreshToken string    `json:"refreshToken"`
 	CreatedAt    time.Time `json:"createdAt"`
 	UpdatedAt    time.Time `json:"updatedAt"`
-	CreatedBy    string    `json:"createdBy"`
-	UpdatedBy    string    `json:"updatedBy"`
+	CreatedBy    uuid.UUID `json:"createdBy"`
+	UpdatedBy    uuid.UUID `json:"updatedBy"`
 	ExpiresAt    time.Time `json:"expiresAt"`
 	UserID       uuid.UUID `json:"userId"`
 }
@@ -107,7 +107,7 @@ returning user_id
 
 type RevokeRefreshTokenWithTokenParams struct {
 	RefreshToken string         `json:"refreshToken"`
-	UpdatedBy    string         `json:"updatedBy"`
+	UpdatedBy    uuid.UUID      `json:"updatedBy"`
 	RevokedBy    sql.NullString `json:"revokedBy"`
 }
 

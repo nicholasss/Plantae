@@ -25,8 +25,8 @@ insert into plant_species (
 `
 
 type CreatePlantSpeciesParams struct {
-	CreatedBy        string       `json:"createdBy"`
-	UpdatedBy        string       `json:"updatedBy"`
+	CreatedBy        uuid.UUID    `json:"createdBy"`
+	UpdatedBy        uuid.UUID    `json:"updatedBy"`
 	SpeciesName      string       `json:"speciesName"`
 	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
 	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
@@ -78,8 +78,8 @@ type GetAllPlantSpeciesOrderedByCreatedRow struct {
 	ID               uuid.UUID    `json:"id"`
 	CreatedAt        time.Time    `json:"createdAt"`
 	UpdatedAt        time.Time    `json:"updatedAt"`
-	CreatedBy        string       `json:"createdBy"`
-	UpdatedBy        string       `json:"updatedBy"`
+	CreatedBy        uuid.UUID    `json:"createdBy"`
+	UpdatedBy        uuid.UUID    `json:"updatedBy"`
 	SpeciesName      string       `json:"speciesName"`
 	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
 	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
@@ -136,8 +136,8 @@ type GetAllPlantSpeciesOrderedByUpdatedRow struct {
 	ID               uuid.UUID    `json:"id"`
 	CreatedAt        time.Time    `json:"createdAt"`
 	UpdatedAt        time.Time    `json:"updatedAt"`
-	CreatedBy        string       `json:"createdBy"`
-	UpdatedBy        string       `json:"updatedBy"`
+	CreatedBy        uuid.UUID    `json:"createdBy"`
+	UpdatedBy        uuid.UUID    `json:"updatedBy"`
 	SpeciesName      string       `json:"speciesName"`
 	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
 	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
@@ -195,8 +195,8 @@ type GetPlantSpeciesByIDRow struct {
 	ID               uuid.UUID    `json:"id"`
 	CreatedAt        time.Time    `json:"createdAt"`
 	UpdatedAt        time.Time    `json:"updatedAt"`
-	CreatedBy        string       `json:"createdBy"`
-	UpdatedBy        string       `json:"updatedBy"`
+	CreatedBy        uuid.UUID    `json:"createdBy"`
+	UpdatedBy        uuid.UUID    `json:"updatedBy"`
 	SpeciesName      string       `json:"speciesName"`
 	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
 	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
@@ -238,8 +238,8 @@ type GetPlantSpeciesByNameRow struct {
 	ID               uuid.UUID    `json:"id"`
 	CreatedAt        time.Time    `json:"createdAt"`
 	UpdatedAt        time.Time    `json:"updatedAt"`
-	CreatedBy        string       `json:"createdBy"`
-	UpdatedBy        string       `json:"updatedBy"`
+	CreatedBy        uuid.UUID    `json:"createdBy"`
+	UpdatedBy        uuid.UUID    `json:"updatedBy"`
 	SpeciesName      string       `json:"speciesName"`
 	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
 	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
@@ -273,8 +273,8 @@ where id = $1
 `
 
 type MarkPlantSpeciesAsDeletedByIDParams struct {
-	ID        uuid.UUID      `json:"id"`
-	DeletedBy sql.NullString `json:"deletedBy"`
+	ID        uuid.UUID     `json:"id"`
+	DeletedBy uuid.NullUUID `json:"deletedBy"`
 }
 
 func (q *Queries) MarkPlantSpeciesAsDeletedByID(ctx context.Context, arg MarkPlantSpeciesAsDeletedByIDParams) error {
@@ -305,7 +305,7 @@ where id = $1
 
 type UpdatePlantSpeciesPropertiesByIDParams struct {
 	ID               uuid.UUID    `json:"id"`
-	UpdatedBy        string       `json:"updatedBy"`
+	UpdatedBy        uuid.UUID    `json:"updatedBy"`
 	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
 	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
 	HumanEdible      sql.NullBool `json:"humanEdible"`
