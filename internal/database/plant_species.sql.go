@@ -8,6 +8,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -63,29 +64,44 @@ func (q *Queries) CreatePlantSpecies(ctx context.Context, arg CreatePlantSpecies
 }
 
 const getAllPlantSpeciesOrderedByCreated = `-- name: GetAllPlantSpeciesOrderedByCreated :many
-select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, biome_id, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible from plant_species
+select 
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
+	human_poison_toxic, pet_poison_toxic,
+	human_edible, pet_edible
+from plant_species
   where deleted_at is null
   order by created_at desc
 `
 
-func (q *Queries) GetAllPlantSpeciesOrderedByCreated(ctx context.Context) ([]PlantSpecy, error) {
+type GetAllPlantSpeciesOrderedByCreatedRow struct {
+	ID               uuid.UUID    `json:"id"`
+	CreatedAt        time.Time    `json:"createdAt"`
+	UpdatedAt        time.Time    `json:"updatedAt"`
+	CreatedBy        string       `json:"createdBy"`
+	UpdatedBy        string       `json:"updatedBy"`
+	SpeciesName      string       `json:"speciesName"`
+	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
+	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
+	HumanEdible      sql.NullBool `json:"humanEdible"`
+	PetEdible        sql.NullBool `json:"petEdible"`
+}
+
+func (q *Queries) GetAllPlantSpeciesOrderedByCreated(ctx context.Context) ([]GetAllPlantSpeciesOrderedByCreatedRow, error) {
 	rows, err := q.db.QueryContext(ctx, getAllPlantSpeciesOrderedByCreated)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []PlantSpecy
+	var items []GetAllPlantSpeciesOrderedByCreatedRow
 	for rows.Next() {
-		var i PlantSpecy
+		var i GetAllPlantSpeciesOrderedByCreatedRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.DeletedAt,
 			&i.CreatedBy,
 			&i.UpdatedBy,
-			&i.DeletedBy,
-			&i.BiomeID,
 			&i.SpeciesName,
 			&i.HumanPoisonToxic,
 			&i.PetPoisonToxic,
@@ -106,29 +122,44 @@ func (q *Queries) GetAllPlantSpeciesOrderedByCreated(ctx context.Context) ([]Pla
 }
 
 const getAllPlantSpeciesOrderedByUpdated = `-- name: GetAllPlantSpeciesOrderedByUpdated :many
-select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, biome_id, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible from plant_species
+select 
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
+	human_poison_toxic, pet_poison_toxic,
+	human_edible, pet_edible
+from plant_species
   where deleted_at is null
   order by updated_at desc
 `
 
-func (q *Queries) GetAllPlantSpeciesOrderedByUpdated(ctx context.Context) ([]PlantSpecy, error) {
+type GetAllPlantSpeciesOrderedByUpdatedRow struct {
+	ID               uuid.UUID    `json:"id"`
+	CreatedAt        time.Time    `json:"createdAt"`
+	UpdatedAt        time.Time    `json:"updatedAt"`
+	CreatedBy        string       `json:"createdBy"`
+	UpdatedBy        string       `json:"updatedBy"`
+	SpeciesName      string       `json:"speciesName"`
+	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
+	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
+	HumanEdible      sql.NullBool `json:"humanEdible"`
+	PetEdible        sql.NullBool `json:"petEdible"`
+}
+
+func (q *Queries) GetAllPlantSpeciesOrderedByUpdated(ctx context.Context) ([]GetAllPlantSpeciesOrderedByUpdatedRow, error) {
 	rows, err := q.db.QueryContext(ctx, getAllPlantSpeciesOrderedByUpdated)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []PlantSpecy
+	var items []GetAllPlantSpeciesOrderedByUpdatedRow
 	for rows.Next() {
-		var i PlantSpecy
+		var i GetAllPlantSpeciesOrderedByUpdatedRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.DeletedAt,
 			&i.CreatedBy,
 			&i.UpdatedBy,
-			&i.DeletedBy,
-			&i.BiomeID,
 			&i.SpeciesName,
 			&i.HumanPoisonToxic,
 			&i.PetPoisonToxic,
@@ -149,24 +180,39 @@ func (q *Queries) GetAllPlantSpeciesOrderedByUpdated(ctx context.Context) ([]Pla
 }
 
 const getPlantSpeciesByID = `-- name: GetPlantSpeciesByID :one
-select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, biome_id, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible from plant_species
+select 
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
+	human_poison_toxic, pet_poison_toxic,
+	human_edible, pet_edible
+from plant_species
   where id = $1
   and deleted_at is null
   limit 1
 `
 
-func (q *Queries) GetPlantSpeciesByID(ctx context.Context, id uuid.UUID) (PlantSpecy, error) {
+type GetPlantSpeciesByIDRow struct {
+	ID               uuid.UUID    `json:"id"`
+	CreatedAt        time.Time    `json:"createdAt"`
+	UpdatedAt        time.Time    `json:"updatedAt"`
+	CreatedBy        string       `json:"createdBy"`
+	UpdatedBy        string       `json:"updatedBy"`
+	SpeciesName      string       `json:"speciesName"`
+	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
+	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
+	HumanEdible      sql.NullBool `json:"humanEdible"`
+	PetEdible        sql.NullBool `json:"petEdible"`
+}
+
+func (q *Queries) GetPlantSpeciesByID(ctx context.Context, id uuid.UUID) (GetPlantSpeciesByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getPlantSpeciesByID, id)
-	var i PlantSpecy
+	var i GetPlantSpeciesByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.DeletedAt,
 		&i.CreatedBy,
 		&i.UpdatedBy,
-		&i.DeletedBy,
-		&i.BiomeID,
 		&i.SpeciesName,
 		&i.HumanPoisonToxic,
 		&i.PetPoisonToxic,
@@ -177,24 +223,39 @@ func (q *Queries) GetPlantSpeciesByID(ctx context.Context, id uuid.UUID) (PlantS
 }
 
 const getPlantSpeciesByName = `-- name: GetPlantSpeciesByName :one
-select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, biome_id, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible from plant_species
+select 
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
+	human_poison_toxic, pet_poison_toxic,
+	human_edible, pet_edible
+from plant_species
 	where species_name like $1
   and deleted_at is null
   limit 1
 `
 
-func (q *Queries) GetPlantSpeciesByName(ctx context.Context, speciesName string) (PlantSpecy, error) {
+type GetPlantSpeciesByNameRow struct {
+	ID               uuid.UUID    `json:"id"`
+	CreatedAt        time.Time    `json:"createdAt"`
+	UpdatedAt        time.Time    `json:"updatedAt"`
+	CreatedBy        string       `json:"createdBy"`
+	UpdatedBy        string       `json:"updatedBy"`
+	SpeciesName      string       `json:"speciesName"`
+	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
+	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
+	HumanEdible      sql.NullBool `json:"humanEdible"`
+	PetEdible        sql.NullBool `json:"petEdible"`
+}
+
+func (q *Queries) GetPlantSpeciesByName(ctx context.Context, speciesName string) (GetPlantSpeciesByNameRow, error) {
 	row := q.db.QueryRowContext(ctx, getPlantSpeciesByName, speciesName)
-	var i PlantSpecy
+	var i GetPlantSpeciesByNameRow
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.DeletedAt,
 		&i.CreatedBy,
 		&i.UpdatedBy,
-		&i.DeletedBy,
-		&i.BiomeID,
 		&i.SpeciesName,
 		&i.HumanPoisonToxic,
 		&i.PetPoisonToxic,

@@ -12,24 +12,44 @@ insert into plant_species (
 delete from plant_species;
 
 -- name: GetPlantSpeciesByName :one
-select * from plant_species
+select 
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
+	human_poison_toxic, pet_poison_toxic,
+	human_edible, pet_edible
+from plant_species
 	where species_name like $1
   and deleted_at is null
   limit 1;
 
 -- name: GetPlantSpeciesByID :one
-select * from plant_species
+select 
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
+	human_poison_toxic, pet_poison_toxic,
+	human_edible, pet_edible
+from plant_species
   where id = $1
   and deleted_at is null
   limit 1;
 
 -- name: GetAllPlantSpeciesOrderedByUpdated :many
-select * from plant_species
+select 
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
+	human_poison_toxic, pet_poison_toxic,
+	human_edible, pet_edible
+from plant_species
   where deleted_at is null
   order by updated_at desc;
 
 -- name: GetAllPlantSpeciesOrderedByCreated :many
-select * from plant_species
+select 
+	id, created_at, updated_at,
+	created_by, updated_by, species_name,
+	human_poison_toxic, pet_poison_toxic,
+	human_edible, pet_edible
+from plant_species
   where deleted_at is null
   order by created_at desc;
 
