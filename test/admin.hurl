@@ -107,10 +107,10 @@ jsonpath "$[0].updatedAt" isIsoDate
 jsonpath "$[0].createdBy" == "hurl-project-test"
 jsonpath "$[0].updatedBy" == "hurl-project-test"
 jsonpath "$[0].speciesName" == "{{1_species_name}}"
-jsonpath "$[0].humanPoisonToxic" == false
-jsonpath "$[0].petPoisonToxic" == false
-jsonpath "$[0].humanEdible" == false
-jsonpath "$[0].petEdible" == false
+jsonpath "$[0].humanPoisonToxic" == {{1_human_poison_toxic}}
+jsonpath "$[0].petPoisonToxic" == {{1_pet_poison_toxic}}
+jsonpath "$[0].humanEdible" == {{1_human_edible}}
+jsonpath "$[0].petEdible" == {{1_pet_edible}}
 
 #
 # Add a second plant to the plant_species
@@ -142,12 +142,11 @@ jsonpath "$[0].updatedBy" == "hurl-project-test"
 
 #
 # Updating plant with new information
-POST http://localhost:8080/api/v1/admin/plants/{{2_plant_species_id}}
+PUT http://localhost:8080/api/v1/admin/plants/{{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
 {
   "client": "hurl-project-test",
-  "speciesName": "{{2_species_name}}",
   "humanPoisonToxic": {{2_human_poison_toxic}},
   "petPoisonToxic": {{2_pet_poison_toxic}},
   "humanEdible": {{2_human_edible}},
@@ -155,3 +154,20 @@ Authorization: Bearer {{lisa_token}}
 }
 ```
 HTTP 204
+
+#
+# Requesting list of plant species in the table
+# -- with one record updated after it was created
+GET http://localhost:8080/api/v1/admin/plants
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+jsonpath "$[0].speciesName" == "{{2_species_name}}"
+jsonpath "$[0].humanPoisonToxic" == {{2_human_poison_toxic}}
+jsonpath "$[0].petPoisonToxic" == {{2_pet_poison_toxic}}
+jsonpath "$[0].humanEdible" == {{2_human_edible}}
+jsonpath "$[0].petEdible" == {{2_pet_edible}}
+jsonpath "$[0].createdAt" isIsoDate
+jsonpath "$[0].updatedAt" isIsoDate
+jsonpath "$[0].createdBy" == "hurl-project-test"
+jsonpath "$[0].updatedBy" == "hurl-project-test"
