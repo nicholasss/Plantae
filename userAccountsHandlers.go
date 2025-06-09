@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -23,14 +22,12 @@ type AdminStatusRequest struct {
 
 // register endpoint
 type CreateUserRequest struct {
-	Client      string `json:"client"`
 	Email       string `json:"email"`
 	RawPassword string `json:"password"`
 }
 
 // login endpoint
 type UserLoginRequest struct {
-	Client      string `json:"client"`
 	Email       string `json:"email"`
 	RawPassword string `json:"password"`
 }
@@ -50,9 +47,8 @@ type AuthRefreshResponse struct {
 	AccessTokenExpiresAt time.Time `json:"tokenExpiresAt"`
 }
 
-// revoke endpoint
 type AuthRevokeRequest struct {
-	Client string `json:"client"`
+	ID uuid.UUID `json:"id"`
 }
 
 // === User Handler Functions ===
@@ -99,11 +95,6 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		respondWithError(nil, http.StatusBadRequest, w)
 		return
 	}
-	if createUserRequest.Client == "" {
-		log.Print("updatedBy received was empty.")
-		respondWithError(nil, http.StatusBadRequest, w)
-		return
-	}
 
 	// hash password
 	hashedPassword, err := auth.HashPassword(createUserRequest.RawPassword)
@@ -113,12 +104,18 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
-	// log.Print("Hashed a password for creating a user.")
+
+	// user uuid generation
+	newUserUUID, err := uuid.NewUUID()
+	if err != nil {
+		log.Printf("Unable to create a UUID for a user due to: %q", err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
 
 	// CreateUserParams struct
 	createUserParams := database.CreateUserParams{
-		CreatedBy:      createUserRequest.Client,
-		UpdatedBy:      createUserRequest.Client,
+		ID:             newUserUUID,
 		Email:          createUserRequest.Email,
 		HashedPassword: hashedPassword,
 	}
@@ -198,10 +195,8 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	refreshTokenExpiresAt := time.Now().Add(cfg.refreshTokenDuration)
 	createRefreshToken := database.CreateRefreshTokenParams{
 		RefreshToken: userRefreshToken,
-		CreatedBy:    userLoginRequest.Client,
-		UpdatedBy:    userLoginRequest.Client,
+		CreatedBy:    userRecord.ID,
 		ExpiresAt:    refreshTokenExpiresAt,
-		UserID:       userRecord.ID,
 	}
 
 	// TODO: check for prexisting token, if exists then revoke it and replace
@@ -322,14 +317,9 @@ func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	nullableClient := sql.NullString{
-		String: revokeRequest.Client,
-		Valid:  true,
-	}
 	revokeRefreshTokenParams := database.RevokeRefreshTokenWithTokenParams{
 		RefreshToken: providedRefreshToken,
-		UpdatedBy:    revokeRequest.Client,
-		RevokedBy:    nullableClient,
+		UpdatedBy:    revokeRequest.ID,
 	}
 	revokeRecordUserID, err := cfg.db.RevokeRefreshTokenWithToken(r.Context(), revokeRefreshTokenParams)
 	if err != nil {
