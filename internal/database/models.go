@@ -58,17 +58,17 @@ type PlantSpecy struct {
 }
 
 type RefreshToken struct {
-	RefreshToken string         `json:"refreshToken"`
-	CreatedAt    time.Time      `json:"createdAt"`
-	UpdatedAt    time.Time      `json:"updatedAt"`
-	DeletedAt    sql.NullTime   `json:"deletedAt"`
-	CreatedBy    uuid.UUID      `json:"createdBy"`
-	UpdatedBy    uuid.UUID      `json:"updatedBy"`
-	DeletedBy    uuid.NullUUID  `json:"deletedBy"`
-	RevokedAt    sql.NullTime   `json:"revokedAt"`
-	RevokedBy    sql.NullString `json:"revokedBy"`
-	ExpiresAt    time.Time      `json:"expiresAt"`
-	UserID       uuid.UUID      `json:"userId"`
+	RefreshToken string        `json:"refreshToken"`
+	CreatedAt    time.Time     `json:"createdAt"`
+	UpdatedAt    time.Time     `json:"updatedAt"`
+	DeletedAt    sql.NullTime  `json:"deletedAt"`
+	CreatedBy    uuid.UUID     `json:"createdBy"`
+	UpdatedBy    uuid.UUID     `json:"updatedBy"`
+	DeletedBy    uuid.NullUUID `json:"deletedBy"`
+	RevokedAt    sql.NullTime  `json:"revokedAt"`
+	RevokedBy    uuid.NullUUID `json:"revokedBy"`
+	ExpiresAt    time.Time     `json:"expiresAt"`
+	UserID       uuid.UUID     `json:"userId"`
 }
 
 type User struct {

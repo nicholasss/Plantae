@@ -11,7 +11,7 @@ create table refresh_tokens (
   --
   -- table data
   revoked_at timestamp,
-  revoked_by text,
+  revoked_by uuid,
   expires_at timestamp not null,
   --
   -- table foreign key

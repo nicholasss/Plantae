@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -22,8 +21,8 @@ insert into refresh_tokens (
 ) values (
   $1,
   now(), now(),
-  $2, $3,
-  $4, $5
+  $2, $2,
+  $3, $2
 ) returning
   refresh_token,
   created_at, updated_at,
@@ -34,9 +33,7 @@ insert into refresh_tokens (
 type CreateRefreshTokenParams struct {
 	RefreshToken string    `json:"refreshToken"`
 	CreatedBy    uuid.UUID `json:"createdBy"`
-	UpdatedBy    uuid.UUID `json:"updatedBy"`
 	ExpiresAt    time.Time `json:"expiresAt"`
-	UserID       uuid.UUID `json:"userId"`
 }
 
 type CreateRefreshTokenRow struct {
@@ -50,13 +47,7 @@ type CreateRefreshTokenRow struct {
 }
 
 func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error) {
-	row := q.db.QueryRowContext(ctx, createRefreshToken,
-		arg.RefreshToken,
-		arg.CreatedBy,
-		arg.UpdatedBy,
-		arg.ExpiresAt,
-		arg.UserID,
-	)
+	row := q.db.QueryRowContext(ctx, createRefreshToken, arg.RefreshToken, arg.CreatedBy, arg.ExpiresAt)
 	var i CreateRefreshTokenRow
 	err := row.Scan(
 		&i.RefreshToken,
@@ -100,19 +91,18 @@ set
   updated_at = now(),
   updated_by = $2,
   revoked_at = now(),
-  revoked_by = $3
+  revoked_by = $2
 where refresh_token = $1
 returning user_id
 `
 
 type RevokeRefreshTokenWithTokenParams struct {
-	RefreshToken string         `json:"refreshToken"`
-	UpdatedBy    uuid.UUID      `json:"updatedBy"`
-	RevokedBy    sql.NullString `json:"revokedBy"`
+	RefreshToken string    `json:"refreshToken"`
+	UpdatedBy    uuid.UUID `json:"updatedBy"`
 }
 
 func (q *Queries) RevokeRefreshTokenWithToken(ctx context.Context, arg RevokeRefreshTokenWithTokenParams) (uuid.UUID, error) {
-	row := q.db.QueryRowContext(ctx, revokeRefreshTokenWithToken, arg.RefreshToken, arg.UpdatedBy, arg.RevokedBy)
+	row := q.db.QueryRowContext(ctx, revokeRefreshTokenWithToken, arg.RefreshToken, arg.UpdatedBy)
 	var user_id uuid.UUID
 	err := row.Scan(&user_id)
 	return user_id, err

@@ -7,8 +7,8 @@ insert into refresh_tokens (
 ) values (
   $1,
   now(), now(),
-  $2, $3,
-  $4, $5
+  $2, $2,
+  $3, $2
 ) returning
   refresh_token,
   created_at, updated_at,
@@ -25,6 +25,6 @@ set
   updated_at = now(),
   updated_by = $2,
   revoked_at = now(),
-  revoked_by = $3
+  revoked_by = $2
 where refresh_token = $1
 returning user_id;

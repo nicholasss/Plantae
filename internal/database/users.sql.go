@@ -18,15 +18,14 @@ insert into users (
   created_by, updated_by, join_date,
   is_admin, email, hashed_password
 ) values (
-  gen_random_uuid(), now(), now(),
-  $1, $2, now(),
-  false, $3, $4
+  $1, now(), now(),
+  $1, $1, now(),
+  false, $2, $3
 ) returning id, created_at, updated_at, created_by, updated_by, join_date, is_admin, email
 `
 
 type CreateUserParams struct {
-	CreatedBy      uuid.UUID `json:"createdBy"`
-	UpdatedBy      uuid.UUID `json:"updatedBy"`
+	ID             uuid.UUID `json:"id"`
 	Email          string    `json:"email"`
 	HashedPassword string    `json:"hashedPassword"`
 }
@@ -43,12 +42,7 @@ type CreateUserRow struct {
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
-	row := q.db.QueryRowContext(ctx, createUser,
-		arg.CreatedBy,
-		arg.UpdatedBy,
-		arg.Email,
-		arg.HashedPassword,
-	)
+	row := q.db.QueryRowContext(ctx, createUser, arg.ID, arg.Email, arg.HashedPassword)
 	var i CreateUserRow
 	err := row.Scan(
 		&i.ID,
