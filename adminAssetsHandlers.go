@@ -25,6 +25,15 @@ type AdminPlantsCreateRequest struct {
 	PetEdible        *bool  `json:"petEdible,omitempty"`
 }
 
+// only supply client performing update and updatable informatino
+type AdminPlantsUpdateRequest struct {
+	Client           string `json:"client"`
+	HumanPoisonToxic *bool  `json:"humanPoisonToxic,omitempty"`
+	PetPoisonToxic   *bool  `json:"petPoisonToxic,omitempty"`
+	HumanEdible      *bool  `json:"humanEdible,omitempty"`
+	PetEdible        *bool  `json:"petEdible,omitempty"`
+}
+
 type AdminPlantsViewResponse struct {
 	ID               uuid.UUID `json:"id"`
 	CreatedAt        time.Time `json:"createdAt"`
@@ -177,6 +186,101 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 	w.Write(plantSpeciesData)
 }
 
+// POST /api/v1/admin/plants/{plant_species_id}
+func (cfg *apiConfig) adminReplacePlantInfoHandler(w http.ResponseWriter, r *http.Request) {
+	plantSpeciesIDStr := r.PathValue("plant_species_id")
+	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant species id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// check header for admin access token
+	requestUserID, err := cfg.authorizeNormalAdmin(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	var updateRequest AdminPlantsUpdateRequest
+	err = json.NewDecoder(r.Body).Decode(&updateRequest)
+	if err != nil {
+		log.Printf("Could not decode body of request due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+	defer r.Body.Close()
+
+	// check all of the request properties
+	if updateRequest.Client == "" {
+		log.Print("Request body was missing client field.")
+		respondWithError(errors.New("no client name provided"), http.StatusBadRequest, w)
+		return
+	}
+
+	// NOTE: convert to a warning if a single field is missing instead of individual?
+	humanPT := sql.NullBool{}
+	if updateRequest.HumanPoisonToxic == nil {
+		// log.Print("Warning: human_poison_toxic field missing.")
+		humanPT.Valid = false
+	} else {
+		// log.Print("Request body has human_poison_toxic is present.")
+		humanPT.Valid = true
+		humanPT.Bool = *updateRequest.HumanPoisonToxic
+	}
+
+	petPT := sql.NullBool{}
+	if updateRequest.PetPoisonToxic == nil {
+		// log.Print("Warning: pet_poison_toxic field missing.")
+		petPT.Valid = false
+	} else {
+		// log.Print("Request body has pet_poison_toxic is present.")
+		petPT.Valid = true
+		petPT.Bool = *updateRequest.PetPoisonToxic
+	}
+
+	humanE := sql.NullBool{}
+	if updateRequest.HumanEdible == nil {
+		// log.Print("Warning: human_edible field missing.")
+		humanE.Valid = false
+	} else {
+		// log.Print("Request body has human_edible is present.")
+		humanE.Valid = true
+		humanE.Bool = *updateRequest.HumanEdible
+	}
+
+	petE := sql.NullBool{}
+	if updateRequest.PetEdible == nil {
+		// log.Print("Warning: pet_edible field missing.")
+		petE.Valid = false
+	} else {
+		// log.Print("Request body has pet_edible is present.")
+		petE.Valid = true
+		petE.Bool = *updateRequest.PetEdible
+	}
+
+	updateRequestParams := database.UpdatePlantSpeciesPropertiesByIDParams{
+		ID:               plantSpeciesID,
+		UpdatedBy:        updateRequest.Client,
+		HumanPoisonToxic: humanPT,
+		PetPoisonToxic:   petPT,
+		HumanEdible:      humanE,
+		PetEdible:        petE,
+	}
+
+	err = cfg.db.UpdatePlantSpeciesPropertiesByID(r.Context(), updateRequestParams)
+	if err != nil {
+		log.Printf("Could not update plant species record %q due to: %q", plantSpeciesID, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q updated plant species %q successfully.", requestUserID, plantSpeciesID)
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // POST json to create plant
 func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *http.Request) {
 	// check header for admin access token
@@ -209,54 +313,54 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 	}
 
 	// NOTE: convert to a warning if a single field is missing instead of individual?
-	humanPoisonToxic := sql.NullBool{}
+	humanPT := sql.NullBool{}
 	if createRequest.HumanPoisonToxic == nil {
-		log.Print("WARNING: human_poison_toxic field missing.")
-		humanPoisonToxic.Valid = false
+		// log.Print("Warning: human_poison_toxic field missing.")
+		humanPT.Valid = false
 	} else {
-		log.Print("Request body has human_poison_toxic is present.")
-		humanPoisonToxic.Valid = true
-		humanPoisonToxic.Bool = *createRequest.HumanPoisonToxic
+		// log.Print("Request body has human_poison_toxic is present.")
+		humanPT.Valid = true
+		humanPT.Bool = *createRequest.HumanPoisonToxic
 	}
 
-	petPoisonToxic := sql.NullBool{}
+	petPT := sql.NullBool{}
 	if createRequest.PetPoisonToxic == nil {
-		log.Print("WARNING: pet_poison_toxic field missing.")
-		petPoisonToxic.Valid = false
+		// log.Print("Warning: pet_poison_toxic field missing.")
+		petPT.Valid = false
 	} else {
-		log.Print("Request body has pet_poison_toxic is present.")
-		petPoisonToxic.Valid = true
-		petPoisonToxic.Bool = *createRequest.PetPoisonToxic
+		// log.Print("Request body has pet_poison_toxic is present.")
+		petPT.Valid = true
+		petPT.Bool = *createRequest.PetPoisonToxic
 	}
 
-	humanEdible := sql.NullBool{}
+	humanE := sql.NullBool{}
 	if createRequest.HumanEdible == nil {
-		log.Print("WARNING: human_edible field missing.")
-		humanEdible.Valid = false
+		// log.Print("Warning: human_edible field missing.")
+		humanE.Valid = false
 	} else {
-		log.Print("Request body has human_edible is present.")
-		humanEdible.Valid = true
-		humanEdible.Bool = *createRequest.HumanEdible
+		// log.Print("Request body has human_edible is present.")
+		humanE.Valid = true
+		humanE.Bool = *createRequest.HumanEdible
 	}
 
-	petEdible := sql.NullBool{}
+	petE := sql.NullBool{}
 	if createRequest.PetEdible == nil {
-		log.Print("WARNING: pet_edible field missing.")
-		petEdible.Valid = false
+		// log.Print("Warning: pet_edible field missing.")
+		petE.Valid = false
 	} else {
-		log.Print("Request body has pet_edible is present.")
-		petEdible.Valid = true
-		petEdible.Bool = *createRequest.PetEdible
+		// log.Print("Request body has pet_edible is present.")
+		petE.Valid = true
+		petE.Bool = *createRequest.PetEdible
 	}
 
 	createRequestParams := database.CreatePlantSpeciesParams{
 		CreatedBy:        createRequest.Client,
 		UpdatedBy:        createRequest.Client,
 		SpeciesName:      createRequest.SpeciesName,
-		HumanPoisonToxic: humanPoisonToxic,
-		PetPoisonToxic:   petPoisonToxic,
-		HumanEdible:      humanEdible,
-		PetEdible:        petEdible,
+		HumanPoisonToxic: humanPT,
+		PetPoisonToxic:   petPT,
+		HumanEdible:      humanE,
+		PetEdible:        petE,
 	}
 	_, err = cfg.db.CreatePlantSpecies(r.Context(), createRequestParams)
 	if err != nil {
