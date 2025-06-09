@@ -234,6 +234,10 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if cfg.platform == "production" || cfg.platform == "" {
+		log.Printf("User %q, accessToken: %q, refreshToken: %q", userLoginResponse.ID, userLoginResponse.AccessToken, userLoginResponse.RefreshToken)
+	}
+
 	log.Printf("User %q successfully logged in.", userRecord.ID)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
