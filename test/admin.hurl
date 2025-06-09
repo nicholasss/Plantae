@@ -99,6 +99,7 @@ HTTP 200
 [Captures]
 1_plant_species_id: jsonpath "$[0].id"
 [Asserts]
+jsonpath "$" count == 1
 jsonpath "$[0].createdAt" isIsoDate
 jsonpath "$[0].updatedAt" isIsoDate
 jsonpath "$[0].createdBy" == {{lisa_id}}
@@ -130,11 +131,12 @@ HTTP 200
 [Captures]
 2_plant_species_id: jsonpath "$[0].id"
 [Asserts]
+jsonpath "$" count == 2
 jsonpath "$[0].speciesName" == "{{2_species_name}}"
 jsonpath "$[0].createdAt" isIsoDate
 jsonpath "$[0].updatedAt" isIsoDate
-jsonpath "$[0].createdBy" == "hurl-project-test"
-jsonpath "$[0].updatedBy" == "hurl-project-test"
+jsonpath "$[0].createdBy" == "{{lisa_id}}"
+jsonpath "$[0].updatedBy" == "{{lisa_id}}"
 
 #
 # Updating plant with new information
@@ -157,6 +159,7 @@ GET http://localhost:8080/api/v1/admin/plants
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Asserts]
+jsonpath "$" count == 2
 jsonpath "$[0].speciesName" == "{{2_species_name}}"
 jsonpath "$[0].humanPoisonToxic" == {{2_human_poison_toxic}}
 jsonpath "$[0].petPoisonToxic" == {{2_pet_poison_toxic}}
@@ -164,8 +167,8 @@ jsonpath "$[0].humanEdible" == {{2_human_edible}}
 jsonpath "$[0].petEdible" == {{2_pet_edible}}
 jsonpath "$[0].createdAt" isIsoDate
 jsonpath "$[0].updatedAt" isIsoDate
-jsonpath "$[0].createdBy" == "hurl-project-test"
-jsonpath "$[0].updatedBy" == "hurl-project-test"
+jsonpath "$[0].createdBy" == "{{lisa_id}}"
+jsonpath "$[0].updatedBy" == "{{lisa_id}}"
 
 #
 # Requesting deletion of a plants species record
@@ -179,6 +182,7 @@ GET http://localhost:8080/api/v1/admin/plants
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Asserts]
+jsonpath "$" count == 1
 jsonpath "$[0].speciesName" == "{{2_species_name}}"
 jsonpath "$[0].humanPoisonToxic" == {{2_human_poison_toxic}}
 jsonpath "$[0].petPoisonToxic" == {{2_pet_poison_toxic}}
@@ -186,5 +190,5 @@ jsonpath "$[0].humanEdible" == {{2_human_edible}}
 jsonpath "$[0].petEdible" == {{2_pet_edible}}
 jsonpath "$[0].createdAt" isIsoDate
 jsonpath "$[0].updatedAt" isIsoDate
-jsonpath "$[0].createdBy" == "hurl-project-test"
-jsonpath "$[0].updatedBy" == "hurl-project-test"
+jsonpath "$[0].createdBy" == "{{lisa_id}}"
+jsonpath "$[0].updatedBy" == "{{lisa_id}}"

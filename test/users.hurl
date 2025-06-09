@@ -64,6 +64,11 @@ craig_token: jsonpath "$.token"
 POST http://localhost:8080/api/v1/auth/revoke
 Authorization: Bearer {{craig_refresh_token}}
 Content-Type: application/json; charset=UTF-8
+```json
+{
+  "id": "{{craig_id}}"
+}
+```
 HTTP 204
 
 #
