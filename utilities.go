@@ -95,7 +95,7 @@ func loadApiConfig() (*apiConfig, error) {
 
 // TODO: send out a more generic error to client
 func respondWithError(err error, code int, w http.ResponseWriter) {
-	log.Printf("Sending error to client: %q", err)
+	log.Printf("ERROR: Sending error to client: %q", err)
 
 	// response side
 	w.Header().Set("Content-Type", "application/json")
