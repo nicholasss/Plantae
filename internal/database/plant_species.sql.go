@@ -293,16 +293,19 @@ func (q *Queries) ResetPlantSpeciesTable(ctx context.Context) error {
 
 const updatePlantSpeciesPropertiesByID = `-- name: UpdatePlantSpeciesPropertiesByID :exec
 update plant_species
-  set human_poison_toxic = $2,
-	pet_poison_toxic = $3,
-	human_edible = $4,
-  pet_edible = $5
+  set updated_at = now(),
+  updated_by = $2,
+  human_poison_toxic = $3,
+	pet_poison_toxic = $4,
+	human_edible = $5,
+  pet_edible = $6
 where id = $1
   and deleted_at is null
 `
 
 type UpdatePlantSpeciesPropertiesByIDParams struct {
 	ID               uuid.UUID    `json:"id"`
+	UpdatedBy        string       `json:"updatedBy"`
 	HumanPoisonToxic sql.NullBool `json:"humanPoisonToxic"`
 	PetPoisonToxic   sql.NullBool `json:"petPoisonToxic"`
 	HumanEdible      sql.NullBool `json:"humanEdible"`
@@ -312,6 +315,7 @@ type UpdatePlantSpeciesPropertiesByIDParams struct {
 func (q *Queries) UpdatePlantSpeciesPropertiesByID(ctx context.Context, arg UpdatePlantSpeciesPropertiesByIDParams) error {
 	_, err := q.db.ExecContext(ctx, updatePlantSpeciesPropertiesByID,
 		arg.ID,
+		arg.UpdatedBy,
 		arg.HumanPoisonToxic,
 		arg.PetPoisonToxic,
 		arg.HumanEdible,

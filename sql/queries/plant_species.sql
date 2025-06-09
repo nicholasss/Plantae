@@ -55,10 +55,12 @@ from plant_species
 
 -- name: UpdatePlantSpeciesPropertiesByID :exec
 update plant_species
-  set human_poison_toxic = $2,
-	pet_poison_toxic = $3,
-	human_edible = $4,
-  pet_edible = $5
+  set updated_at = now(),
+  updated_by = $2,
+  human_poison_toxic = $3,
+	pet_poison_toxic = $4,
+	human_edible = $5,
+  pet_edible = $6
 where id = $1
   and deleted_at is null;
 
