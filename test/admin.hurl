@@ -19,6 +19,12 @@ Authorization: SuperAdminToken {{super_admin_token}}
 HTTP 204
 
 #
+# Reset plant_names table
+POST http://localhost:8080/api/v1/super-admin/reset-plant-names
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
 # Create user account
 POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json; charset=UTF-8
@@ -200,3 +206,5 @@ jsonpath "$[0].updatedBy" == "{{lisa_id}}"
 # testing plant species
 # ========================================================================
 # testing plant names
+
+# 
