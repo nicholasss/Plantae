@@ -214,8 +214,8 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "plantID": {{1_plant_species_id}},
-  "lang_code": {{1a_species_common_langcode}},
-  "petEdible": {{1a_species_common_name}}
+  "langCode": {{1a_species_common_langcode}},
+  "commonName": {{1a_species_common_name}}
 }
 ```
 HTTP 204
@@ -225,8 +225,8 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "plantID": {{1_plant_species_id}},
-  "lang_code": {{1b_species_common_langcode}},
-  "petEdible": {{1b_species_common_name}}
+  "langCode": {{1b_species_common_langcode}},
+  "commonName": {{1b_species_common_name}}
 }
 ```
 HTTP 204
@@ -236,8 +236,8 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "plantID": {{1_plant_species_id}},
-  "lang_code": {{1c_species_common_langcode}},
-  "petEdible": {{1c_species_common_name}}
+  "langCode": {{1c_species_common_langcode}},
+  "commonName": {{1c_species_common_name}}
 }
 ```
 HTTP 204
@@ -247,8 +247,8 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "plantID": {{1_plant_species_id}},
-  "lang_code": {{1d_species_common_langcode}},
-  "petEdible": {{1d_species_common_name}}
+  "langCode": {{1d_species_common_langcode}},
+  "commonName": {{1d_species_common_name}}
 }
 ```
 HTTP 204
@@ -258,8 +258,8 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "plantID": {{1_plant_species_id}},
-  "lang_code": {{1e_species_common_langcode}},
-  "petEdible": {{1e_species_common_name}}
+  "langCode": {{1e_species_common_langcode}},
+  "commonName": {{1e_species_common_name}}
 }
 ```
 HTTP 204
@@ -269,8 +269,8 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "plantID": {{1_plant_species_id}},
-  "lang_code": {{1f_species_common_langcode}},
-  "petEdible": {{1f_species_common_name}}
+  "langCode": {{1f_species_common_langcode}},
+  "commonName": {{1f_species_common_name}}
 }
 ```
 HTTP 204
