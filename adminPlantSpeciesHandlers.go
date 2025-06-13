@@ -13,7 +13,7 @@ import (
 	"github.com/nicholasss/plantae/internal/database"
 )
 
-// === request response types
+// === request response types ===
 
 // create request for plant species
 type AdminPlantsCreateRequest struct {
