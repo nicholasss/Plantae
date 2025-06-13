@@ -10,11 +10,11 @@ create table plant_names (
   deleted_by uuid,
   --
   -- foreign keys
-  plant_id uuid,
+  plant_id uuid not null,
   --
   -- table data
-  lang_code text,
-  common_name text
+  lang_code text not null,
+  common_name text not null
 );
 
 alter table plant_names

@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -31,10 +30,10 @@ insert into plant_names (
 `
 
 type CreatePlantNameParams struct {
-	CreatedBy  uuid.UUID      `json:"createdBy"`
-	PlantID    uuid.NullUUID  `json:"plantId"`
-	LangCode   sql.NullString `json:"langCode"`
-	CommonName sql.NullString `json:"commonName"`
+	CreatedBy  uuid.UUID `json:"createdBy"`
+	PlantID    uuid.UUID `json:"plantId"`
+	LangCode   string    `json:"langCode"`
+	CommonName string    `json:"commonName"`
 }
 
 func (q *Queries) CreatePlantName(ctx context.Context, arg CreatePlantNameParams) (PlantName, error) {

@@ -29,16 +29,16 @@ type Biome struct {
 }
 
 type PlantName struct {
-	ID         uuid.UUID      `json:"id"`
-	CreatedAt  time.Time      `json:"createdAt"`
-	UpdatedAt  time.Time      `json:"updatedAt"`
-	DeletedAt  sql.NullTime   `json:"deletedAt"`
-	CreatedBy  uuid.UUID      `json:"createdBy"`
-	UpdatedBy  uuid.UUID      `json:"updatedBy"`
-	DeletedBy  uuid.NullUUID  `json:"deletedBy"`
-	PlantID    uuid.NullUUID  `json:"plantId"`
-	LangCode   sql.NullString `json:"langCode"`
-	CommonName sql.NullString `json:"commonName"`
+	ID         uuid.UUID     `json:"id"`
+	CreatedAt  time.Time     `json:"createdAt"`
+	UpdatedAt  time.Time     `json:"updatedAt"`
+	DeletedAt  sql.NullTime  `json:"deletedAt"`
+	CreatedBy  uuid.UUID     `json:"createdBy"`
+	UpdatedBy  uuid.UUID     `json:"updatedBy"`
+	DeletedBy  uuid.NullUUID `json:"deletedBy"`
+	PlantID    uuid.UUID     `json:"plantId"`
+	LangCode   string        `json:"langCode"`
+	CommonName string        `json:"commonName"`
 }
 
 type PlantSpecy struct {
