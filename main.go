@@ -31,22 +31,19 @@ func main() {
 	mux.Handle("GET /api/v1/health", cfg.logMW(http.HandlerFunc(healthHandler)))
 
 	// super-admin endpoints
-	mux.Handle("POST /api/v1/super-admin/reset-users", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetUsersHandler))))
 	mux.Handle("POST /api/v1/super-admin/promote-user", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.promoteUserToAdminHandler))))
 	mux.Handle("POST /api/v1/super-admin/demote-user", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.demoteUserToAdminHandler))))
 
-	// reset plants
+	// reset endpoints utilized for development & testing
+	// requires super-admin token & for platform to be not production.
 	mux.Handle("POST /api/v1/super-admin/reset-plant-species", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetPlantSpeciesHandler))))
+	mux.Handle("POST /api/v1/super-admin/reset-users", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetUsersHandler))))
 
-	// admin plants endpoints
+	// admin plant species endpoints
 	mux.Handle("GET /api/v1/admin/plants", cfg.logMW(http.HandlerFunc(cfg.adminPlantsViewHandler)))
 	mux.Handle("POST /api/v1/admin/plants", cfg.logMW(http.HandlerFunc(cfg.adminAllInfoPlantsCreateHandler)))
 	mux.Handle("PUT /api/v1/admin/plants/{plant_species_id}", cfg.logMW(http.HandlerFunc(cfg.adminReplacePlantInfoHandler)))
 	mux.Handle("DELETE /api/v1/admin/plants/{plant_species_id}", cfg.logMW(http.HandlerFunc(cfg.adminDeletePlantHandler)))
-
-	// POST /admin/plants
-	// PUT /admin/plants/{plant species id}
-	// DELETE /admin/plants/{plant species id}
 
 	// POST /admin/plant-names
 	// GET /admin/plant-names
