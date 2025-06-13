@@ -16,7 +16,7 @@ import (
 // === request response types ===
 
 // create request for plant species
-type AdminPlantsCreateRequest struct {
+type AdminPlantSpeciesCreateRequest struct {
 	SpeciesName      string `json:"speciesName"`
 	HumanPoisonToxic *bool  `json:"humanPoisonToxic,omitempty"`
 	PetPoisonToxic   *bool  `json:"petPoisonToxic,omitempty"`
@@ -25,14 +25,14 @@ type AdminPlantsCreateRequest struct {
 }
 
 // only provides client and updatable information
-type AdminPlantsUpdateRequest struct {
+type AdminPlantSpeciesUpdateRequest struct {
 	HumanPoisonToxic *bool `json:"humanPoisonToxic,omitempty"`
 	PetPoisonToxic   *bool `json:"petPoisonToxic,omitempty"`
 	HumanEdible      *bool `json:"humanEdible,omitempty"`
 	PetEdible        *bool `json:"petEdible,omitempty"`
 }
 
-type AdminPlantsViewResponse struct {
+type AdminPlantSpeciesViewResponse struct {
 	ID               uuid.UUID `json:"id"`
 	CreatedAt        time.Time `json:"createdAt"`
 	UpdatedAt        time.Time `json:"updatedAt"`
@@ -48,7 +48,7 @@ type AdminPlantsViewResponse struct {
 // === handler functions ===
 
 // GET json
-func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *http.Request) {
 	requestUserID, err := cfg.authorizeNormalAdmin(r)
 	if err != nil {
 		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
@@ -84,7 +84,7 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	// NOTE: not the most effecient way to convert
-	plantSpeciesResponse := make([]AdminPlantsViewResponse, 0)
+	plantSpeciesResponse := make([]AdminPlantSpeciesViewResponse, 0)
 	for _, oldRecord := range plantSpeciesRecords {
 		// converting sql.NullBool to bool reference
 		var humanPT *bool
@@ -113,7 +113,7 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 			petE = nil
 		}
 
-		newResponse := AdminPlantsViewResponse{
+		newResponse := AdminPlantSpeciesViewResponse{
 			ID:               oldRecord.ID,
 			CreatedAt:        oldRecord.CreatedAt,
 			UpdatedAt:        oldRecord.UpdatedAt,
@@ -144,7 +144,7 @@ func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Requ
 }
 
 // POST /api/v1/admin/plants/{plant_species_id}
-func (cfg *apiConfig) adminReplacePlantInfoHandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter, r *http.Request) {
 	plantSpeciesIDStr := r.PathValue("plant_species_id")
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
@@ -161,7 +161,7 @@ func (cfg *apiConfig) adminReplacePlantInfoHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	var updateRequest AdminPlantsUpdateRequest
+	var updateRequest AdminPlantSpeciesUpdateRequest
 	err = json.NewDecoder(r.Body).Decode(&updateRequest)
 	if err != nil {
 		log.Printf("Could not decode body of request due to: %q", err)
@@ -222,7 +222,7 @@ func (cfg *apiConfig) adminReplacePlantInfoHandler(w http.ResponseWriter, r *htt
 }
 
 // DELETE /api/v1/admin/plants/{plant_species_id}
-func (cfg *apiConfig) adminDeletePlantHandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *http.Request) {
 	plantSpeciesIDStr := r.PathValue("plant_species_id")
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
@@ -260,7 +260,7 @@ func (cfg *apiConfig) adminDeletePlantHandler(w http.ResponseWriter, r *http.Req
 }
 
 // POST json to create plant
-func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *http.Request) {
 	// check header for admin access token
 	requestUserID, err := cfg.authorizeNormalAdmin(r)
 	if err != nil {
@@ -269,7 +269,7 @@ func (cfg *apiConfig) adminAllInfoPlantsCreateHandler(w http.ResponseWriter, r *
 		return
 	}
 
-	var createRequest AdminPlantsCreateRequest
+	var createRequest AdminPlantSpeciesCreateRequest
 	err = json.NewDecoder(r.Body).Decode(&createRequest)
 	if err != nil {
 		log.Printf("Could not decode body of request due to: %q", err)
