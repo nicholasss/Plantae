@@ -213,9 +213,9 @@ POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "plantID": {{1_plant_species_id}},
-  "langCode": {{1a_species_common_langcode}},
-  "commonName": {{1a_species_common_name}}
+  "plantID": "{{1_plant_species_id}}",
+  "langCode": "{{1a_species_common_langcode}}",
+  "commonName": "{{1a_species_common_name}}"
 }
 ```
 HTTP 204
@@ -224,9 +224,9 @@ POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "plantID": {{1_plant_species_id}},
-  "langCode": {{1b_species_common_langcode}},
-  "commonName": {{1b_species_common_name}}
+  "plantID": "{{1_plant_species_id}}",
+  "langCode": "{{1b_species_common_langcode}}",
+  "commonName": "{{1b_species_common_name}}"
 }
 ```
 HTTP 204
@@ -235,9 +235,9 @@ POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "plantID": {{1_plant_species_id}},
-  "langCode": {{1c_species_common_langcode}},
-  "commonName": {{1c_species_common_name}}
+  "plantID": "{{1_plant_species_id}}",
+  "langCode": "{{1c_species_common_langcode}}",
+  "commonName": "{{1c_species_common_name}}"
 }
 ```
 HTTP 204
@@ -246,9 +246,9 @@ POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "plantID": {{1_plant_species_id}},
-  "langCode": {{1d_species_common_langcode}},
-  "commonName": {{1d_species_common_name}}
+  "plantID": "{{1_plant_species_id}}",
+  "langCode": "{{1d_species_common_langcode}}",
+  "commonName": "{{1d_species_common_name}}"
 }
 ```
 HTTP 204
@@ -257,9 +257,9 @@ POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "plantID": {{1_plant_species_id}},
-  "langCode": {{1e_species_common_langcode}},
-  "commonName": {{1e_species_common_name}}
+  "plantID": "{{1_plant_species_id}}",
+  "langCode": "{{1e_species_common_langcode}}",
+  "commonName": "{{1e_species_common_name}}"
 }
 ```
 HTTP 204
@@ -268,9 +268,9 @@ POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "plantID": {{1_plant_species_id}},
-  "langCode": {{1f_species_common_langcode}},
-  "commonName": {{1f_species_common_name}}
+  "plantID": "{{1_plant_species_id}}",
+  "langCode": "{{1f_species_common_langcode}}",
+  "commonName": "{{1f_species_common_name}}"
 }
 ```
 HTTP 204
