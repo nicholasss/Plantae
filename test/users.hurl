@@ -12,6 +12,10 @@ POST http://localhost:8080/api/v1/super-admin/reset-users
 Authorization: SuperAdminToken {{super_admin_token}}
 HTTP 204
 
+# setup
+# ========================================================================
+# testing users
+
 #
 # Create user account
 POST http://localhost:8080/api/v1/auth/register

@@ -68,6 +68,10 @@ Content-Type: application/json; charset=UTF-8
 ```
 HTTP 204
 
+# setup
+# ========================================================================
+# testing plant species
+
 #
 # Test empty plant species table
 GET http://localhost:8080/api/v1/admin/plants
@@ -192,3 +196,7 @@ jsonpath "$[0].createdAt" isIsoDate
 jsonpath "$[0].updatedAt" isIsoDate
 jsonpath "$[0].createdBy" == "{{lisa_id}}"
 jsonpath "$[0].updatedBy" == "{{lisa_id}}"
+
+# testing plant species
+# ========================================================================
+# testing plant names
