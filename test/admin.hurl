@@ -207,4 +207,70 @@ jsonpath "$[0].updatedBy" == "{{lisa_id}}"
 # ========================================================================
 # testing plant names
 
-# 
+#
+# Adding common names in english & spanish for 2_plant_species
+POST http://localhost:8080/api/v1/admin/plant-names
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "plantID": {{1_plant_species_id}},
+  "lang_code": {{1a_species_common_langcode}},
+  "petEdible": {{1a_species_common_name}}
+}
+```
+HTTP 204
+
+POST http://localhost:8080/api/v1/admin/plant-names
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "plantID": {{1_plant_species_id}},
+  "lang_code": {{1b_species_common_langcode}},
+  "petEdible": {{1b_species_common_name}}
+}
+```
+HTTP 204
+
+POST http://localhost:8080/api/v1/admin/plant-names
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "plantID": {{1_plant_species_id}},
+  "lang_code": {{1c_species_common_langcode}},
+  "petEdible": {{1c_species_common_name}}
+}
+```
+HTTP 204
+
+POST http://localhost:8080/api/v1/admin/plant-names
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "plantID": {{1_plant_species_id}},
+  "lang_code": {{1d_species_common_langcode}},
+  "petEdible": {{1d_species_common_name}}
+}
+```
+HTTP 204
+
+POST http://localhost:8080/api/v1/admin/plant-names
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "plantID": {{1_plant_species_id}},
+  "lang_code": {{1e_species_common_langcode}},
+  "petEdible": {{1e_species_common_name}}
+}
+```
+HTTP 204
+
+POST http://localhost:8080/api/v1/admin/plant-names
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "plantID": {{1_plant_species_id}},
+  "lang_code": {{1f_species_common_langcode}},
+  "petEdible": {{1f_species_common_name}}
+}
+```
+HTTP 204

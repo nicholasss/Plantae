@@ -31,6 +31,30 @@ hurl \
   --variable 2_pet_poison_toxic=true \
   --variable 2_human_edible=false \
   --variable 2_pet_edible=false \
+  --variable 1a_species_common_name="Chinese money plant" \
+  --variable 1a_species_common_langcode="en" \
+  --variable 1b_species_common_name="UFO plant" \
+  --variable 1b_species_common_langcode="en" \
+  --variable 1c_species_common_name="lefse plant" \
+  --variable 1c_species_common_langcode="en" \
+  --variable 1d_species_common_name="planta china del dinero" \
+  --variable 1d_species_common_langcode="es" \
+  --variable 1e_species_common_name="planta lefse" \
+  --variable 1e_species_common_langcode="es" \
+  --variable 1f_species_common_name="planta ONVI" \
+  --variable 1f_species_common_langcode="es" \
+  --variable 2a_species_common_name="jade plant" \
+  --variable 2a_species_common_langcode="en" \
+  --variable 2b_species_common_name="lucky plant" \
+  --variable 2b_species_common_langcode="en" \
+  --variable 2c_species_common_name="money plant" \
+  --variable 2c_species_common_langcode="en" \
+  --variable 2d_species_common_name="árbol de jade" \
+  --variable 2d_species_common_langcode="es" \
+  --variable 2e_species_common_name="Monedita" \
+  --variable 2e_species_common_langcode="es" \
+  --variable 2f_species_common_name="árbol de las monedas" \
+  --variable 2f_species_common_langcode="es" \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/admin.hurl
