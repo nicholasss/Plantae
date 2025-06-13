@@ -53,28 +53,6 @@ type AuthRevokeRequest struct {
 
 // === User Handler Functions ===
 
-func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) {
-	// super-admin pre-authenticated before the handler is used
-	// ensure development platform
-	if platformProduction(cfg) {
-		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
-		respondWithError(nil, http.StatusForbidden, w)
-		return
-	}
-
-	// drop records from db
-	err := cfg.db.ResetUsersTable(r.Context())
-	if err != nil {
-		log.Printf("Unable to reset user table due to error: %q", err)
-		respondWithError(nil, http.StatusInternalServerError, w)
-		return
-	}
-
-	// reset successfully
-	log.Print("Reset users table successfully.")
-	w.WriteHeader(http.StatusNoContent)
-}
-
 func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) {
 	var createUserRequest CreateUserRequest
 	decoder := json.NewDecoder(r.Body)
@@ -329,73 +307,5 @@ func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) 
 
 	// token was revoked
 	log.Printf("User %q revoked their refresh token successfully.", revokeRecordUserID)
-	w.WriteHeader(http.StatusNoContent)
-}
-
-// promotes user to admin
-func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
-	var adminStatusRequest AdminStatusRequest
-	err := json.NewDecoder(r.Body).Decode(&adminStatusRequest)
-	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
-		return
-	}
-	defer r.Body.Close()
-
-	// validate that id is a users id
-	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusRequest.ID)
-	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
-		return
-	}
-
-	// check that user is not already admin
-	if userRecord.IsAdmin {
-		respondWithError(fmt.Errorf("user is already admin"), http.StatusBadRequest, w)
-		return
-	}
-
-	// make user admin
-	err = cfg.db.PromoteUserToAdminByID(r.Context(), adminStatusRequest.ID)
-	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
-		return
-	}
-
-	// successful
-	w.WriteHeader(http.StatusNoContent)
-}
-
-// demotes user from admin
-func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
-	var adminStatusRequest AdminStatusRequest
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&adminStatusRequest)
-	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
-		return
-	}
-
-	// validate that id is a users id
-	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusRequest.ID)
-	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
-		return
-	}
-
-	// check that user is not demoted was never promoted
-	if !userRecord.IsAdmin {
-		respondWithError(fmt.Errorf("user is already not-admin"), http.StatusBadRequest, w)
-		return
-	}
-
-	// demote user
-	err = cfg.db.DemoteUserFromAdminByID(r.Context(), adminStatusRequest.ID)
-	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
-		return
-	}
-
-	// successful
 	w.WriteHeader(http.StatusNoContent)
 }

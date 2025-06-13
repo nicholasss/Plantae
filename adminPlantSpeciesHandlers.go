@@ -65,28 +65,6 @@ func (cfg *apiConfig) authorizeNormalAdmin(r *http.Request) (uuid.UUID, error) {
 
 // === handler functions ===
 
-// POST no request?
-func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Request) {
-	// super-admin pre-authenticated before the handler is used
-	if platformProduction(cfg) {
-		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
-		respondWithError(nil, http.StatusForbidden, w)
-		return
-	}
-
-	// drop records from db
-	err := cfg.db.ResetPlantSpeciesTable(r.Context())
-	if err != nil {
-		log.Printf("Unable to reset plant_species table due to error: %q", err)
-		respondWithError(nil, http.StatusInternalServerError, w)
-		return
-	}
-
-	// reset successfully
-	log.Print("Reset plant_species table successfully.")
-	w.WriteHeader(http.StatusNoContent)
-}
-
 // GET json
 func (cfg *apiConfig) adminPlantsViewHandler(w http.ResponseWriter, r *http.Request) {
 	requestUserID, err := cfg.authorizeNormalAdmin(r)
