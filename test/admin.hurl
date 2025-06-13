@@ -80,14 +80,14 @@ HTTP 204
 
 #
 # Test empty plant species table
-GET http://localhost:8080/api/v1/admin/plants
+GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 #
 # Add a plant to the plant_species table
 # -- with all details
-POST http://localhost:8080/api/v1/admin/plants
+POST http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 ```json
 {
@@ -103,7 +103,7 @@ HTTP 204
 #
 # Requesting list of plant species in the table
 # -- with only one 
-GET http://localhost:8080/api/v1/admin/plants
+GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Captures]
@@ -123,7 +123,7 @@ jsonpath "$[0].petEdible" == {{1_pet_edible}}
 #
 # Add a second plant to the plant_species
 # -- with required details
-POST http://localhost:8080/api/v1/admin/plants
+POST http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 ```json
 {
@@ -135,7 +135,7 @@ HTTP 204
 #
 # Requesting list of plant species in the table
 # -- with two records in table
-GET http://localhost:8080/api/v1/admin/plants
+GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Captures]
@@ -150,7 +150,7 @@ jsonpath "$[0].updatedBy" == "{{lisa_id}}"
 
 #
 # Updating plant with new information
-PUT http://localhost:8080/api/v1/admin/plants/{{2_plant_species_id}}
+PUT http://localhost:8080/api/v1/admin/plant-species/{{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
 {
@@ -165,7 +165,7 @@ HTTP 204
 #
 # Requesting list of plant species in the table
 # -- with one record updated after it was created
-GET http://localhost:8080/api/v1/admin/plants
+GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Asserts]
@@ -182,13 +182,13 @@ jsonpath "$[0].updatedBy" == "{{lisa_id}}"
 
 #
 # Requesting deletion of a plants species record
-DELETE http://localhost:8080/api/v1/admin/plants/{{1_plant_species_id}}
+DELETE http://localhost:8080/api/v1/admin/plant-species/{{1_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 # 
 # Requesting list of plants after deletion of 1_plant_species
-GET http://localhost:8080/api/v1/admin/plants
+GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Asserts]
