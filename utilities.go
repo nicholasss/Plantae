@@ -8,7 +8,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"github.com/nicholasss/plantae/internal/auth"
 	"github.com/nicholasss/plantae/internal/database"
 )
 
@@ -41,6 +43,21 @@ func platformProduction(cfg *apiConfig) bool {
 // returns true if the platform is not production
 func platformNotProduction(cfg *apiConfig) bool {
 	return cfg.platform != "production"
+}
+
+// check header for admin access token
+func (cfg *apiConfig) authorizeNormalAdmin(r *http.Request) (uuid.UUID, error) {
+	requestAccessToken, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+
+	requestUserID, err := auth.ValidateJWT(requestAccessToken, cfg.JWTSecret)
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+
+	return requestUserID, nil
 }
 
 func loadApiConfig() (*apiConfig, error) {

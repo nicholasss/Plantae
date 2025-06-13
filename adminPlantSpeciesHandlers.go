@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nicholasss/plantae/internal/auth"
 	"github.com/nicholasss/plantae/internal/database"
 )
 
@@ -44,23 +43,6 @@ type AdminPlantsViewResponse struct {
 	PetPoisonToxic   *bool     `json:"petPoisonToxic,omitempty"`
 	HumanEdible      *bool     `json:"humanEdible,omitempty"`
 	PetEdible        *bool     `json:"petEdible,omitempty"`
-}
-
-// === helper functions ===
-
-// check header for admin access token
-func (cfg *apiConfig) authorizeNormalAdmin(r *http.Request) (uuid.UUID, error) {
-	requestAccessToken, err := auth.GetBearerToken(r.Header)
-	if err != nil {
-		return uuid.UUID{}, err
-	}
-
-	requestUserID, err := auth.ValidateJWT(requestAccessToken, cfg.JWTSecret)
-	if err != nil {
-		return uuid.UUID{}, err
-	}
-
-	return requestUserID, nil
 }
 
 // === handler functions ===
