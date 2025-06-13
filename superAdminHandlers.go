@@ -34,7 +34,26 @@ func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Re
 // === Plant Names Management Handlers ===
 
 // resets plant names table
-func (cfg *apiConfig) resetPlantNamesHandler(w http.ResponseWriter, r *http.Request) {}
+func (cfg *apiConfig) resetPlantNamesHandler(w http.ResponseWriter, r *http.Request) {
+	// super-admin pre-authenticated before the handler is used
+	// ensure development platform
+	if platformProduction(cfg) {
+		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
+		respondWithError(nil, http.StatusForbidden, w)
+		return
+	}
+
+	err := cfg.db.ResetPlantNamesTable(r.Context())
+	if err != nil {
+		log.Printf("Unable to reset user table due to error: %q", err)
+		respondWithError(nil, http.StatusInternalServerError, w)
+		return
+	}
+
+	// reset successfully
+	log.Print("Reset plant_names table successfully.")
+	w.WriteHeader(http.StatusNoContent)
+}
 
 // === User/Admin management Handlers ===
 

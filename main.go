@@ -36,6 +36,7 @@ func main() {
 
 	// reset endpoints utilized for development & testing
 	// requires super-admin token & for platform to be not production.
+	mux.Handle("POST /api/v1/super-admin/reset-plant-names", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetPlantNamesHandler))))
 	mux.Handle("POST /api/v1/super-admin/reset-plant-species", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetPlantSpeciesHandler))))
 	mux.Handle("POST /api/v1/super-admin/reset-users", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetUsersHandler))))
 
