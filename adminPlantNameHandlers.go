@@ -105,8 +105,8 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 		}
 
 		log.Printf("Admin %q successfully queried plant names without language code.", requestUserID)
-		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		w.Write(plantNameData)
 		return
 	}
@@ -135,7 +135,7 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 	}
 
 	log.Printf("Admin %q successfully queried plant names with language code %q.", requestUserID, requestedLangCode)
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	w.Write(plantNameData)
 }
