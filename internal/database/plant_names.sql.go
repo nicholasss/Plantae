@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -63,8 +62,6 @@ func (q *Queries) CreatePlantName(ctx context.Context, arg CreatePlantNameParams
 const getAllPlantNamesForLanguageOrderedByCreated = `-- name: GetAllPlantNamesForLanguageOrderedByCreated :many
 select 
 	id,
-  created_at, updated_at,
-	created_by, updated_by,
   plant_id,
   lang_code,
   common_name
@@ -76,10 +73,6 @@ from plant_names
 
 type GetAllPlantNamesForLanguageOrderedByCreatedRow struct {
 	ID         uuid.UUID `json:"id"`
-	CreatedAt  time.Time `json:"createdAt"`
-	UpdatedAt  time.Time `json:"updatedAt"`
-	CreatedBy  uuid.UUID `json:"createdBy"`
-	UpdatedBy  uuid.UUID `json:"updatedBy"`
 	PlantID    uuid.UUID `json:"plantId"`
 	LangCode   string    `json:"langCode"`
 	CommonName string    `json:"commonName"`
@@ -96,10 +89,6 @@ func (q *Queries) GetAllPlantNamesForLanguageOrderedByCreated(ctx context.Contex
 		var i GetAllPlantNamesForLanguageOrderedByCreatedRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.CreatedBy,
-			&i.UpdatedBy,
 			&i.PlantID,
 			&i.LangCode,
 			&i.CommonName,
@@ -120,8 +109,6 @@ func (q *Queries) GetAllPlantNamesForLanguageOrderedByCreated(ctx context.Contex
 const getAllPlantNamesOrderedByCreated = `-- name: GetAllPlantNamesOrderedByCreated :many
 select 
 	id,
-  created_at, updated_at,
-	created_by, updated_by,
   plant_id,
   lang_code,
   common_name
@@ -132,10 +119,6 @@ from plant_names
 
 type GetAllPlantNamesOrderedByCreatedRow struct {
 	ID         uuid.UUID `json:"id"`
-	CreatedAt  time.Time `json:"createdAt"`
-	UpdatedAt  time.Time `json:"updatedAt"`
-	CreatedBy  uuid.UUID `json:"createdBy"`
-	UpdatedBy  uuid.UUID `json:"updatedBy"`
 	PlantID    uuid.UUID `json:"plantId"`
 	LangCode   string    `json:"langCode"`
 	CommonName string    `json:"commonName"`
@@ -152,10 +135,6 @@ func (q *Queries) GetAllPlantNamesOrderedByCreated(ctx context.Context) ([]GetAl
 		var i GetAllPlantNamesOrderedByCreatedRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.CreatedBy,
-			&i.UpdatedBy,
 			&i.PlantID,
 			&i.LangCode,
 			&i.CommonName,

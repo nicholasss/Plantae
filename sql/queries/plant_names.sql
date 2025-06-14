@@ -28,8 +28,6 @@ where id = $1;
 -- name: GetAllPlantNamesOrderedByCreated :many
 select 
 	id,
-  created_at, updated_at,
-	created_by, updated_by,
   plant_id,
   lang_code,
   common_name
@@ -40,8 +38,6 @@ from plant_names
 -- name: GetAllPlantNamesForLanguageOrderedByCreated :many
 select 
 	id,
-  created_at, updated_at,
-	created_by, updated_by,
   plant_id,
   lang_code,
   common_name
