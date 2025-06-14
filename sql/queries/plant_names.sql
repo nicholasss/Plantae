@@ -24,3 +24,28 @@ update plant_names
   deleted_at = now(),
   deleted_by = $2
 where id = $1;
+
+-- name: GetAllPlantNamesOrderedByCreated :many
+select 
+	id,
+  created_at, updated_at,
+	created_by, updated_by,
+  plant_id,
+  lang_code,
+  common_name
+from plant_names
+  where deleted_at is null
+  order by created_at desc;
+
+-- name: GetAllPlantNamesForLanguageOrderedByCreated :many
+select 
+	id,
+  created_at, updated_at,
+	created_by, updated_by,
+  plant_id,
+  lang_code,
+  common_name
+from plant_names
+  where lang_code ilike $1
+  and deleted_at is null
+  order by created_at desc;

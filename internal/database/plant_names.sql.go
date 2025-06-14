@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -57,6 +58,119 @@ func (q *Queries) CreatePlantName(ctx context.Context, arg CreatePlantNameParams
 		&i.CommonName,
 	)
 	return i, err
+}
+
+const getAllPlantNamesForLanguageOrderedByCreated = `-- name: GetAllPlantNamesForLanguageOrderedByCreated :many
+select 
+	id,
+  created_at, updated_at,
+	created_by, updated_by,
+  plant_id,
+  lang_code,
+  common_name
+from plant_names
+  where lang_code ilike $1
+  and deleted_at is null
+  order by created_at desc
+`
+
+type GetAllPlantNamesForLanguageOrderedByCreatedRow struct {
+	ID         uuid.UUID `json:"id"`
+	CreatedAt  time.Time `json:"createdAt"`
+	UpdatedAt  time.Time `json:"updatedAt"`
+	CreatedBy  uuid.UUID `json:"createdBy"`
+	UpdatedBy  uuid.UUID `json:"updatedBy"`
+	PlantID    uuid.UUID `json:"plantId"`
+	LangCode   string    `json:"langCode"`
+	CommonName string    `json:"commonName"`
+}
+
+func (q *Queries) GetAllPlantNamesForLanguageOrderedByCreated(ctx context.Context, langCode string) ([]GetAllPlantNamesForLanguageOrderedByCreatedRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllPlantNamesForLanguageOrderedByCreated, langCode)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllPlantNamesForLanguageOrderedByCreatedRow
+	for rows.Next() {
+		var i GetAllPlantNamesForLanguageOrderedByCreatedRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.CreatedBy,
+			&i.UpdatedBy,
+			&i.PlantID,
+			&i.LangCode,
+			&i.CommonName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAllPlantNamesOrderedByCreated = `-- name: GetAllPlantNamesOrderedByCreated :many
+select 
+	id,
+  created_at, updated_at,
+	created_by, updated_by,
+  plant_id,
+  lang_code,
+  common_name
+from plant_names
+  where deleted_at is null
+  order by created_at desc
+`
+
+type GetAllPlantNamesOrderedByCreatedRow struct {
+	ID         uuid.UUID `json:"id"`
+	CreatedAt  time.Time `json:"createdAt"`
+	UpdatedAt  time.Time `json:"updatedAt"`
+	CreatedBy  uuid.UUID `json:"createdBy"`
+	UpdatedBy  uuid.UUID `json:"updatedBy"`
+	PlantID    uuid.UUID `json:"plantId"`
+	LangCode   string    `json:"langCode"`
+	CommonName string    `json:"commonName"`
+}
+
+func (q *Queries) GetAllPlantNamesOrderedByCreated(ctx context.Context) ([]GetAllPlantNamesOrderedByCreatedRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllPlantNamesOrderedByCreated)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllPlantNamesOrderedByCreatedRow
+	for rows.Next() {
+		var i GetAllPlantNamesOrderedByCreatedRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.CreatedBy,
+			&i.UpdatedBy,
+			&i.PlantID,
+			&i.LangCode,
+			&i.CommonName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const markPlantNameAsDeletedByID = `-- name: MarkPlantNameAsDeletedByID :exec
