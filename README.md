@@ -32,3 +32,4 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [ ] Fix respondWithError utility function to not reveal the error value to client
 - [ ] Replace all fmt.Errorf with errors.New where formatting or wrapping is not needed
 - [ ] Formalize JSON, SQL, and scripting variables to a single style. Either camelCase or snake_case.
+- [ ] Add 'application/json' Content-Type assert in all of the tests and fix where needed
