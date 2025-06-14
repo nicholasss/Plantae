@@ -143,9 +143,9 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 	w.Write(plantSpeciesData)
 }
 
-// POST /api/v1/admin/plants/{plant-species-id}
+// POST /api/v1/admin/plants/{plantSpeciesID}
 func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter, r *http.Request) {
-	plantSpeciesIDStr := r.PathValue("plant-species-id")
+	plantSpeciesIDStr := r.PathValue("plantSpeciesID")
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant species id from url path due to: %q", err)
@@ -221,9 +221,9 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// DELETE /api/v1/admin/plants/{plant-species-id}
+// DELETE /api/v1/admin/plants/{plantSpeciesID}
 func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *http.Request) {
-	plantSpeciesIDStr := r.PathValue("plant-species-id")
+	plantSpeciesIDStr := r.PathValue("plantSpeciesID")
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant species id from url path due to: %q", err)

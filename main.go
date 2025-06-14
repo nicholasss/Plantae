@@ -43,14 +43,14 @@ func main() {
 	// admin plant species endpoints
 	mux.Handle("GET /api/v1/admin/plant-species", cfg.logMW(http.HandlerFunc(cfg.adminPlantSpeciesViewHandler)))
 	mux.Handle("POST /api/v1/admin/plant-species", cfg.logMW(http.HandlerFunc(cfg.adminPlantSpeciesCreateHandler)))
-	mux.Handle("PUT /api/v1/admin/plant-species/{plant-species-id}", cfg.logMW(http.HandlerFunc(cfg.adminReplacePlantSpeciesInfoHandler)))
-	mux.Handle("DELETE /api/v1/admin/plant-species/{plant-species-id}", cfg.logMW(http.HandlerFunc(cfg.adminDeletePlantSpeciesHandler)))
+	mux.Handle("PUT /api/v1/admin/plant-species/{plantSpeciesID}", cfg.logMW(http.HandlerFunc(cfg.adminReplacePlantSpeciesInfoHandler)))
+	mux.Handle("DELETE /api/v1/admin/plant-species/{plantSpeciesID}", cfg.logMW(http.HandlerFunc(cfg.adminDeletePlantSpeciesHandler)))
 
 	// admin plant names endpoints
 	mux.Handle("POST /api/v1/admin/plant-names", cfg.logMW(http.HandlerFunc(cfg.adminPlantNamesCreateHandler)))
 	mux.Handle("GET /api/v1/admin/plant-names", cfg.logMW(http.HandlerFunc(cfg.adminPlantNamesViewHandler)))
 	// mux.Handle("PUT /api/v1/admin/plant-names/{plant-name-id}")
-	mux.Handle("DELETE /api/v1/admin/plant-names/{plant-name-id}")
+	mux.Handle("DELETE /api/v1/admin/plant-names/{plantNameID}", cfg.logMW(http.HandlerFunc(cfg.adminPlantNamesDeleteHandler)))
 	// PUT /admin/plant-names/{plant name id}
 	// DELETE /admin/plant-names/{plant name id}
 
