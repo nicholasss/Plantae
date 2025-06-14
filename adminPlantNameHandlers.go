@@ -71,3 +71,71 @@ func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *htt
 	log.Printf("Admin %q created plant name record %q for plant id %q", requestUserID, createRequest.CommonName, createRequest.PlantID)
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.Request) {
+	// check header for admin access token
+	requestUserID, err := cfg.authorizeNormalAdmin(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	requestedLangCode := r.URL.Query().Get("lang")
+	if requestedLangCode == "" {
+		log.Print("Language filter not requested in URL query path.")
+	} else {
+		log.Printf("Language filter of %q requested in URL query path.", requestedLangCode)
+	}
+
+	// perform query without language filter
+	if requestedLangCode == "" {
+		plantNameRecords, err := cfg.db.GetAllPlantNamesOrderedByCreated(r.Context())
+		if err != nil {
+			log.Printf("Could not get plant name records without language code due to %q.", err)
+			respondWithError(err, http.StatusInternalServerError, w)
+			return
+		}
+
+		plantNameData, err := json.Marshal(plantNameRecords)
+		if err != nil {
+			log.Printf("Could not marshall plant name records due to %q.", err)
+			respondWithError(err, http.StatusInternalServerError, w)
+			return
+		}
+
+		log.Printf("Admin %q successfully queried plant names without language code.", requestUserID)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(plantNameData)
+		return
+	}
+
+	// perform query with language filter, checking code first
+	requestedLangName, ok := LangCodes[requestedLangCode]
+	if !ok {
+		log.Printf("Unable to find language code of %q from query.", requestedLangCode)
+		respondWithError(errors.New("language code requested does not exist"), http.StatusBadRequest, w)
+		return
+	}
+
+	log.Printf("Language %q requested via LangCode of %q.", requestedLangName, requestedLangCode)
+	plantNameRecords, err := cfg.db.GetAllPlantNamesForLanguageOrderedByCreated(r.Context(), requestedLangCode)
+	if err != nil {
+		log.Printf("Could not get plant name records with language code %q due to %q.", requestedLangCode, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	plantNameData, err := json.Marshal(plantNameRecords)
+	if err != nil {
+		log.Printf("Could not marshall plant name records due to %q.", err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q successfully queried plant names with language code %q.", requestUserID, requestedLangCode)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(plantNameData)
+}

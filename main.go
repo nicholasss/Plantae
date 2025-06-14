@@ -48,6 +48,7 @@ func main() {
 
 	// admin plant names endpoints
 	mux.Handle("POST /api/v1/admin/plant-names", cfg.logMW(http.HandlerFunc(cfg.adminPlantNamesCreateHandler)))
+	mux.Handle("GET /api/v1/admin/plant-names", cfg.logMW(http.HandlerFunc(cfg.adminPlantNamesViewHandler)))
 	// X POST /admin/plant-names
 	// GET /admin/plant-names
 	// PUT /admin/plant-names/{plant name id}
