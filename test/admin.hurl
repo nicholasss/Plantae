@@ -281,6 +281,7 @@ GET http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Asserts]
+header "Content-Type" == "application/json"
 jsonpath "$" count == 6
 
 #
@@ -289,7 +290,21 @@ GET http://localhost:8080/api/v1/admin/plant-names?lang=en
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Asserts]
+header "Content-Type" == "application/json"
 jsonpath "$" count == 3
+jsonpath "$[0].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[0].commonName" == "{{1c_species_common_name}}"
+jsonpath "$[0].langCode" == "en"
+jsonpath "$[1].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[1].commonName" == "{{1b_species_common_name}}"
+jsonpath "$[1].langCode" == "en"
+jsonpath "$[2].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[2].commonName" == "{{1a_species_common_name}}"
+jsonpath "$[2].langCode" == "en"
+[Captures]
+1c_species_common_name_id: jsonpath "$[0].id"
+1b_species_common_name_id: jsonpath "$[1].id"
+1a_species_common_name_id: jsonpath "$[2].id"
 
 #
 # Get all common names of plants, in spanish
@@ -297,4 +312,67 @@ GET http://localhost:8080/api/v1/admin/plant-names?lang=es
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Asserts]
+header "Content-Type" == "application/json"
 jsonpath "$" count == 3
+jsonpath "$[0].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[0].commonName" == "{{1f_species_common_name}}"
+jsonpath "$[0].langCode" == "es"
+jsonpath "$[1].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[1].commonName" == "{{1e_species_common_name}}"
+jsonpath "$[1].langCode" == "es"
+jsonpath "$[2].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[2].commonName" == "{{1d_species_common_name}}"
+jsonpath "$[2].langCode" == "es"
+[Captures]
+1f_species_common_name_id: jsonpath "$[0].id"
+1e_species_common_name_id: jsonpath "$[1].id"
+1d_species_common_name_id: jsonpath "$[2].id"
+
+#
+# Mark the english names as deleted
+DELETE http://localhost:8080/api/v1/admin/plant-names/{{1a_species_common_name_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+DELETE http://localhost:8080/api/v1/admin/plant-names/{{1b_species_common_name_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+DELETE http://localhost:8080/api/v1/admin/plant-names/{{1c_species_common_name_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# Get all common names of plants, after deleting the english ones
+GET http://localhost:8080/api/v1/admin/plant-names
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+header "Content-Type" == "application/json"
+jsonpath "$" count == 3
+jsonpath "$[0].langCode" == "es"
+jsonpath "$[1].langCode" == "es"
+jsonpath "$[2].langCode" == "es"
+
+#
+# Mark the spanish names as deleted
+DELETE http://localhost:8080/api/v1/admin/plant-names/{{1d_species_common_name_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+DELETE http://localhost:8080/api/v1/admin/plant-names/{{1e_species_common_name_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+DELETE http://localhost:8080/api/v1/admin/plant-names/{{1f_species_common_name_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# Get all common names of plants, after deleting the spanish ones
+GET http://localhost:8080/api/v1/admin/plant-names
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+header "Content-Type" == "application/json"
+jsonpath "$" == null
