@@ -284,14 +284,14 @@ jsonpath "$" count == 6
 
 #
 # Get all common names of plants, in english
-GET http://localhost:8080/api/v1/admin/plant-names
+GET http://localhost:8080/api/v1/admin/plant-names?lang=en
 Authorization: Bearer {{lisa_token}}
 [Asserts]
 jsonpath "$" count == 3
 
 #
 # Get all common names of plants, in spanish
-GET http://localhost:8080/api/v1/admin/plant-names
+GET http://localhost:8080/api/v1/admin/plant-names?lang=es
 Authorization: Bearer {{lisa_token}}
 [Asserts]
 jsonpath "$" count == 3
