@@ -10,7 +10,7 @@ create table plant_species (
   deleted_by uuid,
   --
   -- foreign keys
-  biome_id uuid,
+  environment_id uuid,
   --
   -- table data
 	species_name text not null unique,

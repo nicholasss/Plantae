@@ -1,5 +1,5 @@
 -- +goose Up
-create table biomes (
+create table environment (
   id uuid primary key,
   created_at timestamp with time zone not null,
   updated_at timestamp with time zone not null,
@@ -20,12 +20,12 @@ create table biomes (
 );
 
 alter table plant_species
-	add constraint fk_biome
-	foreign key (biome_id)
-	references biomes(id);
+	add constraint fk_environment
+	foreign key (environment_id)
+	references environment(id);
 
 -- +goose Down
 alter table plant_species
-	drop constraint fk_biome;
+	drop constraint fk_environment;
 
-drop table biomes;
+drop table environment;
