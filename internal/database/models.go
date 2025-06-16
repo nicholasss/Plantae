@@ -55,22 +55,22 @@ type PlantSpecy struct {
 }
 
 type PlantType struct {
-	ID                    uuid.UUID       `json:"id"`
-	CreatedAt             time.Time       `json:"createdAt"`
-	UpdatedAt             time.Time       `json:"updatedAt"`
-	DeletedAt             sql.NullTime    `json:"deletedAt"`
-	CreatedBy             uuid.UUID       `json:"createdBy"`
-	UpdatedBy             uuid.UUID       `json:"updatedBy"`
-	DeletedBy             uuid.NullUUID   `json:"deletedBy"`
-	Name                  string          `json:"name"`
-	Description           string          `json:"description"`
-	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
-	MinTemperatureCelsius sql.NullFloat64 `json:"minTemperatureCelsius"`
-	MaxHumidityPercent    sql.NullFloat64 `json:"maxHumidityPercent"`
-	MinHumidityPercent    sql.NullFloat64 `json:"minHumidityPercent"`
-	SoilOrganicMix        sql.NullString  `json:"soilOrganicMix"`
-	SoilGritMix           sql.NullString  `json:"soilGritMix"`
-	SoilDrainageMix       sql.NullString  `json:"soilDrainageMix"`
+	ID                    uuid.UUID      `json:"id"`
+	CreatedAt             time.Time      `json:"createdAt"`
+	UpdatedAt             time.Time      `json:"updatedAt"`
+	DeletedAt             sql.NullTime   `json:"deletedAt"`
+	CreatedBy             uuid.UUID      `json:"createdBy"`
+	UpdatedBy             uuid.UUID      `json:"updatedBy"`
+	DeletedBy             uuid.NullUUID  `json:"deletedBy"`
+	Name                  string         `json:"name"`
+	Description           string         `json:"description"`
+	MaxTemperatureCelsius sql.NullInt32  `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius sql.NullInt32  `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    sql.NullInt32  `json:"maxHumidityPercent"`
+	MinHumidityPercent    sql.NullInt32  `json:"minHumidityPercent"`
+	SoilOrganicMix        sql.NullString `json:"soilOrganicMix"`
+	SoilGritMix           sql.NullString `json:"soilGritMix"`
+	SoilDrainageMix       sql.NullString `json:"soilDrainageMix"`
 }
 
 type RefreshToken struct {

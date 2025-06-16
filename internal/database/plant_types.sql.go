@@ -96,20 +96,20 @@ from plant_types
 `
 
 type GetAllPlantTypesOrderedByCreatedRow struct {
-	ID                    uuid.UUID       `json:"id"`
-	CreatedAt             time.Time       `json:"createdAt"`
-	UpdatedAt             time.Time       `json:"updatedAt"`
-	CreatedBy             uuid.UUID       `json:"createdBy"`
-	UpdatedBy             uuid.UUID       `json:"updatedBy"`
-	Name                  string          `json:"name"`
-	Description           string          `json:"description"`
-	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
-	MinTemperatureCelsius sql.NullFloat64 `json:"minTemperatureCelsius"`
-	MaxHumidityPercent    sql.NullFloat64 `json:"maxHumidityPercent"`
-	MinHumidityPercent    sql.NullFloat64 `json:"minHumidityPercent"`
-	SoilOrganicMix        sql.NullString  `json:"soilOrganicMix"`
-	SoilGritMix           sql.NullString  `json:"soilGritMix"`
-	SoilDrainageMix       sql.NullString  `json:"soilDrainageMix"`
+	ID                    uuid.UUID      `json:"id"`
+	CreatedAt             time.Time      `json:"createdAt"`
+	UpdatedAt             time.Time      `json:"updatedAt"`
+	CreatedBy             uuid.UUID      `json:"createdBy"`
+	UpdatedBy             uuid.UUID      `json:"updatedBy"`
+	Name                  string         `json:"name"`
+	Description           string         `json:"description"`
+	MaxTemperatureCelsius sql.NullInt32  `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius sql.NullInt32  `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    sql.NullInt32  `json:"maxHumidityPercent"`
+	MinHumidityPercent    sql.NullInt32  `json:"minHumidityPercent"`
+	SoilOrganicMix        sql.NullString `json:"soilOrganicMix"`
+	SoilGritMix           sql.NullString `json:"soilGritMix"`
+	SoilDrainageMix       sql.NullString `json:"soilDrainageMix"`
 }
 
 func (q *Queries) GetAllPlantTypesOrderedByCreated(ctx context.Context) ([]GetAllPlantTypesOrderedByCreatedRow, error) {

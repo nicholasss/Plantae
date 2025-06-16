@@ -13,10 +13,10 @@ create table plant_types (
 	name text not null unique,
   description text not null,
   -- environment description
-	max_temperature_celsius float,
-	min_temperature_celsius float,
-	max_humidity_percent float,
-	min_humidity_percent float,
+	max_temperature_celsius integer,
+	min_temperature_celsius integer,
+	max_humidity_percent integer,
+	min_humidity_percent integer,
   -- soil description
   soil_organic_mix text,
   soil_grit_mix text,
