@@ -38,6 +38,8 @@ type AdminPlantTypeViewResponse struct {
 	UpdatedAt             time.Time `json:"updatedAt"`
 	CreatedBy             uuid.UUID `json:"createdBy"`
 	UpdatedBy             uuid.UUID `json:"updatedBy"`
+	Name                  string    `json:"name"`
+	Description           string    `json:"description"`
 	MaxTemperatureCelsius *float64  `json:"maxTemperatureCelsius,omitempty"`
 	MinTemperatureCelsius *float64  `json:"minTemperatureCelsius,omitempty"`
 	MaxHumidityPercent    *float64  `json:"maxHumidityPercent,omitempty"`
@@ -220,6 +222,8 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 			UpdatedAt:             oldRecord.UpdatedAt,
 			CreatedBy:             oldRecord.CreatedBy,
 			UpdatedBy:             oldRecord.UpdatedBy,
+			Name:                  oldRecord.Name,
+			Description:           oldRecord.Description,
 			MaxTemperatureCelsius: MaxTemperatureCelsius,
 			MinTemperatureCelsius: MinTemperatureCelsius,
 			MaxHumidityPercent:    MaxHumidityPercent,
