@@ -394,3 +394,83 @@ HTTP 200
 [Asserts]
 header "Content-Type" == "application/json"
 jsonpath "$" == null
+
+# testing plant names
+# ========================================================================
+# testing plant types
+
+#
+# adding plant type 1 with minimal information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{1_plant_type_name}}",
+  "description"`: "{{1_plant_type_description}}",
+  "maxTemperatureCelsius": "{{1_plant_type_maxtc}}",
+  "minTemperatureCelsius": "{{1_plant_type_mintc}}",
+  "maxHumidityPercent": "{{1_plant_type_maxph}}",
+  "minHumidityPercent": "{{1_plant_type_minph}}",
+  "soilOrganicMix": "{{1_plant_type_soilom}}",
+  "soilGritMix": "{{1_plant_type_soilgm}}",
+  "soilDrainageMix": "{{1_plant_type_soildm}}"
+}
+```
+HTTP 204
+
+#
+# adding plant type 2 with minimal information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{2_plant_type_name}}",
+  "description"`: "{{2_plant_type_description}}",
+  "maxTemperatureCelsius": "{{2_plant_type_maxtc}}",
+  "minTemperatureCelsius": "{{2_plant_type_mintc}}",
+  "maxHumidityPercent": "{{2_plant_type_maxph}}",
+  "minHumidityPercent": "{{2_plant_type_minph}}",
+  "soilOrganicMix": "{{2_plant_type_soilom}}",
+  "soilGritMix": "{{2_plant_type_soilgm}}",
+  "soilDrainageMix": "{{2_plant_type_soildm}}"
+}
+```
+HTTP 204
+
+#
+# adding plant type 3 with minimal information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{3_plant_type_name}}",
+  "description"`: "{{3_plant_type_description}}",
+  "maxTemperatureCelsius": "{{3_plant_type_maxtc}}",
+  "minTemperatureCelsius": "{{3_plant_type_mintc}}",
+  "maxHumidityPercent": "{{3_plant_type_maxph}}",
+  "minHumidityPercent": "{{3_plant_type_minph}}",
+  "soilOrganicMix": "{{3_plant_type_soilom}}",
+  "soilGritMix": "{{3_plant_type_soilgm}}",
+  "soilDrainageMix": "{{3_plant_type_soildm}}"
+}
+```
+HTTP 204
+
+#
+# adding plant type 4 with minimal information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{4_plant_type_name}}",
+  "description"`: "{{4_plant_type_description}}",
+  "maxTemperatureCelsius": "{{4_plant_type_maxtc}}",
+  "minTemperatureCelsius": "{{4_plant_type_mintc}}",
+  "maxHumidityPercent": "{{4_plant_type_maxph}}",
+  "minHumidityPercent": "{{4_plant_type_minph}}",
+  "soilOrganicMix": "{{4_plant_type_soilom}}",
+  "soilGritMix": "{{4_plant_type_soilgm}}",
+  "soilDrainageMix": "{{4_plant_type_soildm}}"
+}
+```
+HTTP 204
