@@ -25,6 +25,24 @@ Authorization: SuperAdminToken {{super_admin_token}}
 HTTP 204
 
 #
+# Reset plant_types table
+POST http://localhost:8080/api/v1/super-admin/reset-plant-types
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
+# Reset water_needs table
+POST http://localhost:8080/api/v1/super-admin/reset-water
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
+# Reset light_needs table
+POST http://localhost:8080/api/v1/super-admin/reset-light
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
 # Create user account
 POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json; charset=UTF-8
