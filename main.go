@@ -63,7 +63,7 @@ func main() {
 
 	// admin plant type endpoints
 	mux.Handle("POST /api/v1/admin/plant-types", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypesCreateHandler)))
-	// GET /admin/plant-type
+	mux.Handle("GET /api/v1/admin/plant-types", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypesViewHandler)))
 	// PUT /admin/plant-type/{plant type id}
 	// DELETE /admin/plant-type/{plant type id}
 

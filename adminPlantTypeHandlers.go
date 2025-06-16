@@ -6,7 +6,9 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/nicholasss/plantae/internal/database"
 )
 
@@ -28,6 +30,21 @@ type AdminPlantTypeCreateRequest struct {
 	SoilOrganicMix        *string  `json:"soilOrganicMix"`
 	SoilGritMix           *string  `json:"soilGritMix"`
 	SoilDrainageMix       *string  `json:"soilDrainageMix"`
+}
+
+type AdminPlantTypeViewResponse struct {
+	ID                    uuid.UUID `json:"id"`
+	CreatedAt             time.Time `json:"createdAt"`
+	UpdatedAt             time.Time `json:"updatedAt"`
+	CreatedBy             uuid.UUID `json:"createdBy"`
+	UpdatedBy             uuid.UUID `json:"updatedBy"`
+	MaxTemperatureCelsius *float64  `json:"maxTemperatureCelsius,omitempty"`
+	MinTemperatureCelsius *float64  `json:"minTemperatureCelsius,omitempty"`
+	MaxHumidityPercent    *float64  `json:"maxHumidityPercent,omitempty"`
+	MinHumidityPercent    *float64  `json:"minHumidityPercent,omitempty"`
+	SoilOrganicMix        *string   `json:"soilOrganicMix,omitempty"`
+	SoilGritMix           *string   `json:"soilGritMix,omitempty"`
+	SoilDrainageMix       *string   `json:"soilDrainageMix,omitempty"`
 }
 
 // === handler functions ===
@@ -139,4 +156,92 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 	// created successfully
 	log.Printf("Admin %q created plant type record successfully.", requestUserID)
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// GET /admin/plant-type
+// view list of plant types
+func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.Request) {
+	// check header for admin access token
+	requestUserID, err := cfg.authorizeNormalAdmin(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	plantTypeRecords, err := cfg.db.GetAllPlantTypesOrderedByCreated(r.Context())
+	if err != nil {
+		log.Printf("Could not get plant type records due to: %q", err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	if len(plantTypeRecords) <= 0 {
+		log.Print("Admin listed empty plant types list successfully.")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	plantTypesResponse := make([]AdminPlantTypeViewResponse, 0)
+	for _, oldRecord := range plantTypeRecords {
+		var MaxTemperatureCelsius *float64
+		var MinTemperatureCelsius *float64
+		var MaxHumidityPercent *float64
+		var MinHumidityPercent *float64
+		var SoilOrganicMix *string
+		var SoilGritMix *string
+		var SoilDrainageMix *string
+
+		if oldRecord.MaxTemperatureCelsius.Valid {
+			MaxTemperatureCelsius = &oldRecord.MaxTemperatureCelsius.Float64
+		}
+		if oldRecord.MinTemperatureCelsius.Valid {
+			MinTemperatureCelsius = &oldRecord.MinTemperatureCelsius.Float64
+		}
+		if oldRecord.MaxHumidityPercent.Valid {
+			MaxHumidityPercent = &oldRecord.MaxHumidityPercent.Float64
+		}
+		if oldRecord.MinHumidityPercent.Valid {
+			MinHumidityPercent = &oldRecord.MinHumidityPercent.Float64
+		}
+		if oldRecord.SoilOrganicMix.Valid {
+			SoilOrganicMix = &oldRecord.SoilOrganicMix.String
+		}
+		if oldRecord.SoilGritMix.Valid {
+			SoilGritMix = &oldRecord.SoilGritMix.String
+		}
+		if oldRecord.SoilDrainageMix.Valid {
+			SoilDrainageMix = &oldRecord.SoilDrainageMix.String
+		}
+
+		newRecord := AdminPlantTypeViewResponse{
+			ID:                    oldRecord.ID,
+			CreatedAt:             oldRecord.CreatedAt,
+			UpdatedAt:             oldRecord.UpdatedAt,
+			CreatedBy:             oldRecord.CreatedBy,
+			UpdatedBy:             oldRecord.UpdatedBy,
+			MaxTemperatureCelsius: MaxTemperatureCelsius,
+			MinTemperatureCelsius: MinTemperatureCelsius,
+			MaxHumidityPercent:    MaxHumidityPercent,
+			MinHumidityPercent:    MinHumidityPercent,
+			SoilOrganicMix:        SoilOrganicMix,
+			SoilGritMix:           SoilGritMix,
+			SoilDrainageMix:       SoilDrainageMix,
+		}
+
+		plantTypesResponse = append(plantTypesResponse, newRecord)
+	}
+
+	plantTypesData, err := json.Marshal(plantTypesResponse)
+	if err != nil {
+		log.Printf("Could not marshal records to json due to: %q", err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q isted plant types list successfully.", requestUserID)
+	log.Printf("DEBUG: list of plants types: %s", string(plantTypesData))
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(plantTypesData)
 }
