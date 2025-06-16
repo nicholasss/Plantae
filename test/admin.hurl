@@ -406,7 +406,67 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "name": "{{1_plant_type_name}}",
-  "description": "{{1_plant_type_description}}",
+  "description": "{{1_plant_type_description}}"
+}
+```
+HTTP 204
+
+#
+# adding plant type 2 with minimal information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{2_plant_type_name}}",
+  "description": "{{2_plant_type_description}}"
+}
+```
+HTTP 204
+
+#
+# adding plant type 3 with minimal information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{3_plant_type_name}}",
+  "description": "{{3_plant_type_description}}"
+}
+```
+HTTP 204
+
+#
+# adding plant type 4 with minimal information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{4_plant_type_name}}",
+  "description": "{{4_plant_type_description}}"
+}
+```
+HTTP 204
+
+#
+# listing plant types and capturing ids
+GET http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+header "Content-Type" == "application/json"
+jsonpath "$" count == 4
+[Captures]
+1_plant_type_id: jsonpath "$[0].id"
+2_plant_type_id: jsonpath "$[1].id"
+3_plant_type_id: jsonpath "$[2].id"
+4_plant_type_id: jsonpath "$[3].id"
+
+#
+# adding more information to plant 1
+PUT http://localhost:8080/api/v1/admin/plant-types/{{1_plant_type_id}}
+Authorization: Bearer {{lisa_token}}
+```json
+{
   "maxTemperatureCelsius": {{1_plant_type_maxtc}},
   "minTemperatureCelsius": {{1_plant_type_mintc}},
   "maxHumidityPercent": {{1_plant_type_maxph}},
@@ -419,13 +479,11 @@ Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 #
-# adding plant type 2 with minimal information
-POST http://localhost:8080/api/v1/admin/plant-types
+# adding more information to plant 2
+PUT http://localhost:8080/api/v1/admin/plant-types/{{2_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "name": "{{2_plant_type_name}}",
-  "description": "{{2_plant_type_description}}",
   "maxTemperatureCelsius": {{2_plant_type_maxtc}},
   "minTemperatureCelsius": {{2_plant_type_mintc}},
   "maxHumidityPercent": {{2_plant_type_maxph}},
@@ -438,13 +496,11 @@ Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 #
-# adding plant type 3 with minimal information
-POST http://localhost:8080/api/v1/admin/plant-types
+# adding more information to plant 3
+PUT http://localhost:8080/api/v1/admin/plant-types/{{3_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "name": "{{3_plant_type_name}}",
-  "description": "{{3_plant_type_description}}",
   "maxTemperatureCelsius": {{3_plant_type_maxtc}},
   "minTemperatureCelsius": {{3_plant_type_mintc}},
   "maxHumidityPercent": {{3_plant_type_maxph}},
@@ -457,13 +513,11 @@ Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 #
-# adding plant type 4 with minimal information
-POST http://localhost:8080/api/v1/admin/plant-types
+# adding more information to plant 4
+PUT http://localhost:8080/api/v1/admin/plant-types/{{4_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
 {
-  "name": "{{4_plant_type_name}}",
-  "description": "{{4_plant_type_description}}",
   "maxTemperatureCelsius": {{4_plant_type_maxtc}},
   "minTemperatureCelsius": {{4_plant_type_mintc}},
   "maxHumidityPercent": {{4_plant_type_maxph}},
