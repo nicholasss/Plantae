@@ -7,13 +7,85 @@ import (
 	"net/http"
 )
 
+// === Plant Types Management Handlers ===
+
+// reset plant types table
+func (cfg *apiConfig) resetPlantTypesHandler(w http.ResponseWriter, r *http.Request) {
+	// super-admin pre-authenticated before the handler is used
+	if platformProduction(cfg) {
+		log.Printf("Unable to reset plant_types table due to platform: %q", cfg.platform)
+		respondWithError(nil, http.StatusForbidden, w)
+		return
+	}
+
+	// drop records from plant types table
+	err := cfg.db.ResetPlantTypesTable(r.Context())
+	if err != nil {
+		log.Printf("Unable to reset plant_types table due to error: %q", err)
+		respondWithError(nil, http.StatusInternalServerError, w)
+		return
+	}
+
+	// reset successfully
+	log.Print("Reset plant_types table successfully.")
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// === Light Needs Management Handlers ===
+
+// reset light needs table
+func (cfg *apiConfig) resetLightNeedsHandler(w http.ResponseWriter, r *http.Request) {
+	// super-admin pre-authenticated before the handler is used
+	if platformProduction(cfg) {
+		log.Printf("Unable to reset light_needs table due to platform: %q", cfg.platform)
+		respondWithError(nil, http.StatusForbidden, w)
+		return
+	}
+
+	// drop records from db
+	err := cfg.db.ResetLightNeedsTable(r.Context())
+	if err != nil {
+		log.Printf("Unable to reset light_needs table due to error: %q", err)
+		respondWithError(nil, http.StatusInternalServerError, w)
+		return
+	}
+
+	// reset successfully
+	log.Print("Reset light_needs table successfully.")
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// === Water Needs Management Handlers ===
+
+// reset water needs table
+func (cfg *apiConfig) resetWaterNeedsHandler(w http.ResponseWriter, r *http.Request) {
+	// super-admin pre-authenticated before the handler is used
+	if platformProduction(cfg) {
+		log.Printf("Unable to reset water_needs table due to platform: %q", cfg.platform)
+		respondWithError(nil, http.StatusForbidden, w)
+		return
+	}
+
+	// drop records from db
+	err := cfg.db.ResetWateringNeedsTable(r.Context())
+	if err != nil {
+		log.Printf("Unable to reset water_needs table due to error: %q", err)
+		respondWithError(nil, http.StatusInternalServerError, w)
+		return
+	}
+
+	// reset successfully
+	log.Print("Reset water_needs table successfully.")
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // === Plant Species Management Handlers ===
 
 // resets plant species table
 func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
-		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
+		log.Printf("Unable to reset plant_species table due to platform: %q", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
 	}

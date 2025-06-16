@@ -44,9 +44,9 @@ func main() {
 	// super-admin plant reset endpoints
 	mux.Handle("POST /api/v1/super-admin/reset-plant-species", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetPlantSpeciesHandler))))
 	mux.Handle("POST /api/v1/super-admin/reset-plant-names", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetPlantNamesHandler))))
-	// POST /super-admin/reset-plant-types
-	// POST /super-admin/reset-light
-	// POST /super-admin/reset-water
+	mux.Handle("POST /api/v1/super-admin/reset-plant-types", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetPlantTypesHandler))))
+	mux.Handle("POST /api/v1/super-admin/reset-light", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetLightNeedsHandler))))
+	mux.Handle("POST /api/v1/super-admin/reset-water", cfg.logMW(cfg.authSuperAdminMW(http.HandlerFunc(cfg.resetWaterNeedsHandler))))
 
 	// === admin endpoints ===
 
