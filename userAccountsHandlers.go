@@ -208,7 +208,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if platformNotProduction(cfg) {
-		log.Printf("DEBUG: User logged in: %q, accessToken: %q, refreshToken: %q", userLoginResponse.ID, userLoginResponse.AccessToken, userLoginResponse.RefreshToken)
+		// log.Printf("DEBUG: User logged in: %q, accessToken: %q, refreshToken: %q", userLoginResponse.ID, userLoginResponse.AccessToken, userLoginResponse.RefreshToken)
 	}
 
 	log.Printf("User %q successfully logged in.", userRecord.ID)

@@ -206,7 +206,6 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 
 		if oldRecord.MaxTemperatureCelsius.Valid {
 			MaxTemperatureCelsius = &oldRecord.MaxTemperatureCelsius.Int32
-			log.Printf("DEBUGGING HERE: max temp celsius type: %T val: %f", *MaxTemperatureCelsius, *MaxTemperatureCelsius)
 		}
 		if oldRecord.MinTemperatureCelsius.Valid {
 			MinTemperatureCelsius = &oldRecord.MinTemperatureCelsius.Int32
@@ -255,7 +254,7 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 	}
 
 	log.Printf("Admin %q isted plant types list successfully.", requestUserID)
-	log.Printf("DEBUG: list of plants types: %s", string(plantTypesData))
+	// log.Printf("DEBUG: list of plants types: %s", string(plantTypesData))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(plantTypesData)
