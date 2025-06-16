@@ -407,10 +407,10 @@ Authorization: Bearer {{lisa_token}}
 {
   "name": "{{1_plant_type_name}}",
   "description": "{{1_plant_type_description}}",
-  "maxTemperatureCelsius": "{{1_plant_type_maxtc}}",
-  "minTemperatureCelsius": "{{1_plant_type_mintc}}",
-  "maxHumidityPercent": "{{1_plant_type_maxph}}",
-  "minHumidityPercent": "{{1_plant_type_minph}}",
+  "maxTemperatureCelsius": {{1_plant_type_maxtc}},
+  "minTemperatureCelsius": {{1_plant_type_mintc}},
+  "maxHumidityPercent": {{1_plant_type_maxph}},
+  "minHumidityPercent": {{1_plant_type_minph}},
   "soilOrganicMix": "{{1_plant_type_soilom}}",
   "soilGritMix": "{{1_plant_type_soilgm}}",
   "soilDrainageMix": "{{1_plant_type_soildm}}"
@@ -426,10 +426,10 @@ Authorization: Bearer {{lisa_token}}
 {
   "name": "{{2_plant_type_name}}",
   "description": "{{2_plant_type_description}}",
-  "maxTemperatureCelsius": "{{2_plant_type_maxtc}}",
-  "minTemperatureCelsius": "{{2_plant_type_mintc}}",
-  "maxHumidityPercent": "{{2_plant_type_maxph}}",
-  "minHumidityPercent": "{{2_plant_type_minph}}",
+  "maxTemperatureCelsius": {{2_plant_type_maxtc}},
+  "minTemperatureCelsius": {{2_plant_type_mintc}},
+  "maxHumidityPercent": {{2_plant_type_maxph}},
+  "minHumidityPercent": {{2_plant_type_minph}},
   "soilOrganicMix": "{{2_plant_type_soilom}}",
   "soilGritMix": "{{2_plant_type_soilgm}}",
   "soilDrainageMix": "{{2_plant_type_soildm}}"
@@ -445,10 +445,10 @@ Authorization: Bearer {{lisa_token}}
 {
   "name": "{{3_plant_type_name}}",
   "description": "{{3_plant_type_description}}",
-  "maxTemperatureCelsius": "{{3_plant_type_maxtc}}",
-  "minTemperatureCelsius": "{{3_plant_type_mintc}}",
-  "maxHumidityPercent": "{{3_plant_type_maxph}}",
-  "minHumidityPercent": "{{3_plant_type_minph}}",
+  "maxTemperatureCelsius": {{3_plant_type_maxtc}},
+  "minTemperatureCelsius": {{3_plant_type_mintc}},
+  "maxHumidityPercent": {{3_plant_type_maxph}},
+  "minHumidityPercent": {{3_plant_type_minph}},
   "soilOrganicMix": "{{3_plant_type_soilom}}",
   "soilGritMix": "{{3_plant_type_soilgm}}",
   "soilDrainageMix": "{{3_plant_type_soildm}}"
@@ -464,10 +464,10 @@ Authorization: Bearer {{lisa_token}}
 {
   "name": "{{4_plant_type_name}}",
   "description": "{{4_plant_type_description}}",
-  "maxTemperatureCelsius": "{{4_plant_type_maxtc}}",
-  "minTemperatureCelsius": "{{4_plant_type_mintc}}",
-  "maxHumidityPercent": "{{4_plant_type_maxph}}",
-  "minHumidityPercent": "{{4_plant_type_minph}}",
+  "maxTemperatureCelsius": {{4_plant_type_maxtc}},
+  "minTemperatureCelsius": {{4_plant_type_mintc}},
+  "maxHumidityPercent": {{4_plant_type_maxph}},
+  "minHumidityPercent": {{4_plant_type_minph}},
   "soilOrganicMix": "{{4_plant_type_soilom}}",
   "soilGritMix": "{{4_plant_type_soilgm}}",
   "soilDrainageMix": "{{4_plant_type_soildm}}"
