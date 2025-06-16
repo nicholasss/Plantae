@@ -80,6 +80,65 @@ func (q *Queries) CreatePlantType(ctx context.Context, arg CreatePlantTypeParams
 	return i, err
 }
 
+const getAllPlantTypesOrderedByCreated = `-- name: GetAllPlantTypesOrderedByCreated :many
+select 
+	id,
+  name, description,
+  max_temperature_celsius, min_temperature_celsius,
+  max_humidity_percent, min_humidity_percent,
+  soil_organic_mix, soil_grit_mix, soil_drainage_mix
+from plant_types
+  where deleted_at is null
+  order by created_at desc
+`
+
+type GetAllPlantTypesOrderedByCreatedRow struct {
+	ID                    uuid.UUID       `json:"id"`
+	Name                  string          `json:"name"`
+	Description           string          `json:"description"`
+	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius sql.NullFloat64 `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    sql.NullFloat64 `json:"maxHumidityPercent"`
+	MinHumidityPercent    sql.NullFloat64 `json:"minHumidityPercent"`
+	SoilOrganicMix        sql.NullString  `json:"soilOrganicMix"`
+	SoilGritMix           sql.NullString  `json:"soilGritMix"`
+	SoilDrainageMix       sql.NullString  `json:"soilDrainageMix"`
+}
+
+func (q *Queries) GetAllPlantTypesOrderedByCreated(ctx context.Context) ([]GetAllPlantTypesOrderedByCreatedRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllPlantTypesOrderedByCreated)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllPlantTypesOrderedByCreatedRow
+	for rows.Next() {
+		var i GetAllPlantTypesOrderedByCreatedRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.MaxTemperatureCelsius,
+			&i.MinTemperatureCelsius,
+			&i.MaxHumidityPercent,
+			&i.MinHumidityPercent,
+			&i.SoilOrganicMix,
+			&i.SoilGritMix,
+			&i.SoilDrainageMix,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const markPlantTypeAsDeletedByID = `-- name: MarkPlantTypeAsDeletedByID :exec
 update plant_types
   set

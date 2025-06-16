@@ -26,3 +26,14 @@ update plant_types
   deleted_at = now(),
   deleted_by = $2
 where id = $1;
+
+-- name: GetAllPlantTypesOrderedByCreated :many
+select 
+	id,
+  name, description,
+  max_temperature_celsius, min_temperature_celsius,
+  max_humidity_percent, min_humidity_percent,
+  soil_organic_mix, soil_grit_mix, soil_drainage_mix
+from plant_types
+  where deleted_at is null
+  order by created_at desc;
