@@ -30,6 +30,8 @@ where id = $1;
 -- name: GetAllPlantTypesOrderedByCreated :many
 select 
 	id,
+  created_at, updated_at,
+	created_by, updated_by,
   name, description,
   max_temperature_celsius, min_temperature_celsius,
   max_humidity_percent, min_humidity_percent,

@@ -8,6 +8,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -83,6 +84,8 @@ func (q *Queries) CreatePlantType(ctx context.Context, arg CreatePlantTypeParams
 const getAllPlantTypesOrderedByCreated = `-- name: GetAllPlantTypesOrderedByCreated :many
 select 
 	id,
+  created_at, updated_at,
+	created_by, updated_by,
   name, description,
   max_temperature_celsius, min_temperature_celsius,
   max_humidity_percent, min_humidity_percent,
@@ -94,6 +97,10 @@ from plant_types
 
 type GetAllPlantTypesOrderedByCreatedRow struct {
 	ID                    uuid.UUID       `json:"id"`
+	CreatedAt             time.Time       `json:"createdAt"`
+	UpdatedAt             time.Time       `json:"updatedAt"`
+	CreatedBy             uuid.UUID       `json:"createdBy"`
+	UpdatedBy             uuid.UUID       `json:"updatedBy"`
 	Name                  string          `json:"name"`
 	Description           string          `json:"description"`
 	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
@@ -116,6 +123,10 @@ func (q *Queries) GetAllPlantTypesOrderedByCreated(ctx context.Context) ([]GetAl
 		var i GetAllPlantTypesOrderedByCreatedRow
 		if err := rows.Scan(
 			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.CreatedBy,
+			&i.UpdatedBy,
 			&i.Name,
 			&i.Description,
 			&i.MaxTemperatureCelsius,
