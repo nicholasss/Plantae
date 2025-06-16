@@ -406,7 +406,7 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "name": "{{1_plant_type_name}}",
-  "description"`: "{{1_plant_type_description}}",
+  "description": "{{1_plant_type_description}}",
   "maxTemperatureCelsius": "{{1_plant_type_maxtc}}",
   "minTemperatureCelsius": "{{1_plant_type_mintc}}",
   "maxHumidityPercent": "{{1_plant_type_maxph}}",
@@ -425,7 +425,7 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "name": "{{2_plant_type_name}}",
-  "description"`: "{{2_plant_type_description}}",
+  "description": "{{2_plant_type_description}}",
   "maxTemperatureCelsius": "{{2_plant_type_maxtc}}",
   "minTemperatureCelsius": "{{2_plant_type_mintc}}",
   "maxHumidityPercent": "{{2_plant_type_maxph}}",
@@ -444,7 +444,7 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "name": "{{3_plant_type_name}}",
-  "description"`: "{{3_plant_type_description}}",
+  "description": "{{3_plant_type_description}}",
   "maxTemperatureCelsius": "{{3_plant_type_maxtc}}",
   "minTemperatureCelsius": "{{3_plant_type_mintc}}",
   "maxHumidityPercent": "{{3_plant_type_maxph}}",
@@ -463,7 +463,7 @@ Authorization: Bearer {{lisa_token}}
 ```json
 {
   "name": "{{4_plant_type_name}}",
-  "description"`: "{{4_plant_type_description}}",
+  "description": "{{4_plant_type_description}}",
   "maxTemperatureCelsius": "{{4_plant_type_maxtc}}",
   "minTemperatureCelsius": "{{4_plant_type_mintc}}",
   "maxHumidityPercent": "{{4_plant_type_maxph}}",
