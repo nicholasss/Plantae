@@ -66,8 +66,8 @@ type PlantType struct {
 	Description           string          `json:"description"`
 	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
 	MinTemperatureCelsius sql.NullFloat64 `json:"minTemperatureCelsius"`
-	MaxHumidPercent       sql.NullFloat64 `json:"maxHumidPercent"`
-	MinHumidPercent       sql.NullFloat64 `json:"minHumidPercent"`
+	MaxHumidityPercent    sql.NullFloat64 `json:"maxHumidityPercent"`
+	MinHumidityPercent    sql.NullFloat64 `json:"minHumidityPercent"`
 	SoilOrganicMix        sql.NullString  `json:"soilOrganicMix"`
 	SoilGritMix           sql.NullString  `json:"soilGritMix"`
 	SoilDrainageMix       sql.NullString  `json:"soilDrainageMix"`

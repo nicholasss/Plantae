@@ -15,8 +15,8 @@ create table plant_types (
   -- environment description
 	max_temperature_celsius float,
 	min_temperature_celsius float,
-	max_humid_percent float,
-	min_humid_percent float,
+	max_humidity_percent float,
+	min_humidity_percent float,
   -- soil description
   soil_organic_mix text,
   soil_grit_mix text,
