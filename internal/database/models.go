@@ -11,21 +11,16 @@ import (
 	"github.com/google/uuid"
 )
 
-type Biome struct {
-	ID             uuid.UUID       `json:"id"`
-	CreatedAt      time.Time       `json:"createdAt"`
-	UpdatedAt      time.Time       `json:"updatedAt"`
-	DeletedAt      sql.NullTime    `json:"deletedAt"`
-	CreatedBy      uuid.UUID       `json:"createdBy"`
-	UpdatedBy      uuid.UUID       `json:"updatedBy"`
-	DeletedBy      uuid.NullUUID   `json:"deletedBy"`
-	KoppenClass    string          `json:"koppenClass"`
-	AvgSummerTempC sql.NullFloat64 `json:"avgSummerTempC"`
-	AvgWinterTempC sql.NullFloat64 `json:"avgWinterTempC"`
-	AvgSummerHumid sql.NullFloat64 `json:"avgSummerHumid"`
-	AvgWinterHumid sql.NullFloat64 `json:"avgWinterHumid"`
-	AnnualRainMm   sql.NullInt32   `json:"annualRainMm"`
-	AnnualSunHours sql.NullInt32   `json:"annualSunHours"`
+type LightNeed struct {
+	ID          uuid.UUID     `json:"id"`
+	CreatedAt   time.Time     `json:"createdAt"`
+	UpdatedAt   time.Time     `json:"updatedAt"`
+	DeletedAt   sql.NullTime  `json:"deletedAt"`
+	CreatedBy   uuid.UUID     `json:"createdBy"`
+	UpdatedBy   uuid.UUID     `json:"updatedBy"`
+	DeletedBy   uuid.NullUUID `json:"deletedBy"`
+	Name        string        `json:"name"`
+	Description string        `json:"description"`
 }
 
 type PlantName struct {
@@ -49,12 +44,33 @@ type PlantSpecy struct {
 	CreatedBy        uuid.UUID     `json:"createdBy"`
 	UpdatedBy        uuid.UUID     `json:"updatedBy"`
 	DeletedBy        uuid.NullUUID `json:"deletedBy"`
-	BiomeID          uuid.NullUUID `json:"biomeId"`
 	SpeciesName      string        `json:"speciesName"`
 	HumanPoisonToxic sql.NullBool  `json:"humanPoisonToxic"`
 	PetPoisonToxic   sql.NullBool  `json:"petPoisonToxic"`
 	HumanEdible      sql.NullBool  `json:"humanEdible"`
 	PetEdible        sql.NullBool  `json:"petEdible"`
+	PlantTypeID      uuid.NullUUID `json:"plantTypeId"`
+	LightNeedsID     uuid.NullUUID `json:"lightNeedsId"`
+	WateringNeedsID  uuid.NullUUID `json:"wateringNeedsId"`
+}
+
+type PlantType struct {
+	ID                    uuid.UUID       `json:"id"`
+	CreatedAt             time.Time       `json:"createdAt"`
+	UpdatedAt             time.Time       `json:"updatedAt"`
+	DeletedAt             sql.NullTime    `json:"deletedAt"`
+	CreatedBy             uuid.UUID       `json:"createdBy"`
+	UpdatedBy             uuid.UUID       `json:"updatedBy"`
+	DeletedBy             uuid.NullUUID   `json:"deletedBy"`
+	Name                  string          `json:"name"`
+	Description           string          `json:"description"`
+	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius sql.NullFloat64 `json:"minTemperatureCelsius"`
+	MaxHumidPercent       sql.NullFloat64 `json:"maxHumidPercent"`
+	MinHumidPercent       sql.NullFloat64 `json:"minHumidPercent"`
+	SoilOrganicMix        sql.NullString  `json:"soilOrganicMix"`
+	SoilGritMix           sql.NullString  `json:"soilGritMix"`
+	SoilDrainageMix       sql.NullString  `json:"soilDrainageMix"`
 }
 
 type RefreshToken struct {
@@ -97,4 +113,19 @@ type UsersPlant struct {
 	UserID       uuid.UUID      `json:"userId"`
 	AdoptionDate sql.NullTime   `json:"adoptionDate"`
 	Name         sql.NullString `json:"name"`
+}
+
+type WateringNeed struct {
+	ID               uuid.UUID     `json:"id"`
+	CreatedAt        time.Time     `json:"createdAt"`
+	UpdatedAt        time.Time     `json:"updatedAt"`
+	DeletedAt        sql.NullTime  `json:"deletedAt"`
+	CreatedBy        uuid.UUID     `json:"createdBy"`
+	UpdatedBy        uuid.UUID     `json:"updatedBy"`
+	DeletedBy        uuid.NullUUID `json:"deletedBy"`
+	WateringType     string        `json:"wateringType"`
+	Description      string        `json:"description"`
+	GrowSeason       float64       `json:"growSeason"`
+	TransitionSeason float64       `json:"transitionSeason"`
+	DormantSeason    float64       `json:"dormantSeason"`
 }
