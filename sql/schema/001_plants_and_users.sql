@@ -9,9 +9,6 @@ create table plant_species (
   updated_by uuid not null,
   deleted_by uuid,
   --
-  -- foreign keys
-  environment_id uuid,
-  --
   -- table data
 	species_name text not null unique,
 	human_poison_toxic boolean,
