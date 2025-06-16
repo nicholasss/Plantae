@@ -49,6 +49,16 @@ type AdminPlantTypeViewResponse struct {
 	SoilDrainageMix       *string   `json:"soilDrainageMix,omitempty"`
 }
 
+type AdminPlantTypeUpdateRequest struct {
+	MaxTemperatureCelsius *float64 `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius *float64 `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    *float64 `json:"maxHumidityPercent"`
+	MinHumidityPercent    *float64 `json:"minHumidityPercent"`
+	SoilOrganicMix        *string  `json:"soilOrganicMix"`
+	SoilGritMix           *string  `json:"soilGritMix"`
+	SoilDrainageMix       *string  `json:"soilDrainageMix"`
+}
+
 // === handler functions ===
 
 // POST /admin/plant-type
@@ -248,4 +258,105 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(plantTypesData)
+}
+
+// plant type info update
+func (cfg *apiConfig) adminPlantTypesUpdateHandler(w http.ResponseWriter, r *http.Request) {
+	plantTypeIDStr := r.PathValue("plantTypeID")
+	plantTypeID, err := uuid.Parse(plantTypeIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant type id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// check header for admin access token
+	requestUserID, err := cfg.authorizeNormalAdmin(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	var updateRequest AdminPlantTypeUpdateRequest
+	err = json.NewDecoder(r.Body).Decode(&updateRequest)
+	if err != nil {
+		log.Printf("Could not decode body of request due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+	defer r.Body.Close()
+
+	// converting properties
+	maxTC := sql.NullFloat64{}
+	minTC := sql.NullFloat64{}
+	maxHP := sql.NullFloat64{}
+	minHP := sql.NullFloat64{}
+	soilOM := sql.NullString{}
+	soilGM := sql.NullString{}
+	soilDM := sql.NullString{}
+
+	if updateRequest.MaxTemperatureCelsius == nil {
+		maxTC.Valid = false
+	} else {
+		maxTC.Valid = true
+		maxTC.Float64 = *updateRequest.MaxTemperatureCelsius
+	}
+	if updateRequest.MinTemperatureCelsius == nil {
+		minTC.Valid = false
+	} else {
+		minTC.Valid = true
+		minTC.Float64 = *updateRequest.MinTemperatureCelsius
+	}
+	if updateRequest.MaxHumidityPercent == nil {
+		maxHP.Valid = false
+	} else {
+		maxHP.Valid = true
+		maxHP.Float64 = *updateRequest.MaxHumidityPercent
+	}
+	if updateRequest.MinHumidityPercent == nil {
+		minHP.Valid = false
+	} else {
+		minHP.Valid = true
+		minHP.Float64 = *updateRequest.MinHumidityPercent
+	}
+	if updateRequest.SoilOrganicMix == nil {
+		soilOM.Valid = false
+	} else {
+		soilOM.Valid = true
+		soilOM.String = *updateRequest.SoilOrganicMix
+	}
+	if updateRequest.SoilGritMix == nil {
+		soilGM.Valid = false
+	} else {
+		soilGM.Valid = true
+		soilGM.String = *updateRequest.SoilGritMix
+	}
+	if updateRequest.SoilDrainageMix == nil {
+		soilDM.Valid = false
+	} else {
+		soilDM.Valid = true
+		soilDM.String = *updateRequest.SoilDrainageMix
+	}
+
+	updateParams := database.UpdatePlantTypesPropertiesByIDParams{
+		ID:                    plantTypeID,
+		MaxTemperatureCelsius: maxTC,
+		MinTemperatureCelsius: minTC,
+		MaxHumidityPercent:    maxHP,
+		MinHumidityPercent:    minHP,
+		SoilOrganicMix:        soilOM,
+		SoilGritMix:           soilGM,
+		SoilDrainageMix:       soilDM,
+	}
+
+	err = cfg.db.UpdatePlantTypesPropertiesByID(r.Context(), updateParams)
+	if err != nil {
+		log.Printf("Could not update plant type record %q due to: %q", plantTypeID, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q updated plant type %q successfully.", requestUserID, plantTypeID)
+	w.WriteHeader(http.StatusNoContent)
 }
