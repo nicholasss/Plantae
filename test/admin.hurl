@@ -448,7 +448,7 @@ Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 #
-# listing plant types and capturing ids
+# listing plant types and capturing ids with minimal data
 GET http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
 HTTP 200
@@ -456,10 +456,10 @@ HTTP 200
 header "Content-Type" == "application/json"
 jsonpath "$" count == 4
 [Captures]
-1_plant_type_id: jsonpath "$[0].id"
-2_plant_type_id: jsonpath "$[1].id"
-3_plant_type_id: jsonpath "$[2].id"
-4_plant_type_id: jsonpath "$[3].id"
+1_plant_type_id: jsonpath "$[3].id"
+2_plant_type_id: jsonpath "$[2].id"
+3_plant_type_id: jsonpath "$[1].id"
+4_plant_type_id: jsonpath "$[0].id"
 
 #
 # adding more information to plant 1
@@ -528,3 +528,24 @@ Authorization: Bearer {{lisa_token}}
 }
 ```
 HTTP 204
+
+#
+# listing plant types and asserting responses
+GET http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+header "Content-Type" == "application/json"
+jsonpath "$" count == 4
+jsonpath "$[3].id" == "{{1_plant_type_id}}"
+jsonpath "$[3].name" == "{{1_plant_type_name}}"
+jsonpath "$[3].description" == "{{1_plant_type_description}}"
+jsonpath "$[2].id" == "{{2_plant_type_id}}"
+jsonpath "$[2].name" == "{{2_plant_type_name}}"
+jsonpath "$[2].description" == "{{2_plant_type_description}}"
+jsonpath "$[1].id" == "{{3_plant_type_id}}"
+jsonpath "$[1].name" == "{{3_plant_type_name}}"
+jsonpath "$[1].description" == "{{3_plant_type_description}}"
+jsonpath "$[0].id" == "{{4_plant_type_id}}"
+jsonpath "$[0].name" == "{{4_plant_type_name}}"
+jsonpath "$[0].description" == "{{4_plant_type_description}}"
