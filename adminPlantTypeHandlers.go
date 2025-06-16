@@ -21,15 +21,15 @@ import (
 // === request response types ===
 
 type AdminPlantTypeCreateRequest struct {
-	Name                  string   `json:"name"`
-	Description           string   `json:"description"`
-	MaxTemperatureCelsius *float64 `json:"maxTemperatureCelsius"`
-	MinTemperatureCelsius *float64 `json:"minTemperatureCelsius"`
-	MaxHumidityPercent    *float64 `json:"maxHumidityPercent"`
-	MinHumidityPercent    *float64 `json:"minHumidityPercent"`
-	SoilOrganicMix        *string  `json:"soilOrganicMix"`
-	SoilGritMix           *string  `json:"soilGritMix"`
-	SoilDrainageMix       *string  `json:"soilDrainageMix"`
+	Name                  string  `json:"name"`
+	Description           string  `json:"description"`
+	MaxTemperatureCelsius *int32  `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius *int32  `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    *int32  `json:"maxHumidityPercent"`
+	MinHumidityPercent    *int32  `json:"minHumidityPercent"`
+	SoilOrganicMix        *string `json:"soilOrganicMix"`
+	SoilGritMix           *string `json:"soilGritMix"`
+	SoilDrainageMix       *string `json:"soilDrainageMix"`
 }
 
 type AdminPlantTypeViewResponse struct {
@@ -40,23 +40,23 @@ type AdminPlantTypeViewResponse struct {
 	UpdatedBy             uuid.UUID `json:"updatedBy"`
 	Name                  string    `json:"name"`
 	Description           string    `json:"description"`
-	MaxTemperatureCelsius *float64  `json:"maxTemperatureCelsius,omitempty"`
-	MinTemperatureCelsius *float64  `json:"minTemperatureCelsius,omitempty"`
-	MaxHumidityPercent    *float64  `json:"maxHumidityPercent,omitempty"`
-	MinHumidityPercent    *float64  `json:"minHumidityPercent,omitempty"`
+	MaxTemperatureCelsius *int32    `json:"maxTemperatureCelsius,omitempty"`
+	MinTemperatureCelsius *int32    `json:"minTemperatureCelsius,omitempty"`
+	MaxHumidityPercent    *int32    `json:"maxHumidityPercent,omitempty"`
+	MinHumidityPercent    *int32    `json:"minHumidityPercent,omitempty"`
 	SoilOrganicMix        *string   `json:"soilOrganicMix,omitempty"`
 	SoilGritMix           *string   `json:"soilGritMix,omitempty"`
 	SoilDrainageMix       *string   `json:"soilDrainageMix,omitempty"`
 }
 
 type AdminPlantTypeUpdateRequest struct {
-	MaxTemperatureCelsius *float64 `json:"maxTemperatureCelsius"`
-	MinTemperatureCelsius *float64 `json:"minTemperatureCelsius"`
-	MaxHumidityPercent    *float64 `json:"maxHumidityPercent"`
-	MinHumidityPercent    *float64 `json:"minHumidityPercent"`
-	SoilOrganicMix        *string  `json:"soilOrganicMix"`
-	SoilGritMix           *string  `json:"soilGritMix"`
-	SoilDrainageMix       *string  `json:"soilDrainageMix"`
+	MaxTemperatureCelsius *int32  `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius *int32  `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    *int32  `json:"maxHumidityPercent"`
+	MinHumidityPercent    *int32  `json:"minHumidityPercent"`
+	SoilOrganicMix        *string `json:"soilOrganicMix"`
+	SoilGritMix           *string `json:"soilGritMix"`
+	SoilDrainageMix       *string `json:"soilDrainageMix"`
 }
 
 // === handler functions ===
@@ -94,10 +94,10 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 	}
 
 	// converting properties
-	maxTC := sql.NullFloat64{}
-	minTC := sql.NullFloat64{}
-	maxHP := sql.NullFloat64{}
-	minHP := sql.NullFloat64{}
+	maxTC := sql.NullInt32{}
+	minTC := sql.NullInt32{}
+	maxHP := sql.NullInt32{}
+	minHP := sql.NullInt32{}
 	soilOM := sql.NullString{}
 	soilGM := sql.NullString{}
 	soilDM := sql.NullString{}
@@ -106,25 +106,25 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 		maxTC.Valid = false
 	} else {
 		maxTC.Valid = true
-		maxTC.Float64 = *createRequest.MaxTemperatureCelsius
+		maxTC.Int32 = *createRequest.MaxTemperatureCelsius
 	}
 	if createRequest.MinTemperatureCelsius == nil {
 		minTC.Valid = false
 	} else {
 		minTC.Valid = true
-		minTC.Float64 = *createRequest.MinTemperatureCelsius
+		minTC.Int32 = *createRequest.MinTemperatureCelsius
 	}
 	if createRequest.MaxHumidityPercent == nil {
 		maxHP.Valid = false
 	} else {
 		maxHP.Valid = true
-		maxHP.Float64 = *createRequest.MaxHumidityPercent
+		maxHP.Int32 = *createRequest.MaxHumidityPercent
 	}
 	if createRequest.MinHumidityPercent == nil {
 		minHP.Valid = false
 	} else {
 		minHP.Valid = true
-		minHP.Float64 = *createRequest.MinHumidityPercent
+		minHP.Int32 = *createRequest.MinHumidityPercent
 	}
 	if createRequest.SoilOrganicMix == nil {
 		soilOM.Valid = false
@@ -196,25 +196,26 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 
 	plantTypesResponse := make([]AdminPlantTypeViewResponse, 0)
 	for _, oldRecord := range plantTypeRecords {
-		var MaxTemperatureCelsius *float64
-		var MinTemperatureCelsius *float64
-		var MaxHumidityPercent *float64
-		var MinHumidityPercent *float64
+		var MaxTemperatureCelsius *int32
+		var MinTemperatureCelsius *int32
+		var MaxHumidityPercent *int32
+		var MinHumidityPercent *int32
 		var SoilOrganicMix *string
 		var SoilGritMix *string
 		var SoilDrainageMix *string
 
 		if oldRecord.MaxTemperatureCelsius.Valid {
-			MaxTemperatureCelsius = &oldRecord.MaxTemperatureCelsius.Float64
+			MaxTemperatureCelsius = &oldRecord.MaxTemperatureCelsius.Int32
+			log.Printf("DEBUGGING HERE: max temp celsius type: %T val: %f", *MaxTemperatureCelsius, *MaxTemperatureCelsius)
 		}
 		if oldRecord.MinTemperatureCelsius.Valid {
-			MinTemperatureCelsius = &oldRecord.MinTemperatureCelsius.Float64
+			MinTemperatureCelsius = &oldRecord.MinTemperatureCelsius.Int32
 		}
 		if oldRecord.MaxHumidityPercent.Valid {
-			MaxHumidityPercent = &oldRecord.MaxHumidityPercent.Float64
+			MaxHumidityPercent = &oldRecord.MaxHumidityPercent.Int32
 		}
 		if oldRecord.MinHumidityPercent.Valid {
-			MinHumidityPercent = &oldRecord.MinHumidityPercent.Float64
+			MinHumidityPercent = &oldRecord.MinHumidityPercent.Int32
 		}
 		if oldRecord.SoilOrganicMix.Valid {
 			SoilOrganicMix = &oldRecord.SoilOrganicMix.String
@@ -288,10 +289,10 @@ func (cfg *apiConfig) adminPlantTypesUpdateHandler(w http.ResponseWriter, r *htt
 	defer r.Body.Close()
 
 	// converting properties
-	maxTC := sql.NullFloat64{}
-	minTC := sql.NullFloat64{}
-	maxHP := sql.NullFloat64{}
-	minHP := sql.NullFloat64{}
+	maxTC := sql.NullInt32{}
+	minTC := sql.NullInt32{}
+	maxHP := sql.NullInt32{}
+	minHP := sql.NullInt32{}
 	soilOM := sql.NullString{}
 	soilGM := sql.NullString{}
 	soilDM := sql.NullString{}
@@ -300,25 +301,25 @@ func (cfg *apiConfig) adminPlantTypesUpdateHandler(w http.ResponseWriter, r *htt
 		maxTC.Valid = false
 	} else {
 		maxTC.Valid = true
-		maxTC.Float64 = *updateRequest.MaxTemperatureCelsius
+		maxTC.Int32 = *updateRequest.MaxTemperatureCelsius
 	}
 	if updateRequest.MinTemperatureCelsius == nil {
 		minTC.Valid = false
 	} else {
 		minTC.Valid = true
-		minTC.Float64 = *updateRequest.MinTemperatureCelsius
+		minTC.Int32 = *updateRequest.MinTemperatureCelsius
 	}
 	if updateRequest.MaxHumidityPercent == nil {
 		maxHP.Valid = false
 	} else {
 		maxHP.Valid = true
-		maxHP.Float64 = *updateRequest.MaxHumidityPercent
+		maxHP.Int32 = *updateRequest.MaxHumidityPercent
 	}
 	if updateRequest.MinHumidityPercent == nil {
 		minHP.Valid = false
 	} else {
 		minHP.Valid = true
-		minHP.Float64 = *updateRequest.MinHumidityPercent
+		minHP.Int32 = *updateRequest.MinHumidityPercent
 	}
 	if updateRequest.SoilOrganicMix == nil {
 		soilOM.Valid = false
