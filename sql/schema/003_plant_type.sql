@@ -10,7 +10,7 @@ create table plant_type (
   deleted_by uuid,
   --
   -- table data
-	type text not null unique,
+	name text not null unique,
   description text not null,
   -- environment description
 	max_temperature_celsius float,
