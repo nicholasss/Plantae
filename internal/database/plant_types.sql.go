@@ -34,16 +34,16 @@ insert into plant_types (
 `
 
 type CreatePlantTypeParams struct {
-	CreatedBy             uuid.UUID       `json:"createdBy"`
-	Name                  string          `json:"name"`
-	Description           string          `json:"description"`
-	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
-	MinTemperatureCelsius sql.NullFloat64 `json:"minTemperatureCelsius"`
-	MaxHumidityPercent    sql.NullFloat64 `json:"maxHumidityPercent"`
-	MinHumidityPercent    sql.NullFloat64 `json:"minHumidityPercent"`
-	SoilOrganicMix        sql.NullString  `json:"soilOrganicMix"`
-	SoilGritMix           sql.NullString  `json:"soilGritMix"`
-	SoilDrainageMix       sql.NullString  `json:"soilDrainageMix"`
+	CreatedBy             uuid.UUID      `json:"createdBy"`
+	Name                  string         `json:"name"`
+	Description           string         `json:"description"`
+	MaxTemperatureCelsius sql.NullInt32  `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius sql.NullInt32  `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    sql.NullInt32  `json:"maxHumidityPercent"`
+	MinHumidityPercent    sql.NullInt32  `json:"minHumidityPercent"`
+	SoilOrganicMix        sql.NullString `json:"soilOrganicMix"`
+	SoilGritMix           sql.NullString `json:"soilGritMix"`
+	SoilDrainageMix       sql.NullString `json:"soilDrainageMix"`
 }
 
 func (q *Queries) CreatePlantType(ctx context.Context, arg CreatePlantTypeParams) (PlantType, error) {
@@ -192,14 +192,14 @@ where id = $1
 `
 
 type UpdatePlantTypesPropertiesByIDParams struct {
-	ID                    uuid.UUID       `json:"id"`
-	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
-	MinTemperatureCelsius sql.NullFloat64 `json:"minTemperatureCelsius"`
-	MaxHumidityPercent    sql.NullFloat64 `json:"maxHumidityPercent"`
-	MinHumidityPercent    sql.NullFloat64 `json:"minHumidityPercent"`
-	SoilOrganicMix        sql.NullString  `json:"soilOrganicMix"`
-	SoilGritMix           sql.NullString  `json:"soilGritMix"`
-	SoilDrainageMix       sql.NullString  `json:"soilDrainageMix"`
+	ID                    uuid.UUID      `json:"id"`
+	MaxTemperatureCelsius sql.NullInt32  `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius sql.NullInt32  `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    sql.NullInt32  `json:"maxHumidityPercent"`
+	MinHumidityPercent    sql.NullInt32  `json:"minHumidityPercent"`
+	SoilOrganicMix        sql.NullString `json:"soilOrganicMix"`
+	SoilGritMix           sql.NullString `json:"soilGritMix"`
+	SoilDrainageMix       sql.NullString `json:"soilDrainageMix"`
 }
 
 func (q *Queries) UpdatePlantTypesPropertiesByID(ctx context.Context, arg UpdatePlantTypesPropertiesByIDParams) error {
