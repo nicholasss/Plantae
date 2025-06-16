@@ -27,6 +27,19 @@ update plant_types
   deleted_by = $2
 where id = $1;
 
+-- name: UpdatePlantTypesPropertiesByID :exec
+update plant_types
+  set updated_at = now(),
+  max_temperature_celsius = $2,
+  min_temperature_celsius = $3,
+	max_humidity_percent = $4,
+	min_humidity_percent = $5,
+  soil_organic_mix = $6,
+  soil_grit_mix = $7,
+  soil_drainage_mix = $8
+where id = $1
+  and deleted_at is null;
+
 -- name: GetAllPlantTypesOrderedByCreated :many
 select 
 	id,

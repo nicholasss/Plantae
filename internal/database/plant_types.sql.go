@@ -176,3 +176,42 @@ func (q *Queries) ResetPlantTypesTable(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, resetPlantTypesTable)
 	return err
 }
+
+const updatePlantTypesPropertiesByID = `-- name: UpdatePlantTypesPropertiesByID :exec
+update plant_types
+  set updated_at = now(),
+  max_temperature_celsius = $2,
+  min_temperature_celsius = $3,
+	max_humidity_percent = $4,
+	min_humidity_percent = $5,
+  soil_organic_mix = $6,
+  soil_grit_mix = $7,
+  soil_drainage_mix = $8
+where id = $1
+  and deleted_at is null
+`
+
+type UpdatePlantTypesPropertiesByIDParams struct {
+	ID                    uuid.UUID       `json:"id"`
+	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius sql.NullFloat64 `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    sql.NullFloat64 `json:"maxHumidityPercent"`
+	MinHumidityPercent    sql.NullFloat64 `json:"minHumidityPercent"`
+	SoilOrganicMix        sql.NullString  `json:"soilOrganicMix"`
+	SoilGritMix           sql.NullString  `json:"soilGritMix"`
+	SoilDrainageMix       sql.NullString  `json:"soilDrainageMix"`
+}
+
+func (q *Queries) UpdatePlantTypesPropertiesByID(ctx context.Context, arg UpdatePlantTypesPropertiesByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updatePlantTypesPropertiesByID,
+		arg.ID,
+		arg.MaxTemperatureCelsius,
+		arg.MinTemperatureCelsius,
+		arg.MaxHumidityPercent,
+		arg.MinHumidityPercent,
+		arg.SoilOrganicMix,
+		arg.SoilGritMix,
+		arg.SoilDrainageMix,
+	)
+	return err
+}
