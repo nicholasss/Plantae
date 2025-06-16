@@ -11,7 +11,7 @@ create table plant_type (
   --
   -- table data
 	type text not null unique,
-  desc text not null,
+  description text not null,
   -- environment description
 	max_temperature_celsius float,
 	min_temperature_celsius float,
@@ -33,9 +33,9 @@ alter table plant_species
 
 -- +goose Down
 alter table plant_species
-  drop column plant_type_id;
+	drop constraint fk_plant_type;
 
 alter table plant_species
-	drop constraint fk_plant_type;
+  drop column plant_type_id;
 
 drop table plant_type;
