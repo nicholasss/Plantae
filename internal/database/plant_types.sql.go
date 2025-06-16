@@ -7,7 +7,96 @@ package database
 
 import (
 	"context"
+	"database/sql"
+
+	"github.com/google/uuid"
 )
+
+const createPlantType = `-- name: CreatePlantType :one
+insert into plant_types (
+	id,
+  created_at, updated_at,
+	created_by, updated_by,
+  name, description,
+  max_temperature_celsius, min_temperature_celsius,
+  max_humidity_percent, min_humidity_percent,
+  soil_organic_mix, soil_grit_mix, soil_drainage_mix
+) values (
+  gen_random_uuid(),
+  now(), now(),
+  $1, $1,
+  $2, $3,
+  $4, $5,
+  $6, $7,
+  $8, $9, $10
+) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, name, description, max_temperature_celsius, min_temperature_celsius, max_humidity_percent, min_humidity_percent, soil_organic_mix, soil_grit_mix, soil_drainage_mix
+`
+
+type CreatePlantTypeParams struct {
+	CreatedBy             uuid.UUID       `json:"createdBy"`
+	Name                  string          `json:"name"`
+	Description           string          `json:"description"`
+	MaxTemperatureCelsius sql.NullFloat64 `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius sql.NullFloat64 `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    sql.NullFloat64 `json:"maxHumidityPercent"`
+	MinHumidityPercent    sql.NullFloat64 `json:"minHumidityPercent"`
+	SoilOrganicMix        sql.NullString  `json:"soilOrganicMix"`
+	SoilGritMix           sql.NullString  `json:"soilGritMix"`
+	SoilDrainageMix       sql.NullString  `json:"soilDrainageMix"`
+}
+
+func (q *Queries) CreatePlantType(ctx context.Context, arg CreatePlantTypeParams) (PlantType, error) {
+	row := q.db.QueryRowContext(ctx, createPlantType,
+		arg.CreatedBy,
+		arg.Name,
+		arg.Description,
+		arg.MaxTemperatureCelsius,
+		arg.MinTemperatureCelsius,
+		arg.MaxHumidityPercent,
+		arg.MinHumidityPercent,
+		arg.SoilOrganicMix,
+		arg.SoilGritMix,
+		arg.SoilDrainageMix,
+	)
+	var i PlantType
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.CreatedBy,
+		&i.UpdatedBy,
+		&i.DeletedBy,
+		&i.Name,
+		&i.Description,
+		&i.MaxTemperatureCelsius,
+		&i.MinTemperatureCelsius,
+		&i.MaxHumidityPercent,
+		&i.MinHumidityPercent,
+		&i.SoilOrganicMix,
+		&i.SoilGritMix,
+		&i.SoilDrainageMix,
+	)
+	return i, err
+}
+
+const markPlantTypeAsDeletedByID = `-- name: MarkPlantTypeAsDeletedByID :exec
+update plant_types
+  set
+  deleted_at = now(),
+  deleted_by = $2
+where id = $1
+`
+
+type MarkPlantTypeAsDeletedByIDParams struct {
+	ID        uuid.UUID     `json:"id"`
+	DeletedBy uuid.NullUUID `json:"deletedBy"`
+}
+
+func (q *Queries) MarkPlantTypeAsDeletedByID(ctx context.Context, arg MarkPlantTypeAsDeletedByIDParams) error {
+	_, err := q.db.ExecContext(ctx, markPlantTypeAsDeletedByID, arg.ID, arg.DeletedBy)
+	return err
+}
 
 const resetPlantTypesTable = `-- name: ResetPlantTypesTable :exec
 delete from plant_types
