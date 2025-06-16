@@ -131,13 +131,13 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 
 	plantSpeciesData, err := json.Marshal(plantSpeciesResponse)
 	if err != nil {
-		log.Printf("Could not get plant_species records due to: %q", err)
+		log.Printf("Could not marshal records to json due to: %q", err)
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
 
-	log.Printf("Admin listed plant species list successfully.")
-	log.Printf("DEBUG: list of plants: %s", string(plantSpeciesData))
+	log.Printf("Admin %q listed plant species list successfully.", requestUserID)
+	log.Printf("DEBUG: plant species: %s", string(plantSpeciesData))
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(plantSpeciesData)
