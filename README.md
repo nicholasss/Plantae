@@ -22,7 +22,7 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 
 - [x] Implement basic user management.
 - [ ] Implement basic admin management.
-- [ ] Implement plant species management.
+- [x] Implement plant species management.
 - [ ] Implement basic plant tracking.
 - [ ] Begin entering plant information into plant table.
 - [ ] Create a backup scheme for the universal plant data.
