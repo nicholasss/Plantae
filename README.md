@@ -1,7 +1,10 @@
 # Plantae Server
 
-A REST API server to track your house plants over time.
+A REST API server to track care and feeding of your house plants.
+
 This is the server portion of the project. There is currently no front-end.
+
+! This is currently a work in progress and may have bugs or malfunction.
 
 ## Style guide
 
@@ -23,14 +26,14 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [x] Implement basic user management.
 - [ ] Implement basic admin management.
 - [x] Implement plant species management.
-- [ ] Implement basic plant tracking.
+- [ ] Implement basic end-user's plant tracking.
 - [ ] Begin entering plant information into plant table.
-- [ ] Create a backup scheme for the universal plant data.
+- [ ] Create a backup scheme for the universal plant species data.
 
 ### Cleanup efforts
 
 - [ ] Fix respondWithError utility function to not reveal the error value to client
 - [ ] Replace all fmt.Errorf with errors.New where formatting or wrapping is not needed
-- [ ] Formalize JSON, SQL, and scripting variables to a single style. Either camelCase or snake_case.
+- [ ] Transition JSON, SQL, and scripting variables to a single style. Either camelCase or snake_case.
 - [ ] Add 'application/json' Content-Type assert in all of the tests and fix where needed
 - [ ] Rename 'authorizeNormalAdmin' utility function or rewrite to actually authorize normal admins.
