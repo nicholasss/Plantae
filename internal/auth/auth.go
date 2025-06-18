@@ -65,7 +65,7 @@ func GetBearerToken(headers http.Header) (string, error) {
 
 	authHeader := headers.Get("Authorization")
 	if authHeader == "" {
-		return "", fmt.Errorf("header field 'authorization' is absent")
+		return "", errors.New("header field 'Authorization' is absent")
 	}
 
 	tokenString, ok := strings.CutPrefix(authHeader, "Bearer ")
