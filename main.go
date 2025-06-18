@@ -69,9 +69,9 @@ func main() {
 
 	// admin set/unset plant species to plant type
 	// set plant species to plant type
-	mux.Handle("POST /admin/plant-type/{plantTypeID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminSetPlantAsTypeHandler))))
+	mux.Handle("POST /admin/plant-types/{plantTypeID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminSetPlantAsTypeHandler))))
 	// unset plant species to lighting need
-	mux.Handle("DELETE /admin/plant-type/{plantTypeID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminUnsetPlantAsTypeHandler))))
+	mux.Handle("DELETE /admin/plant-types/{plantTypeID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminUnsetPlantAsTypeHandler))))
 
 	// admin lighting needs endpoints
 	// POST /admin/light
