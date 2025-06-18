@@ -65,7 +65,7 @@ func main() {
 	mux.Handle("POST /api/v1/admin/plant-types", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypesCreateHandler)))
 	mux.Handle("GET /api/v1/admin/plant-types", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypesViewHandler)))
 	mux.Handle("PUT /api/v1/admin/plant-types/{plantTypeID}", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypesUpdateHandler)))
-	// DELETE /admin/plant-type/{plant type id}
+	mux.Handle("DELETE /api/v1/admin/plant-types/{plantTypeID}", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypeDeleteHandler)))
 
 	// admin set/unset plant species to plant type
 	// set plant species to plant type
