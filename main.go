@@ -70,6 +70,7 @@ func main() {
 	// admin set/unset plant species to plant type
 	// set plant species to plant type
 	// POST /admin/plant-type/{plant type id} ? plant species id = uuid
+	mux.Handle("POST /admin/plant-type/{plantTypeID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminSetPlantAsTypeHandler))))
 	// unset plant species to lighting need
 	// DELETE /admin/plant-type ? plant species id = uuid
 

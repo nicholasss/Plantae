@@ -395,3 +395,53 @@ func (cfg *apiConfig) adminPlantTypeDeleteHandler(w http.ResponseWriter, r *http
 	log.Printf("Admin %q successfully marked plant type %q as deleted.", requestUserID, plantTypeID)
 	w.WriteHeader(http.StatusNoContent)
 }
+
+// POST /admin/plant-type/{plant type id} ? plant species id = uuid
+func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.Request) {
+	// plant type
+	plantTypeIDStr := r.PathValue("plantTypeID")
+	plantTypeID, err := uuid.Parse(plantTypeIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant type id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+	nullPlantTypeID := uuid.NullUUID{Valid: true, UUID: plantTypeID}
+
+	// plant species
+	plantSpeciesIDStr := r.URL.Query().Get("plantSpeciesID")
+	if plantSpeciesIDStr == "" {
+		log.Print("No plant species id was specified in url query")
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		return
+	}
+	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant species id from url query due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// user id
+	requestUserID, err := cfg.getUserIDFromToken(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	setPlantTypeParams := database.SetPlantSpeciesAsTypeParams{
+		ID:          plantSpeciesID,
+		PlantTypeID: nullPlantTypeID,
+		UpdatedBy:   requestUserID,
+	}
+	err = cfg.db.SetPlantSpeciesAsType(r.Context(), setPlantTypeParams)
+	if err != nil {
+		log.Printf("Could not set plant species %q as type %q due to: %q", plantSpeciesID, plantTypeID, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q successfully set species %q as type %q", requestUserID, plantSpeciesID, plantTypeID)
+	w.WriteHeader(http.StatusNoContent)
+}
