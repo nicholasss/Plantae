@@ -239,7 +239,7 @@ func platformNotProduction(cfg *apiConfig) bool {
 }
 
 // check header for admin access token
-func (cfg *apiConfig) authorizeNormalAdmin(r *http.Request) (uuid.UUID, error) {
+func (cfg *apiConfig) getUserIDFromToken(r *http.Request) (uuid.UUID, error) {
 	requestAccessToken, err := auth.GetBearerToken(r.Header)
 	if err != nil {
 		return uuid.UUID{}, err

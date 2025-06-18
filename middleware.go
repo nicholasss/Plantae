@@ -36,7 +36,7 @@ func (cfg *apiConfig) authSuperAdminMW(next http.Handler) http.Handler {
 // auth normal admin middleware
 func (cfg *apiConfig) authNormalAdminMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestUserID, err := cfg.authorizeUser(r)
+		requestUserID, err := cfg.getUserIDFromToken(r)
 		if err != nil {
 			log.Printf("Could not authorize user in request due to: %q", err)
 			respondWithError(err, http.StatusBadRequest, w)

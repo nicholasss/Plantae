@@ -49,9 +49,9 @@ type AdminPlantSpeciesViewResponse struct {
 
 // GET json
 func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *http.Request) {
-	requestUserID, err := cfg.authorizeNormalAdmin(r)
+	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		log.Printf("Could not get User ID from token due to: %q", err)
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
@@ -154,9 +154,9 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 	}
 
 	// check header for admin access token
-	requestUserID, err := cfg.authorizeNormalAdmin(r)
+	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		log.Printf("Could not get User ID from token due to: %q", err)
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
@@ -232,9 +232,9 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 	}
 
 	// check header for admin access token
-	requestUserID, err := cfg.authorizeNormalAdmin(r)
+	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		log.Printf("Could not get User ID from token due to: %q", err)
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
@@ -262,9 +262,9 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 // POST json to create plant
 func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *http.Request) {
 	// check header for admin access token
-	requestUserID, err := cfg.authorizeNormalAdmin(r)
+	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		log.Printf("Could not get User ID from token to: %q", err)
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
