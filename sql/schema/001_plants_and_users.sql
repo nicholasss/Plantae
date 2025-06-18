@@ -10,7 +10,7 @@ create table plant_species (
   deleted_by uuid,
   --
   -- table data
-	species_name text not null unique,
+	species_name text not null,
 	human_poison_toxic boolean,
 	pet_poison_toxic boolean,
 	human_edible boolean,
