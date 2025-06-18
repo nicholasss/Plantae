@@ -408,7 +408,7 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 	}
 
 	// plant species
-	plantSpeciesIDStr := r.URL.Query().Get("plantSpeciesID")
+	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
 	if plantSpeciesIDStr == "" {
 		log.Print("No plant species id was specified in url query")
 		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
@@ -459,7 +459,7 @@ func (cfg *apiConfig) adminUnsetPlantAsTypeHandler(w http.ResponseWriter, r *htt
 	}
 
 	// plant species
-	plantSpeciesIDStr := r.URL.Query().Get("plantSpeciesID")
+	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
 	if plantSpeciesIDStr == "" {
 		log.Print("No plant species id was specified in url query")
 		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
