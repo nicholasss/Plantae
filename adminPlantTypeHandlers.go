@@ -406,7 +406,6 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
-	nullPlantTypeID := uuid.NullUUID{Valid: true, UUID: plantTypeID}
 
 	// plant species
 	plantSpeciesIDStr := r.URL.Query().Get("plantSpeciesID")
@@ -429,6 +428,8 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
+
+	nullPlantTypeID := uuid.NullUUID{Valid: true, UUID: plantTypeID}
 
 	setPlantTypeParams := database.SetPlantSpeciesAsTypeParams{
 		ID:          plantSpeciesID,
