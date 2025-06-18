@@ -577,3 +577,44 @@ jsonpath "$[0].minHumidityPercent" == {{4_plant_type_minph}}
 jsonpath "$[0].soilOrganicMix" == "{{4_plant_type_soilom}}"
 jsonpath "$[0].soilGritMix" == "{{4_plant_type_soilgm}}"
 jsonpath "$[0].soilDrainageMix" == "{{4_plant_type_soildm}}"
+
+#
+# deleting plant type 1
+DELETE http://localhost:8080/api/v1/admin/plant-types/{{1_plant_type_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# deleting plant type 2
+DELETE http://localhost:8080/api/v1/admin/plant-types/{{2_plant_type_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# listing plant types and asserting responses after deleting type 1 & 2
+GET http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+header "Content-Type" == "application/json"
+jsonpath "$" count == 2
+jsonpath "$[1].id" == "{{3_plant_type_id}}"
+jsonpath "$[1].name" == "{{3_plant_type_name}}"
+jsonpath "$[1].description" == "{{3_plant_type_description}}"
+jsonpath "$[1].maxTemperatureCelsius" == {{3_plant_type_maxtc}}
+jsonpath "$[1].minTemperatureCelsius" == {{3_plant_type_mintc}}
+jsonpath "$[1].maxHumidityPercent" == {{3_plant_type_maxph}}
+jsonpath "$[1].minHumidityPercent" == {{3_plant_type_minph}}
+jsonpath "$[1].soilOrganicMix" == "{{3_plant_type_soilom}}"
+jsonpath "$[1].soilGritMix" == "{{3_plant_type_soilgm}}"
+jsonpath "$[1].soilDrainageMix" == "{{3_plant_type_soildm}}"
+jsonpath "$[0].id" == "{{4_plant_type_id}}"
+jsonpath "$[0].name" == "{{4_plant_type_name}}"
+jsonpath "$[0].description" == "{{4_plant_type_description}}"
+jsonpath "$[0].maxTemperatureCelsius" == {{4_plant_type_maxtc}}
+jsonpath "$[0].minTemperatureCelsius" == {{4_plant_type_mintc}}
+jsonpath "$[0].maxHumidityPercent" == {{4_plant_type_maxph}}
+jsonpath "$[0].minHumidityPercent" == {{4_plant_type_minph}}
+jsonpath "$[0].soilOrganicMix" == "{{4_plant_type_soilom}}"
+jsonpath "$[0].soilGritMix" == "{{4_plant_type_soilgm}}"
+jsonpath "$[0].soilDrainageMix" == "{{4_plant_type_soildm}}"
