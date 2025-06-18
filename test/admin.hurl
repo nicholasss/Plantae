@@ -462,7 +462,7 @@ jsonpath "$" count == 4
 4_plant_type_id: jsonpath "$[0].id"
 
 #
-# adding more information to plant 1
+# adding more information to plant type 1
 PUT http://localhost:8080/api/v1/admin/plant-types/{{1_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
@@ -479,7 +479,7 @@ Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 #
-# adding more information to plant 2
+# adding more information to plant type 2
 PUT http://localhost:8080/api/v1/admin/plant-types/{{2_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
@@ -496,7 +496,7 @@ Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 #
-# adding more information to plant 3
+# adding more information to plant type 3
 PUT http://localhost:8080/api/v1/admin/plant-types/{{3_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
@@ -513,7 +513,7 @@ Authorization: Bearer {{lisa_token}}
 HTTP 204
 
 #
-# adding more information to plant 4
+# adding more information to plant type 4
 PUT http://localhost:8080/api/v1/admin/plant-types/{{4_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
 ```json
