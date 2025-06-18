@@ -295,7 +295,9 @@ func (q *Queries) ResetPlantSpeciesTable(ctx context.Context) error {
 
 const setPlantSpeciesAsType = `-- name: SetPlantSpeciesAsType :exec
 update plant_species
-  set plant_type_id = $2
+  set plant_type_id = $2,
+  updated_at = now(),
+  updated_by = $3
 where
   id = $1 and
   deleted_by is null
@@ -304,10 +306,11 @@ where
 type SetPlantSpeciesAsTypeParams struct {
 	ID          uuid.UUID     `json:"id"`
 	PlantTypeID uuid.NullUUID `json:"plantTypeId"`
+	UpdatedBy   uuid.UUID     `json:"updatedBy"`
 }
 
 func (q *Queries) SetPlantSpeciesAsType(ctx context.Context, arg SetPlantSpeciesAsTypeParams) error {
-	_, err := q.db.ExecContext(ctx, setPlantSpeciesAsType, arg.ID, arg.PlantTypeID)
+	_, err := q.db.ExecContext(ctx, setPlantSpeciesAsType, arg.ID, arg.PlantTypeID, arg.UpdatedBy)
 	return err
 }
 

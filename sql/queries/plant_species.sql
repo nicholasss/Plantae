@@ -72,7 +72,9 @@ where id = $1;
 
 -- name: SetPlantSpeciesAsType :exec
 update plant_species
-  set plant_type_id = $2
+  set plant_type_id = $2,
+  updated_at = now(),
+  updated_by = $3
 where
   id = $1 and
   deleted_by is null;
