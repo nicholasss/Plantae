@@ -9,6 +9,7 @@ import (
 
 // === Middleware Functions ===
 
+// auth super admin middleware
 func (cfg *apiConfig) authSuperAdminMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// get token from header
@@ -28,6 +29,34 @@ func (cfg *apiConfig) authSuperAdminMW(next http.Handler) http.Handler {
 		}
 
 		log.Print("Authenticated Super Admin successfully.")
+		next.ServeHTTP(w, r)
+	})
+}
+
+// auth normal admin middleware
+func (cfg *apiConfig) authNormalAdminMW(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requestUserID, err := cfg.authorizeUser(r)
+		if err != nil {
+			log.Printf("Could not authorize user in request due to: %q", err)
+			respondWithError(err, http.StatusBadRequest, w)
+			return
+		}
+
+		userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), requestUserID)
+		if err != nil {
+			log.Printf("Could not find user record for user id %q due to %q", requestUserID, err)
+			respondWithError(err, http.StatusInternalServerError, w)
+			return
+		}
+
+		if !userRecord.IsAdmin {
+			log.Printf("Non-Admin %q [ID %q] is performing requests to admin endpoints.", userRecord.Email, requestUserID)
+			respondWithError(err, http.StatusUnauthorized, w)
+			return
+		}
+
+		log.Print("Authenticated normal admin successfully.")
 		next.ServeHTTP(w, r)
 	})
 }
