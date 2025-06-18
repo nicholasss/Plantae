@@ -51,21 +51,21 @@ func main() {
 	// === admin endpoints ===
 
 	// admin plant species endpoints
-	mux.Handle("GET /api/v1/admin/plant-species", cfg.logMW(http.HandlerFunc(cfg.adminPlantSpeciesViewHandler)))
-	mux.Handle("POST /api/v1/admin/plant-species", cfg.logMW(http.HandlerFunc(cfg.adminPlantSpeciesCreateHandler)))
-	mux.Handle("PUT /api/v1/admin/plant-species/{plantSpeciesID}", cfg.logMW(http.HandlerFunc(cfg.adminReplacePlantSpeciesInfoHandler)))
-	mux.Handle("DELETE /api/v1/admin/plant-species/{plantSpeciesID}", cfg.logMW(http.HandlerFunc(cfg.adminDeletePlantSpeciesHandler)))
+	mux.Handle("GET /api/v1/admin/plant-species", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantSpeciesViewHandler))))
+	mux.Handle("POST /api/v1/admin/plant-species", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantSpeciesCreateHandler))))
+	mux.Handle("PUT /api/v1/admin/plant-species/{plantSpeciesID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminReplacePlantSpeciesInfoHandler))))
+	mux.Handle("DELETE /api/v1/admin/plant-species/{plantSpeciesID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminDeletePlantSpeciesHandler))))
 
 	// admin plant names endpoints
-	mux.Handle("POST /api/v1/admin/plant-names", cfg.logMW(http.HandlerFunc(cfg.adminPlantNamesCreateHandler)))
-	mux.Handle("GET /api/v1/admin/plant-names", cfg.logMW(http.HandlerFunc(cfg.adminPlantNamesViewHandler)))
-	mux.Handle("DELETE /api/v1/admin/plant-names/{plantNameID}", cfg.logMW(http.HandlerFunc(cfg.adminPlantNamesDeleteHandler)))
+	mux.Handle("POST /api/v1/admin/plant-names", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantNamesCreateHandler))))
+	mux.Handle("GET /api/v1/admin/plant-names", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantNamesViewHandler))))
+	mux.Handle("DELETE /api/v1/admin/plant-names/{plantNameID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantNamesDeleteHandler))))
 
 	// admin plant type endpoints
-	mux.Handle("POST /api/v1/admin/plant-types", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypesCreateHandler)))
-	mux.Handle("GET /api/v1/admin/plant-types", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypesViewHandler)))
-	mux.Handle("PUT /api/v1/admin/plant-types/{plantTypeID}", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypesUpdateHandler)))
-	mux.Handle("DELETE /api/v1/admin/plant-types/{plantTypeID}", cfg.logMW(http.HandlerFunc(cfg.adminPlantTypeDeleteHandler)))
+	mux.Handle("POST /api/v1/admin/plant-types", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantTypesCreateHandler))))
+	mux.Handle("GET /api/v1/admin/plant-types", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantTypesViewHandler))))
+	mux.Handle("PUT /api/v1/admin/plant-types/{plantTypeID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantTypesUpdateHandler))))
+	mux.Handle("DELETE /api/v1/admin/plant-types/{plantTypeID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantTypeDeleteHandler))))
 
 	// admin set/unset plant species to plant type
 	// set plant species to plant type
