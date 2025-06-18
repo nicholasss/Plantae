@@ -78,3 +78,12 @@ update plant_species
 where
   id = $1 and
   deleted_by is null;
+
+-- name: UnsetPlantSpeciesAsType :exec
+update plant_species
+  set plant_type_id = null,
+  updated_at = now(),
+  updated_by = $2
+where
+  id = $1 and
+  deleted_by is null;
