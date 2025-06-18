@@ -618,3 +618,99 @@ jsonpath "$[0].minHumidityPercent" == {{4_plant_type_minph}}
 jsonpath "$[0].soilOrganicMix" == "{{4_plant_type_soilom}}"
 jsonpath "$[0].soilGritMix" == "{{4_plant_type_soilgm}}"
 jsonpath "$[0].soilDrainageMix" == "{{4_plant_type_soildm}}"
+
+# setting species as type
+
+#
+# Reset plant_species table
+POST http://localhost:8080/api/v1/super-admin/reset-plant-species
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
+# Reset plant_types table
+POST http://localhost:8080/api/v1/super-admin/reset-plant-types
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
+# Add plant 1 to the plant_species table
+# -- with all details
+POST http://localhost:8080/api/v1/admin/plant-species
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "speciesName": "{{1_species_name}}",
+  "humanPoisonToxic": {{1_human_poison_toxic}},
+  "petPoisonToxic": {{1_pet_poison_toxic}},
+  "humanEdible": {{1_human_edible}},
+  "petEdible": {{1_pet_edible}}
+}
+```
+HTTP 204
+
+#
+# Add plant 2 to the plant_species table
+# -- with all details
+POST http://localhost:8080/api/v1/admin/plant-species
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "speciesName": "{{2_species_name}}",
+  "humanPoisonToxic": {{2_human_poison_toxic}},
+  "petPoisonToxic": {{2_pet_poison_toxic}},
+  "humanEdible": {{2_human_edible}},
+  "petEdible": {{2_pet_edible}}
+}
+```
+HTTP 204
+
+# adding plant type 1 with full information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{1_plant_type_name}}",
+  "description": "{{1_plant_type_description}}",
+  "maxTemperatureCelsius": {{1_plant_type_maxtc}},
+  "minTemperatureCelsius": {{1_plant_type_mintc}},
+  "maxHumidityPercent": {{1_plant_type_maxph}},
+  "minHumidityPercent": {{1_plant_type_minph}},
+  "soilOrganicMix": "{{1_plant_type_soilom}}",
+  "soilGritMix": "{{1_plant_type_soilgm}}",
+  "soilDrainageMix": "{{1_plant_type_soildm}}"
+}
+```
+HTTP 204
+
+#
+# adding plant type 2 with full information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{2_plant_type_name}}",
+  "description": "{{2_plant_type_description}}",
+  "maxTemperatureCelsius": {{2_plant_type_maxtc}},
+  "minTemperatureCelsius": {{2_plant_type_mintc}},
+  "maxHumidityPercent": {{2_plant_type_maxph}},
+  "minHumidityPercent": {{2_plant_type_minph}},
+  "soilOrganicMix": "{{2_plant_type_soilom}}",
+  "soilGritMix": "{{2_plant_type_soilgm}}",
+  "soilDrainageMix": "{{2_plant_type_soildm}}"
+}
+```
+HTTP 204
+
+
+#
+# set 1_plant_species as type
+POST http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{2_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+# 
+# set 2_plant_species as type
+POST http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{1_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
