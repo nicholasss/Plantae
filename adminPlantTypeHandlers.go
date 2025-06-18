@@ -429,8 +429,8 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
+	// perform set
 	nullPlantTypeID := uuid.NullUUID{Valid: true, UUID: plantTypeID}
-
 	setPlantTypeParams := database.SetPlantSpeciesAsTypeParams{
 		ID:          plantSpeciesID,
 		PlantTypeID: nullPlantTypeID,
@@ -438,11 +438,60 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 	}
 	err = cfg.db.SetPlantSpeciesAsType(r.Context(), setPlantTypeParams)
 	if err != nil {
-		log.Printf("Could not set plant species %q as type %q due to: %q", plantSpeciesID, plantTypeID, err)
+		log.Printf("Could not set type %q for plant species %q due to: %q", plantTypeID, plantSpeciesID, err)
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
 
-	log.Printf("Admin %q successfully set species %q as type %q", requestUserID, plantSpeciesID, plantTypeID)
+	log.Printf("Admin %q successfully set type %q for species %q ", requestUserID, plantTypeID, plantSpeciesID)
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// DELETE /admin/plant-type/{plant type id} ? plant species id = uuid
+func (cfg *apiConfig) adminUnsetPlantAsTypeHandler(w http.ResponseWriter, r *http.Request) {
+	// plant type
+	plantTypeIDStr := r.PathValue("plantTypeID")
+	plantTypeID, err := uuid.Parse(plantTypeIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant type id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// plant species
+	plantSpeciesIDStr := r.URL.Query().Get("plantSpeciesID")
+	if plantSpeciesIDStr == "" {
+		log.Print("No plant species id was specified in url query")
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		return
+	}
+	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant species id from url query due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// user id
+	requestUserID, err := cfg.getUserIDFromToken(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// perform operation
+	unsetPlantTypeParams := database.UnsetPlantSpeciesAsTypeParams{
+		ID:        plantSpeciesID,
+		UpdatedBy: requestUserID,
+	}
+	err = cfg.db.UnsetPlantSpeciesAsType(r.Context(), unsetPlantTypeParams)
+	if err != nil {
+		log.Printf("Could not unset type %q for plant species %q due to: %q", plantTypeID, plantSpeciesID, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q successfully unset type %q for species %q ", requestUserID, plantTypeID, plantSpeciesID)
 	w.WriteHeader(http.StatusNoContent)
 }
