@@ -59,6 +59,7 @@ func main() {
 	// admin plant names endpoints
 	mux.Handle("POST /api/v1/admin/plant-names", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantNamesCreateHandler))))
 	mux.Handle("GET /api/v1/admin/plant-names", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantNamesViewHandler))))
+	// mux.Handle("PUT /api/v1/admin/plant-names")
 	mux.Handle("DELETE /api/v1/admin/plant-names/{plantNameID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminPlantNamesDeleteHandler))))
 
 	// admin plant type endpoints
@@ -75,15 +76,21 @@ func main() {
 
 	// admin lighting needs endpoints
 	// POST /admin/light
+	// mux.Handle("POST /api/v1/admin/light")
 	// GET /admin/light
+	// mux.Handle("GET /api/v1/admin/light")
 	// PUT /admin/light/{light id}
+	// mux.Handle("PUT /api/v1/admin/light")
 	// DELETE /admin/light/{light id}
+	// mux.Handle("DELETE /api/v1/admin/light")
 
 	// admin set/unset plant species to lighting need
 	// set plant species to lighting need
 	// -- POST /admin/light/{light id} ? plant species id = uuid
+	// mux.Handle("POST /api/v1/admin/light/link/{lightID}")
 	// unset plant species to lighting need
 	// -- DELETE /admin/light ? plant species id = uuid
+	// mux.Handle("DELETE /api/v1/admin/light/link/{lightID}")
 
 	// admin watering needs endpoints
 	// POST /admin/water
