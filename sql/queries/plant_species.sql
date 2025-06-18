@@ -69,3 +69,10 @@ update plant_species
   set deleted_at = now(),
   deleted_by = $2
 where id = $1;
+
+-- name: SetPlantSpeciesAsType :exec
+update plant_species
+  set plant_type_id = $2
+where
+  id = $1 and
+  deleted_by is null;
