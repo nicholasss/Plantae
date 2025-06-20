@@ -10,7 +10,7 @@ create table light_needs (
   deleted_by uuid,
   --
   -- table data
-	name text not null unique,
+	name text not null,
   description text not null
 );
 
