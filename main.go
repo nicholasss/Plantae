@@ -87,7 +87,7 @@ func main() {
 	mux.Handle("DELETE /api/v1/admin/light/link/{lightID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminUnsetPlantAsLightNeedHandler))))
 
 	// admin watering needs endpoints
-	// POST /admin/water
+	mux.Handle("POST /api/v1/admin/water", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminWaterCreateHandler))))
 	// GET /admin/water
 	// PUT /admin/water/{water id}
 	// DELETE /admin/water/{water id}
