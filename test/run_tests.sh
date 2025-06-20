@@ -111,6 +111,12 @@ hurl \
   --variable 4_light_name="Low indirect" \
   --variable 4_light_description="Very little light, often found in the corner of a room, far from any window, or in a north-facing room with small windows." \
   --variable 4_light_description_alt="Very little natural light." \
+  --variable 1_plant_water_type="Temperate" \
+  --variable 1_plant_water_description="This plant is a temperate species that prefers its soil to dry out between watering sessions to avoid root rot. It thrives in typical indoor conditions." \
+  --variable 1_plant_water_mm=50 \
+  --variable 2_plant_water_type="Semi-Arid" \
+  --variable 2_plant_water_description="As an arid succulent, the Jade plant stores water in its leaves and requires very infrequent watering. It is crucial to allow the soil to fully dry between waterings." \
+  --variable 2_plant_water_days=15 \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/admin.hurl

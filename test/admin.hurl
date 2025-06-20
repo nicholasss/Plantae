@@ -964,4 +964,30 @@ jsonpath "$" == null
 
 # testing setting plant to light need
 # ========================================================================
+# testing water need
+
 #
+# adding water record for plant 1
+POST http://localhost:8080/api/v1/admin/water
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "plantType": "{{1_plant_water_type}}",
+  "description": "{{1_plant_water_description}}",
+  "drySoilMM": {{1_plant_water_mm}}
+}
+```
+HTTP 204
+
+#
+# adding water record for plant 2
+POST http://localhost:8080/api/v1/admin/water
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "plantType": "{{2_plant_water_type}}",
+  "description": "{{2_plant_water_description}}",
+  "drySoilDays": {{2_plant_water_days}}
+}
+```
+HTTP 204
