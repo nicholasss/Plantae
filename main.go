@@ -82,11 +82,9 @@ func main() {
 
 	// admin set/unset plant species to lighting need
 	// set plant species to lighting need
-	// -- POST /admin/light/{light id} ? plant species id = uuid
-	// mux.Handle("POST /api/v1/admin/light/link/{lightID}")
+	mux.Handle("POST /api/v1/admin/light/link/{lightID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminSetPlantAsLightNeedHandler))))
 	// unset plant species to lighting need
-	// -- DELETE /admin/light ? plant species id = uuid
-	// mux.Handle("DELETE /api/v1/admin/light/link/{lightID}")
+	mux.Handle("DELETE /api/v1/admin/light/link/{lightID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminUnsetPlantAsLightNeedHandler))))
 
 	// admin watering needs endpoints
 	// POST /admin/water

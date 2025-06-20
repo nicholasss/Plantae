@@ -194,3 +194,106 @@ func (cfg *apiConfig) adminLightDeleteHandler(w http.ResponseWriter, r *http.Req
 	log.Printf("Admin %q successfully deleted light needs record %q", requestUserID, lightID)
 	w.WriteHeader(http.StatusNoContent)
 }
+
+// POST /admin/light/link{light id} ? plant species id = uuid
+func (cfg *apiConfig) adminSetPlantAsLightNeedHandler(w http.ResponseWriter, r *http.Request) {
+	// light id
+	lightIDStr := r.PathValue("lightID")
+	lightID, err := uuid.Parse(lightIDStr)
+	if err != nil {
+		log.Printf("Could not parse light id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// plant species
+	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
+	if plantSpeciesIDStr == "" {
+		log.Print("No plant species id was specified in url query")
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		return
+	}
+	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant species id from url query due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// user id
+	requestUserID, err := cfg.getUserIDFromToken(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// perform set
+	lightNullID := uuid.NullUUID{
+		UUID:  lightID,
+		Valid: true,
+	}
+	setParams := database.SetPlantSpeciesAsLightNeedParams{
+		ID:           plantSpeciesID,
+		LightNeedsID: lightNullID,
+		UpdatedBy:    requestUserID,
+	}
+	err = cfg.db.SetPlantSpeciesAsLightNeed(r.Context(), setParams)
+	if err != nil {
+		log.Printf("Could not set light need %q for plant species %q due to: %q", lightID, plantSpeciesID, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q successfully set light need %q for species %q ", requestUserID, lightID, plantSpeciesID)
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// DELETE /admin/light/link{light id} ? plant species id = uuid
+func (cfg *apiConfig) adminUnsetPlantAsLightNeedHandler(w http.ResponseWriter, r *http.Request) {
+	// light id
+	lightIDStr := r.PathValue("lightID")
+	lightID, err := uuid.Parse(lightIDStr)
+	if err != nil {
+		log.Printf("Could not parse light id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// plant species
+	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
+	if plantSpeciesIDStr == "" {
+		log.Print("No plant species id was specified in url query")
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		return
+	}
+	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant species id from url query due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// user id
+	requestUserID, err := cfg.getUserIDFromToken(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// perform unset
+	unsetParams := database.UnsetPlantSpeciesAsLightNeedParams{
+		ID:        plantSpeciesID,
+		UpdatedBy: requestUserID,
+	}
+	err = cfg.db.UnsetPlantSpeciesAsLightNeed(r.Context(), unsetParams)
+	if err != nil {
+		log.Printf("Could not unset light need %q for plant species %q due to: %q", lightID, plantSpeciesID, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q successfully unset light need %q for species %q ", requestUserID, lightID, plantSpeciesID)
+	w.WriteHeader(http.StatusNoContent)
+}
