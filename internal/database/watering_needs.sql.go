@@ -7,7 +7,171 @@ package database
 
 import (
 	"context"
+	"database/sql"
+
+	"github.com/google/uuid"
 )
+
+const createWaterDryDays = `-- name: CreateWaterDryDays :one
+insert into water_needs (
+	id,
+  created_at, updated_at,
+	created_by, updated_by,
+  plant_type, description,
+  dry_soil_days
+) values (
+  gen_random_uuid(),
+  now(), now(),
+  $1, $1,
+  $2, $3,
+  $4
+) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, plant_type, description, dry_soil_mm, dry_soil_days
+`
+
+type CreateWaterDryDaysParams struct {
+	CreatedBy   uuid.UUID     `json:"createdBy"`
+	PlantType   string        `json:"plantType"`
+	Description string        `json:"description"`
+	DrySoilDays sql.NullInt32 `json:"drySoilDays"`
+}
+
+func (q *Queries) CreateWaterDryDays(ctx context.Context, arg CreateWaterDryDaysParams) (WaterNeed, error) {
+	row := q.db.QueryRowContext(ctx, createWaterDryDays,
+		arg.CreatedBy,
+		arg.PlantType,
+		arg.Description,
+		arg.DrySoilDays,
+	)
+	var i WaterNeed
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.CreatedBy,
+		&i.UpdatedBy,
+		&i.DeletedBy,
+		&i.PlantType,
+		&i.Description,
+		&i.DrySoilMm,
+		&i.DrySoilDays,
+	)
+	return i, err
+}
+
+const createWaterDryMM = `-- name: CreateWaterDryMM :one
+insert into water_needs (
+	id,
+  created_at, updated_at,
+	created_by, updated_by,
+  plant_type, description,
+  dry_soil_mm
+) values (
+  gen_random_uuid(),
+  now(), now(),
+  $1, $1,
+  $2, $3,
+  $4
+) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, plant_type, description, dry_soil_mm, dry_soil_days
+`
+
+type CreateWaterDryMMParams struct {
+	CreatedBy   uuid.UUID     `json:"createdBy"`
+	PlantType   string        `json:"plantType"`
+	Description string        `json:"description"`
+	DrySoilMm   sql.NullInt32 `json:"drySoilMm"`
+}
+
+func (q *Queries) CreateWaterDryMM(ctx context.Context, arg CreateWaterDryMMParams) (WaterNeed, error) {
+	row := q.db.QueryRowContext(ctx, createWaterDryMM,
+		arg.CreatedBy,
+		arg.PlantType,
+		arg.Description,
+		arg.DrySoilMm,
+	)
+	var i WaterNeed
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.CreatedBy,
+		&i.UpdatedBy,
+		&i.DeletedBy,
+		&i.PlantType,
+		&i.Description,
+		&i.DrySoilMm,
+		&i.DrySoilDays,
+	)
+	return i, err
+}
+
+const getAllWaterNeedsOrderedByCreated = `-- name: GetAllWaterNeedsOrderedByCreated :many
+select
+  id,
+  plant_type,
+  description,
+  dry_soil_mm,
+  dry_soil_days
+from water_needs
+  where deleted_at is null
+  order by created_at desc
+`
+
+type GetAllWaterNeedsOrderedByCreatedRow struct {
+	ID          uuid.UUID     `json:"id"`
+	PlantType   string        `json:"plantType"`
+	Description string        `json:"description"`
+	DrySoilMm   sql.NullInt32 `json:"drySoilMm"`
+	DrySoilDays sql.NullInt32 `json:"drySoilDays"`
+}
+
+func (q *Queries) GetAllWaterNeedsOrderedByCreated(ctx context.Context) ([]GetAllWaterNeedsOrderedByCreatedRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllWaterNeedsOrderedByCreated)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllWaterNeedsOrderedByCreatedRow
+	for rows.Next() {
+		var i GetAllWaterNeedsOrderedByCreatedRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.PlantType,
+			&i.Description,
+			&i.DrySoilMm,
+			&i.DrySoilDays,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const markWaterNeedAsDeletedByID = `-- name: MarkWaterNeedAsDeletedByID :exec
+update water_needs
+  set
+  deleted_at = now(),
+  deleted_by = $2
+where id = $1
+`
+
+type MarkWaterNeedAsDeletedByIDParams struct {
+	ID        uuid.UUID     `json:"id"`
+	DeletedBy uuid.NullUUID `json:"deletedBy"`
+}
+
+func (q *Queries) MarkWaterNeedAsDeletedByID(ctx context.Context, arg MarkWaterNeedAsDeletedByIDParams) error {
+	_, err := q.db.ExecContext(ctx, markWaterNeedAsDeletedByID, arg.ID, arg.DeletedBy)
+	return err
+}
 
 const resetWaterNeedsTable = `-- name: ResetWaterNeedsTable :exec
 delete from water_needs
@@ -15,5 +179,59 @@ delete from water_needs
 
 func (q *Queries) ResetWaterNeedsTable(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, resetWaterNeedsTable)
+	return err
+}
+
+const updateWaterDryDaysNeedsByID = `-- name: UpdateWaterDryDaysNeedsByID :exec
+update water_needs
+  set updated_at = now(),
+  updated_by = $2,
+  description = $3,
+  dry_soil_days = $4
+where id = $1
+  and deleted_at is null
+`
+
+type UpdateWaterDryDaysNeedsByIDParams struct {
+	ID          uuid.UUID     `json:"id"`
+	UpdatedBy   uuid.UUID     `json:"updatedBy"`
+	Description string        `json:"description"`
+	DrySoilDays sql.NullInt32 `json:"drySoilDays"`
+}
+
+func (q *Queries) UpdateWaterDryDaysNeedsByID(ctx context.Context, arg UpdateWaterDryDaysNeedsByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateWaterDryDaysNeedsByID,
+		arg.ID,
+		arg.UpdatedBy,
+		arg.Description,
+		arg.DrySoilDays,
+	)
+	return err
+}
+
+const updateWaterDryMMNeedsByID = `-- name: UpdateWaterDryMMNeedsByID :exec
+update water_needs
+  set updated_at = now(),
+  updated_by = $2,
+  description = $3,
+  dry_soil_mm = $4
+where id = $1
+  and deleted_at is null
+`
+
+type UpdateWaterDryMMNeedsByIDParams struct {
+	ID          uuid.UUID     `json:"id"`
+	UpdatedBy   uuid.UUID     `json:"updatedBy"`
+	Description string        `json:"description"`
+	DrySoilMm   sql.NullInt32 `json:"drySoilMm"`
+}
+
+func (q *Queries) UpdateWaterDryMMNeedsByID(ctx context.Context, arg UpdateWaterDryMMNeedsByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateWaterDryMMNeedsByID,
+		arg.ID,
+		arg.UpdatedBy,
+		arg.Description,
+		arg.DrySoilMm,
+	)
 	return err
 }
