@@ -907,3 +907,24 @@ Authorization: Bearer {{lisa_token}}
 }
 ```
 HTTP 204
+
+#
+# get list of light needs
+GET http://localhost:8080/api/v1/admin/light
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+header "Content-Type" == "application/json; charset=utf-8"
+jsonpath "$" count == 4
+jsonpath "$[0].id" == "{{4_light_id}}"
+jsonpath "$[0].name" == "{{4_light_name}}"
+jsonpath "$[0].description" == "{{4_light_description_alt}}"
+jsonpath "$[1].id" == "{{3_light_id}}"
+jsonpath "$[1].name" == "{{3_light_name}}"
+jsonpath "$[1].description" == "{{3_light_description_alt}}"
+jsonpath "$[2].id" == "{{2_light_id}}"
+jsonpath "$[2].name" == "{{2_light_name}}"
+jsonpath "$[2].description" == "{{2_light_description_alt}}"
+jsonpath "$[3].id" == "{{1_light_id}}"
+jsonpath "$[3].name" == "{{1_light_name}}"
+jsonpath "$[3].description" == "{{1_light_description_alt}}"
