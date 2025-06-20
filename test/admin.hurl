@@ -619,7 +619,9 @@ jsonpath "$[0].soilOrganicMix" == "{{4_plant_type_soilom}}"
 jsonpath "$[0].soilGritMix" == "{{4_plant_type_soilgm}}"
 jsonpath "$[0].soilDrainageMix" == "{{4_plant_type_soildm}}"
 
-# setting species as type
+# testing plant types
+# ========================================================================
+# testing setting plant to types
 
 #
 # Reset plant_species table
@@ -665,6 +667,7 @@ Authorization: Bearer {{lisa_token}}
 ```
 HTTP 204
 
+#
 # adding plant type 1 with full information
 POST http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
