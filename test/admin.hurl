@@ -717,3 +717,123 @@ HTTP 204
 POST http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{1_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 204
+
+#
+# unset 1_plant_species as type
+DELETE http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{2_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+# 
+# unset 2_plant_species as type
+DELETE http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{1_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# again, set 1_plant_species as type
+POST http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{2_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+# 
+# again, set 2_plant_species as type
+POST http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{1_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+# testing setting plant to types
+# ========================================================================
+# testing setting plant to light need
+
+#
+# Reset plant_species table
+POST http://localhost:8080/api/v1/super-admin/reset-plant-species
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
+# Reset light_needs table
+POST http://localhost:8080/api/v1/super-admin/reset-light
+Authorization: SuperAdminToken {{super_admin_token}}
+HTTP 204
+
+#
+# Add plant 1 to the plant_species table
+# -- with all details
+POST http://localhost:8080/api/v1/admin/plant-species
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "speciesName": "{{1_species_name}}",
+  "humanPoisonToxic": {{1_human_poison_toxic}},
+  "petPoisonToxic": {{1_pet_poison_toxic}},
+  "humanEdible": {{1_human_edible}},
+  "petEdible": {{1_pet_edible}}
+}
+```
+HTTP 204
+
+#
+# Add plant 2 to the plant_species table
+# -- with all details
+POST http://localhost:8080/api/v1/admin/plant-species
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "speciesName": "{{2_species_name}}",
+  "humanPoisonToxic": {{2_human_poison_toxic}},
+  "petPoisonToxic": {{2_pet_poison_toxic}},
+  "humanEdible": {{2_human_edible}},
+  "petEdible": {{2_pet_edible}}
+}
+```
+HTTP 204
+
+#
+# add light 1 to light_needs table
+POST http://localhost:8080/api/v1/admin/light
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{1_light_name}}",
+  "description": "{{1_light_description}}"
+}
+```
+HTTP 204
+
+#
+# add light 2 to light_needs table
+POST http://localhost:8080/api/v1/admin/light
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{2_light_name}}",
+  "description": "{{2_light_description}}"
+}
+```
+HTTP 204
+
+#
+# add light 2 to light_needs table
+POST http://localhost:8080/api/v1/admin/light
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{3_light_name}}",
+  "description": "{{3_light_description}}"
+}
+```
+HTTP 204
+
+#
+# add light 4 to light_needs table
+POST http://localhost:8080/api/v1/admin/light
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{4_light_name}}",
+  "description": "{{4_light_description}}"
+}
+```
+HTTP 204
