@@ -837,3 +837,73 @@ Authorization: Bearer {{lisa_token}}
 }
 ```
 HTTP 204
+
+#
+# get list of light needs
+GET http://localhost:8080/api/v1/admin/light
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+header "Content-Type" == "application/json; charset=utf-8"
+jsonpath "$" count == 4
+jsonpath "$[0].name" == "{{4_light_name}}"
+jsonpath "$[0].description" == "{{4_light_description}}"
+jsonpath "$[1].name" == "{{3_light_name}}"
+jsonpath "$[1].description" == "{{3_light_description}}"
+jsonpath "$[2].name" == "{{2_light_name}}"
+jsonpath "$[2].description" == "{{2_light_description}}"
+jsonpath "$[3].name" == "{{1_light_name}}"
+jsonpath "$[3].description" == "{{1_light_description}}"
+[Captures]
+1_light_id: jsonpath "$[3].id"
+2_light_id: jsonpath "$[2].id"
+3_light_id: jsonpath "$[1].id"
+4_light_id: jsonpath "$[0].id"
+
+# 
+# update light 1
+PUT http://localhost:8080/api/v1/admin/light/{{1_light_id}}
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{1_light_name}}",
+  "description": "{{1_light_description_alt}}"
+}
+```
+HTTP 204
+
+# 
+# update light 2
+PUT http://localhost:8080/api/v1/admin/light/{{2_light_id}}
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{2_light_name}}",
+  "description": "{{2_light_description_alt}}"
+}
+```
+HTTP 204
+
+# 
+# update light 3
+PUT http://localhost:8080/api/v1/admin/light/{{3_light_id}}
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{3_light_name}}",
+  "description": "{{3_light_description_alt}}"
+}
+```
+HTTP 204
+
+# 
+# update light 4
+PUT http://localhost:8080/api/v1/admin/light/{{4_light_id}}
+Authorization: Bearer {{lisa_token}}
+```json
+{
+  "name": "{{4_light_name}}",
+  "description": "{{4_light_description_alt}}"
+}
+```
+HTTP 204
