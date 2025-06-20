@@ -83,7 +83,7 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 
 	// checking body properties
 	if createRequest.Name == "" {
-		log.Print("Request Body missing name proptery.")
+		log.Print("Request Body missing name property.")
 		respondWithError(errors.New("no name provided"), http.StatusBadRequest, w)
 		return
 	}
