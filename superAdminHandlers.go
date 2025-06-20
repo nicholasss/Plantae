@@ -67,7 +67,7 @@ func (cfg *apiConfig) resetWaterNeedsHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	// drop records from db
-	err := cfg.db.ResetWateringNeedsTable(r.Context())
+	err := cfg.db.ResetWaterNeedsTable(r.Context())
 	if err != nil {
 		log.Printf("Unable to reset water_needs table due to error: %q", err)
 		respondWithError(nil, http.StatusInternalServerError, w)

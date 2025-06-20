@@ -9,11 +9,11 @@ import (
 	"context"
 )
 
-const resetWateringNeedsTable = `-- name: ResetWateringNeedsTable :exec
-delete from watering_needs
+const resetWaterNeedsTable = `-- name: ResetWaterNeedsTable :exec
+delete from water_needs
 `
 
-func (q *Queries) ResetWateringNeedsTable(ctx context.Context) error {
-	_, err := q.db.ExecContext(ctx, resetWateringNeedsTable)
+func (q *Queries) ResetWaterNeedsTable(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, resetWaterNeedsTable)
 	return err
 }

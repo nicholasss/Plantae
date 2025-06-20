@@ -21,7 +21,7 @@ insert into plant_species (
 	human_edible, pet_edible
 ) values (
 	gen_random_uuid(), now(), now(), $1, $2, $3, $4, $5, $6, $7
-) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible, plant_type_id, light_needs_id, watering_needs_id
+) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, species_name, human_poison_toxic, pet_poison_toxic, human_edible, pet_edible, plant_type_id, light_needs_id, water_needs_id
 `
 
 type CreatePlantSpeciesParams struct {
@@ -60,7 +60,7 @@ func (q *Queries) CreatePlantSpecies(ctx context.Context, arg CreatePlantSpecies
 		&i.PetEdible,
 		&i.PlantTypeID,
 		&i.LightNeedsID,
-		&i.WateringNeedsID,
+		&i.WaterNeedsID,
 	)
 	return i, err
 }

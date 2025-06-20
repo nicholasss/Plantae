@@ -1,2 +1,2 @@
--- name: ResetWateringNeedsTable :exec
-delete from watering_needs;
+-- name: ResetWaterNeedsTable :exec
+delete from water_needs;

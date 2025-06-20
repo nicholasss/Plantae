@@ -1,5 +1,5 @@
 -- +goose Up
-create table watering_needs (
+create table water_needs (
   id uuid primary key,
   created_at timestamp with time zone not null,
   updated_at timestamp with time zone not null,
@@ -9,32 +9,31 @@ create table watering_needs (
   updated_by uuid not null,
   deleted_by uuid,
   --
- -- table data
-  watering_type text not null,
-  description text not null,
   -- type is either soil depth or interval watering
   -- values below fill in the 'X'
   -- 'X' number of days between waterings
   -- or
-  -- 'X' inches of soil is dry between watering
-  grow_season float not null,
-  transition_season float not null,
-  dormant_season float not null
+  -- 'X' millimeters of soil is dry between watering
+  -- table data
+  plant_type text not null,
+  description text not null,
+  dry_soil_mm integer,
+  dry_soil_days integer
 );
 
 alter table plant_species
-  add column watering_needs_id uuid;
+  add column water_needs_id uuid;
 
 alter table plant_species
-  add constraint fk_watering_needs
-  foreign key (watering_needs_id)
-  references watering_needs(id);
+  add constraint fk_water_needs
+  foreign key (water_needs_id)
+  references water_needs(id);
 
 -- +goose Down
 alter table plant_species
-  drop constraint fk_watering_needs;
+  drop constraint fk_water_needs;
 
 alter table plant_species
-  drop column watering_needs_id;
+  drop column water_needs_id;
 
-drop table watering_needs;
+drop table water_needs;

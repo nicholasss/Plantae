@@ -51,7 +51,7 @@ type PlantSpecy struct {
 	PetEdible        sql.NullBool  `json:"petEdible"`
 	PlantTypeID      uuid.NullUUID `json:"plantTypeId"`
 	LightNeedsID     uuid.NullUUID `json:"lightNeedsId"`
-	WateringNeedsID  uuid.NullUUID `json:"wateringNeedsId"`
+	WaterNeedsID     uuid.NullUUID `json:"waterNeedsId"`
 }
 
 type PlantType struct {
@@ -115,17 +115,16 @@ type UsersPlant struct {
 	Name         sql.NullString `json:"name"`
 }
 
-type WateringNeed struct {
-	ID               uuid.UUID     `json:"id"`
-	CreatedAt        time.Time     `json:"createdAt"`
-	UpdatedAt        time.Time     `json:"updatedAt"`
-	DeletedAt        sql.NullTime  `json:"deletedAt"`
-	CreatedBy        uuid.UUID     `json:"createdBy"`
-	UpdatedBy        uuid.UUID     `json:"updatedBy"`
-	DeletedBy        uuid.NullUUID `json:"deletedBy"`
-	WateringType     string        `json:"wateringType"`
-	Description      string        `json:"description"`
-	GrowSeason       float64       `json:"growSeason"`
-	TransitionSeason float64       `json:"transitionSeason"`
-	DormantSeason    float64       `json:"dormantSeason"`
+type WaterNeed struct {
+	ID          uuid.UUID     `json:"id"`
+	CreatedAt   time.Time     `json:"createdAt"`
+	UpdatedAt   time.Time     `json:"updatedAt"`
+	DeletedAt   sql.NullTime  `json:"deletedAt"`
+	CreatedBy   uuid.UUID     `json:"createdBy"`
+	UpdatedBy   uuid.UUID     `json:"updatedBy"`
+	DeletedBy   uuid.NullUUID `json:"deletedBy"`
+	PlantType   string        `json:"plantType"`
+	Description string        `json:"description"`
+	DrySoilMm   sql.NullInt32 `json:"drySoilMm"`
+	DrySoilDays sql.NullInt32 `json:"drySoilDays"`
 }
