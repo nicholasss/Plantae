@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/nicholasss/plantae/internal/database"
 )
 
@@ -31,10 +32,11 @@ type AdminWaterCreateRequest struct {
 }
 
 type AdminWaterResponse struct {
-	PlantType   string `json:"plantType"`
-	Description string `json:"description"`
-	DrySoilMM   *int32 `json:"drySoilMM,omitempty"`
-	DrySoilDays *int32 `json:"drySoilDays,omitempty"`
+	ID          uuid.UUID `json:"id"`
+	PlantType   string    `json:"plantType"`
+	Description string    `json:"description"`
+	DrySoilMM   *int32    `json:"drySoilMM,omitempty"`
+	DrySoilDays *int32    `json:"drySoilDays,omitempty"`
 }
 
 // === handler functions ===
@@ -72,6 +74,8 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 	mmRequest := strings.ToLower(createRequest.PlantType) == "tropical" || strings.ToLower(createRequest.PlantType) == "temperate"
 	dayRequest := strings.ToLower(createRequest.PlantType) == "semi-arid" || strings.ToLower(createRequest.PlantType) == "arid"
 
+	var waterResponse AdminWaterResponse
+
 	if dayRequest {
 		if createRequest.DrySoilDays == nil {
 			log.Print("Request Body missing dry soil days property.")
@@ -86,12 +90,17 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 			Description: createRequest.Description,
 			DrySoilDays: nullDrySoilDays,
 		}
-		_, err = cfg.db.CreateWaterDryDays(r.Context(), createParams)
+		waterRecord, err := cfg.db.CreateWaterDryDays(r.Context(), createParams)
 		if err != nil {
 			log.Printf("Could not create water need record due to: %q", err)
 			respondWithError(err, http.StatusInternalServerError, w)
 			return
 		}
+
+		waterResponse.ID = waterRecord.ID
+		waterResponse.PlantType = waterRecord.PlantType
+		waterResponse.Description = waterRecord.Description
+		waterResponse.DrySoilDays = &waterRecord.DrySoilDays.Int32
 
 	} else if mmRequest {
 		if createRequest.DrySoilMM == nil {
@@ -107,12 +116,17 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 			Description: createRequest.Description,
 			DrySoilMm:   nullDrySoilMM,
 		}
-		_, err = cfg.db.CreateWaterDryMM(r.Context(), createParams)
+		waterRecord, err := cfg.db.CreateWaterDryMM(r.Context(), createParams)
 		if err != nil {
 			log.Printf("Could not create water need record due to: %q", err)
 			respondWithError(err, http.StatusInternalServerError, w)
 			return
 		}
+
+		waterResponse.ID = waterRecord.ID
+		waterResponse.PlantType = waterRecord.PlantType
+		waterResponse.Description = waterRecord.Description
+		waterResponse.DrySoilDays = &waterRecord.DrySoilMm.Int32
 
 	} else {
 		log.Printf("Invalid plant type of %q", createRequest.PlantType)
@@ -120,6 +134,15 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	waterData, err := json.Marshal(&waterResponse)
+	if err != nil {
+		log.Printf("Could not marshal records to json due to: %q", err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
 	log.Printf("Admin %q created water need successfully", requestUserID)
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(waterData)
 }

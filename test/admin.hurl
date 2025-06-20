@@ -977,7 +977,9 @@ Authorization: Bearer {{lisa_token}}
   "drySoilMM": {{1_plant_water_mm}}
 }
 ```
-HTTP 204
+HTTP 200
+[Captures]
+1_water_id: jsonpath "$.id"
 
 #
 # adding water record for plant 2
@@ -990,4 +992,6 @@ Authorization: Bearer {{lisa_token}}
   "drySoilDays": {{2_plant_water_days}}
 }
 ```
-HTTP 204
+HTTP 200
+[Captures]
+2_water_id: jsonpath "$.id"

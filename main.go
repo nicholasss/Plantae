@@ -88,8 +88,7 @@ func main() {
 
 	// admin watering needs endpoints
 	mux.Handle("POST /api/v1/admin/water", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminWaterCreateHandler))))
-	// GET /admin/water
-	// PUT /admin/water/{water id}
+	// GET /admin/water/{water id}
 	// DELETE /admin/water/{water id}
 
 	// admin set/unset plant species to watering need
