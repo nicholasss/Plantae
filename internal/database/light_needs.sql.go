@@ -7,7 +7,103 @@ package database
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
+
+const createLightNeed = `-- name: CreateLightNeed :one
+insert into light_needs (
+	id,
+  created_at, updated_at,
+	created_by, updated_by,
+  name, description
+) values (
+  gen_random_uuid(),
+  now(), now(),
+  $1, $1,
+  $2, $3
+) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, name, description
+`
+
+type CreateLightNeedParams struct {
+	CreatedBy   uuid.UUID `json:"createdBy"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+}
+
+func (q *Queries) CreateLightNeed(ctx context.Context, arg CreateLightNeedParams) (LightNeed, error) {
+	row := q.db.QueryRowContext(ctx, createLightNeed, arg.CreatedBy, arg.Name, arg.Description)
+	var i LightNeed
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.CreatedBy,
+		&i.UpdatedBy,
+		&i.DeletedBy,
+		&i.Name,
+		&i.Description,
+	)
+	return i, err
+}
+
+const getAllLightNeedsOrderedByCreated = `-- name: GetAllLightNeedsOrderedByCreated :many
+select 
+	id,
+  name,
+  description
+from light_needs
+  where deleted_at is null
+  order by created_at desc
+`
+
+type GetAllLightNeedsOrderedByCreatedRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+}
+
+func (q *Queries) GetAllLightNeedsOrderedByCreated(ctx context.Context) ([]GetAllLightNeedsOrderedByCreatedRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllLightNeedsOrderedByCreated)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllLightNeedsOrderedByCreatedRow
+	for rows.Next() {
+		var i GetAllLightNeedsOrderedByCreatedRow
+		if err := rows.Scan(&i.ID, &i.Name, &i.Description); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const markLightNeedAsDeletedByID = `-- name: MarkLightNeedAsDeletedByID :exec
+update light_needs
+  set
+  deleted_at = now(),
+  deleted_by = $2
+where id = $1
+`
+
+type MarkLightNeedAsDeletedByIDParams struct {
+	ID        uuid.UUID     `json:"id"`
+	DeletedBy uuid.NullUUID `json:"deletedBy"`
+}
+
+func (q *Queries) MarkLightNeedAsDeletedByID(ctx context.Context, arg MarkLightNeedAsDeletedByIDParams) error {
+	_, err := q.db.ExecContext(ctx, markLightNeedAsDeletedByID, arg.ID, arg.DeletedBy)
+	return err
+}
 
 const resetLightNeedsTable = `-- name: ResetLightNeedsTable :exec
 delete from light_needs
