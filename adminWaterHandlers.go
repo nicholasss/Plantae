@@ -69,8 +69,8 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	dayRequest := strings.ToLower(createRequest.PlantType) == "tropical" || strings.ToLower(createRequest.PlantType) == "temperate"
-	mmRequest := strings.ToLower(createRequest.PlantType) == "semi-arid" || strings.ToLower(createRequest.PlantType) == "arid"
+	mmRequest := strings.ToLower(createRequest.PlantType) == "tropical" || strings.ToLower(createRequest.PlantType) == "temperate"
+	dayRequest := strings.ToLower(createRequest.PlantType) == "semi-arid" || strings.ToLower(createRequest.PlantType) == "arid"
 
 	if dayRequest {
 		if createRequest.DrySoilDays == nil {
