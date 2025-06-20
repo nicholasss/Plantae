@@ -77,8 +77,8 @@ func main() {
 	// admin lighting needs endpoints
 	mux.Handle("POST /api/v1/admin/light", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminLightCreateHandler))))
 	mux.Handle("GET /api/v1/admin/light", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminLightViewHandler))))
-	mux.Handle("PUT /api/v1/admin/light{lightID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminLightUpdateHandler))))
-	mux.Handle("DELETE /api/v1/admin/light{lightID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminLightDeleteHandler))))
+	mux.Handle("PUT /api/v1/admin/light/{lightID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminLightUpdateHandler))))
+	mux.Handle("DELETE /api/v1/admin/light/{lightID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminLightDeleteHandler))))
 
 	// admin set/unset plant species to lighting need
 	// set plant species to lighting need
