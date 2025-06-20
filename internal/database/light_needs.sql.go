@@ -113,3 +113,30 @@ func (q *Queries) ResetLightNeedsTable(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, resetLightNeedsTable)
 	return err
 }
+
+const updateLightNeedsByID = `-- name: UpdateLightNeedsByID :exec
+update light_needs
+  set updated_at = now(),
+  updated_by = $2,
+	name = $3,
+  description = $4
+where id = $1
+  and deleted_at is null
+`
+
+type UpdateLightNeedsByIDParams struct {
+	ID          uuid.UUID `json:"id"`
+	UpdatedBy   uuid.UUID `json:"updatedBy"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+}
+
+func (q *Queries) UpdateLightNeedsByID(ctx context.Context, arg UpdateLightNeedsByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateLightNeedsByID,
+		arg.ID,
+		arg.UpdatedBy,
+		arg.Name,
+		arg.Description,
+	)
+	return err
+}

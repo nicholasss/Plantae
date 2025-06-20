@@ -29,3 +29,12 @@ select
 from light_needs
   where deleted_at is null
   order by created_at desc;
+
+-- name: UpdateLightNeedsByID :exec
+update light_needs
+  set updated_at = now(),
+  updated_by = $2,
+	name = $3,
+  description = $4
+where id = $1
+  and deleted_at is null;
