@@ -928,3 +928,40 @@ jsonpath "$[2].description" == "{{2_light_description_alt}}"
 jsonpath "$[3].id" == "{{1_light_id}}"
 jsonpath "$[3].name" == "{{1_light_name}}"
 jsonpath "$[3].description" == "{{1_light_description_alt}}"
+
+# 
+# delete light 1
+DELETE http://localhost:8080/api/v1/admin/light/{{1_light_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+# 
+# delete light 2
+DELETE http://localhost:8080/api/v1/admin/light/{{2_light_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+# 
+# delete light 3
+DELETE http://localhost:8080/api/v1/admin/light/{{3_light_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+# 
+# delete light 4
+DELETE http://localhost:8080/api/v1/admin/light/{{4_light_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# get empty list
+GET http://localhost:8080/api/v1/admin/light
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+[Asserts]
+header "Content-Type" == "application/json; charset=utf-8"
+jsonpath "$" == null
+
+# testing setting plant to light need
+# ========================================================================
+#
