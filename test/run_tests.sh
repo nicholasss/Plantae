@@ -99,6 +99,14 @@ hurl \
   --variable 4_plant_type_soilom="1 part Cactus mix" \
   --variable 4_plant_type_soilgm="1 part Pumice" \
   --variable 4_plant_type_soildm="2 parts Sand" \
+  --variable 1_light_name="Bright direct" \
+  --variable 1_light_description="Unfiltered sunlight hitting the plant directly, like right in a south-facing window." \
+  --variable 2_light_name="Bright indirect" \
+  --variable 2_light_description="Bright light, but filtered or diffused, such as near a south-facing window with a sheer curtain, or a few feet away from an unobstructed east or west window." \
+  --variable 3_light_name="Medium indirect" \
+  --variable 3_light_description="Good, consistent light, but never direct sun. Think a few feet back from an east or west window, or near a north-facing window." \
+  --variable 4_light_name="Low indirect" \
+  --variable 4_light_description="Very little light, often found in the corner of a room, far from any window, or in a north-facing room with small windows." \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/admin.hurl
