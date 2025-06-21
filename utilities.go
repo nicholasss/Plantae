@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -315,29 +315,19 @@ func loadAPIConfig() (*apiConfig, error) {
 
 // === Utility Response Handlers ===
 
-// TODO: function to respond due to a wrong platform for action
-// some kind of enum for action? reset, promote, etc.
-
-// TODO: send out a more generic error to client
 func respondWithError(err error, code int, w http.ResponseWriter) {
-	log.Printf("ERROR: Sending error to client: %q", err)
-
-	// response side
+	log.Printf("Error has occured during request: %q", err)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 
 	if err != nil {
-		errorString := err.Error()
-		errorResponse := errorResponse{Error: errorString}
-		errorData, err := json.Marshal(errorResponse)
-		if err != nil {
-			log.Printf("Error occured marshaling error response: %q", err)
-			return
-		}
-
-		w.Write(errorData)
+		httpStatus := http.StatusText(code)
+		errorResponse := fmt.Sprintf(`{"error":"%s"}`, httpStatus)
+		w.Write([]byte(errorResponse))
 		return
 	}
 
-	w.Write([]byte(`{"error":"internal error"}`))
+	defaultError := http.StatusText(http.StatusInternalServerError)
+	errorResponse := fmt.Sprintf(`{"error":"%s"}`, defaultError)
+	w.Write([]byte(errorResponse))
 }
