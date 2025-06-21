@@ -2,7 +2,7 @@
 # Verify that server is online
 GET http://localhost:8080/api/v1/health
 HTTP 200
-Content-Type: text/html; charset=UTF-8
+Content-Type: text/html; charset=utf-8
 [Asserts]
 xpath "string(/html/body)" contains "OK"
 
@@ -19,7 +19,7 @@ HTTP 204
 #
 # Create user account
 POST http://localhost:8080/api/v1/auth/register
-Content-Type: application/json; charset=UTF-8
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "email": "{{craig_email}}",
@@ -27,7 +27,7 @@ Content-Type: application/json; charset=UTF-8
 }
 ```
 HTTP 201
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 [Captures]
 craig_id: jsonpath "$.id"
 [Asserts]
@@ -37,7 +37,7 @@ jsonpath "$.email" == "{{craig_email}}"
 #
 # Login to user account
 POST http://localhost:8080/api/v1/auth/login
-Content-Type: application/json; charset=UTF-8
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "email": "{{craig_email}}",
@@ -45,7 +45,7 @@ Content-Type: application/json; charset=UTF-8
 }
 ```
 HTTP 200
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 [Captures]
 craig_token: jsonpath "$.token"
 craig_refresh_token: jsonpath "$.refreshToken"
@@ -59,7 +59,7 @@ jsonpath "$.refreshTokenExpiresAt" exists
 POST http://localhost:8080/api/v1/auth/refresh
 Authorization: Bearer {{craig_refresh_token}}
 HTTP 200
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 [Captures]
 craig_token: jsonpath "$.token"
 
@@ -67,7 +67,7 @@ craig_token: jsonpath "$.token"
 # Revoke token
 POST http://localhost:8080/api/v1/auth/revoke
 Authorization: Bearer {{craig_refresh_token}}
-Content-Type: application/json; charset=UTF-8
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "id": "{{craig_id}}"
@@ -78,7 +78,7 @@ HTTP 204
 #
 # Login back in to user account for new refresh token
 POST http://localhost:8080/api/v1/auth/login
-Content-Type: application/json; charset=UTF-8
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "email": "{{craig_email}}",
@@ -86,7 +86,7 @@ Content-Type: application/json; charset=UTF-8
 }
 ```
 HTTP 200
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 [Captures]
 craig_token: jsonpath "$.token"
 craig_refresh_token: jsonpath "$.refreshToken"
