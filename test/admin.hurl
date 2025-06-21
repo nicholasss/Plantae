@@ -995,3 +995,40 @@ Authorization: Bearer {{lisa_token}}
 HTTP 200
 [Captures]
 2_water_id: jsonpath "$.id"
+
+#
+# set water 1 to plant 1
+POST http://localhost:8080/api/v1/admin/water/link/{{1_water_id}}?plant-species-id={{1_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# set water 2 to plant 2
+POST http://localhost:8080/api/v1/admin/water/link/{{2_water_id}}?plant-species-id={{2_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# unset water 1 to plant 1
+DELETE http://localhost:8080/api/v1/admin/water/link/{{1_water_id}}?plant-species-id={{1_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# unset water 2 to plant 2
+DELETE http://localhost:8080/api/v1/admin/water/link/{{2_water_id}}?plant-species-id={{2_plant_species_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+
+#
+# delete water 1
+DELETE http://localhost:8080/api/v1/admin/water/{{1_water_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
+
+#
+# delete water 2
+DELETE http://localhost:8080/api/v1/admin/water/{{2_water_id}}
+Authorization: Bearer {{lisa_token}}
+HTTP 204
