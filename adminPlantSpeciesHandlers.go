@@ -6,7 +6,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/nicholasss/plantae/internal/database"
@@ -14,23 +13,24 @@ import (
 
 // === request response types ===
 
-// create request for plant species
+// AdminPlantSpeciesCreateRequest is for decoding plant species create requests.
 type AdminPlantSpeciesCreateRequest struct {
 	SpeciesName      string `json:"speciesName"`
-	HumanPoisonToxic *bool  `json:"humanPoisonToxic,omitempty"`
-	PetPoisonToxic   *bool  `json:"petPoisonToxic,omitempty"`
-	HumanEdible      *bool  `json:"humanEdible,omitempty"`
-	PetEdible        *bool  `json:"petEdible,omitempty"`
+	HumanPoisonToxic *bool  `json:"humanPoisonToxic"`
+	PetPoisonToxic   *bool  `json:"petPoisonToxic"`
+	HumanEdible      *bool  `json:"humanEdible"`
+	PetEdible        *bool  `json:"petEdible"`
 }
 
-// only provides client and updatable information
+// AdminPlantSpeciesUpdateRequest is for decoding plant species update requests.
 type AdminPlantSpeciesUpdateRequest struct {
-	HumanPoisonToxic *bool `json:"humanPoisonToxic,omitempty"`
-	PetPoisonToxic   *bool `json:"petPoisonToxic,omitempty"`
-	HumanEdible      *bool `json:"humanEdible,omitempty"`
-	PetEdible        *bool `json:"petEdible,omitempty"`
+	HumanPoisonToxic *bool `json:"humanPoisonToxic"`
+	PetPoisonToxic   *bool `json:"petPoisonToxic"`
+	HumanEdible      *bool `json:"humanEdible"`
+	PetEdible        *bool `json:"petEdible"`
 }
 
+// AdminPlantSpeciesViewResponse is for responding to plant species view requests.
 type AdminPlantSpeciesViewResponse struct {
 	ID               uuid.UUID `json:"id"`
 	SpeciesName      string    `json:"speciesName"`
