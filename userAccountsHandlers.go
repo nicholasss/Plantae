@@ -20,17 +20,19 @@ type AdminStatusRequest struct {
 	ID uuid.UUID `json:"id"`
 }
 
-// register endpoint
+// CreateUserRequest is for decoding create user requests.
 type CreateUserRequest struct {
 	Email       string `json:"email"`
 	RawPassword string `json:"password"`
 }
 
-// login endpoint
+// UserLoginRequest is for decoding user login requests.
 type UserLoginRequest struct {
 	Email       string `json:"email"`
 	RawPassword string `json:"password"`
 }
+
+// UserLoginResponse is for encoding user loging responses.
 type UserLoginResponse struct {
 	ID                    uuid.UUID `json:"id"`
 	IsAdmin               bool      `json:"isAdmin"`
@@ -40,13 +42,14 @@ type UserLoginResponse struct {
 	RefreshTokenExpiresAt time.Time `json:"refreshTokenExpiresAt"`
 }
 
-// refresh endpoint
+// AuthRefreshResponse is for encoding user access token responses.
 type AuthRefreshResponse struct {
 	ID                   uuid.UUID `json:"id"`
 	AccessToken          string    `json:"token"`
 	AccessTokenExpiresAt time.Time `json:"tokenExpiresAt"`
 }
 
+// AuthRevokeRequest is for decoding user refresh token requests.
 type AuthRevokeRequest struct {
 	ID uuid.UUID `json:"id"`
 }
