@@ -217,7 +217,7 @@ func (cfg *apiConfig) adminWaterDeleteHandler(w http.ResponseWriter, r *http.Req
 	waterIDStr := r.PathValue("waterID")
 	waterID, err := uuid.Parse(waterIDStr)
 	if err != nil {
-		log.Printf("Could not parse light id from url path due to: %q", err)
+		log.Printf("Could not parse water id from url path due to: %q", err)
 		respondWithError(err, http.StatusBadRequest, w)
 		return
 	}
