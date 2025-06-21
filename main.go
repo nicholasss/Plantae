@@ -20,7 +20,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	log.Printf("Staring server\n")
 
-	cfg, err := loadApiConfig()
+	cfg, err := loadAPIConfig()
 	if err != nil {
 		log.Fatalf("Issue loading config: %q", err)
 	}

@@ -16,6 +16,9 @@ import (
 
 // === Global Variabes ===
 
+// LangCodes is a map of their ISO 639 codes to its full language name.
+// The data is sourced from Wikipedia, full sourcing information is below.
+//
 // Data source:
 // List of ISO 639 language codes
 // https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
@@ -253,7 +256,7 @@ func (cfg *apiConfig) getUserIDFromToken(r *http.Request) (uuid.UUID, error) {
 	return requestUserID, nil
 }
 
-func loadApiConfig() (*apiConfig, error) {
+func loadAPIConfig() (*apiConfig, error) {
 	// loading vars from .env
 	err := godotenv.Load(".env")
 	if err != nil {
