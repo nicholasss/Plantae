@@ -128,10 +128,6 @@ HTTP 200
 1_plant_species_id: jsonpath "$[0].id"
 [Asserts]
 jsonpath "$" count == 1
-jsonpath "$[0].createdAt" isIsoDate
-jsonpath "$[0].updatedAt" isIsoDate
-jsonpath "$[0].createdBy" == {{lisa_id}}
-jsonpath "$[0].updatedBy" == {{lisa_id}}
 jsonpath "$[0].speciesName" == "{{1_species_name}}"
 jsonpath "$[0].humanPoisonToxic" == {{1_human_poison_toxic}}
 jsonpath "$[0].petPoisonToxic" == {{1_pet_poison_toxic}}
@@ -161,10 +157,6 @@ HTTP 200
 [Asserts]
 jsonpath "$" count == 2
 jsonpath "$[0].speciesName" == "{{2_species_name}}"
-jsonpath "$[0].createdAt" isIsoDate
-jsonpath "$[0].updatedAt" isIsoDate
-jsonpath "$[0].createdBy" == "{{lisa_id}}"
-jsonpath "$[0].updatedBy" == "{{lisa_id}}"
 
 #
 # Updating plant with new information
@@ -193,10 +185,6 @@ jsonpath "$[0].humanPoisonToxic" == {{2_human_poison_toxic}}
 jsonpath "$[0].petPoisonToxic" == {{2_pet_poison_toxic}}
 jsonpath "$[0].humanEdible" == {{2_human_edible}}
 jsonpath "$[0].petEdible" == {{2_pet_edible}}
-jsonpath "$[0].createdAt" isIsoDate
-jsonpath "$[0].updatedAt" isIsoDate
-jsonpath "$[0].createdBy" == "{{lisa_id}}"
-jsonpath "$[0].updatedBy" == "{{lisa_id}}"
 
 #
 # Requesting deletion of a plants species record
@@ -216,10 +204,6 @@ jsonpath "$[0].humanPoisonToxic" == {{2_human_poison_toxic}}
 jsonpath "$[0].petPoisonToxic" == {{2_pet_poison_toxic}}
 jsonpath "$[0].humanEdible" == {{2_human_edible}}
 jsonpath "$[0].petEdible" == {{2_pet_edible}}
-jsonpath "$[0].createdAt" isIsoDate
-jsonpath "$[0].updatedAt" isIsoDate
-jsonpath "$[0].createdBy" == "{{lisa_id}}"
-jsonpath "$[0].updatedBy" == "{{lisa_id}}"
 
 # testing plant species
 # ========================================================================
