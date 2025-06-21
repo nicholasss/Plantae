@@ -33,10 +33,6 @@ type AdminPlantSpeciesUpdateRequest struct {
 
 type AdminPlantSpeciesViewResponse struct {
 	ID               uuid.UUID `json:"id"`
-	CreatedAt        time.Time `json:"createdAt"`
-	UpdatedAt        time.Time `json:"updatedAt"`
-	CreatedBy        uuid.UUID `json:"createdBy"`
-	UpdatedBy        uuid.UUID `json:"updatedBy"`
 	SpeciesName      string    `json:"speciesName"`
 	HumanPoisonToxic *bool     `json:"humanPoisonToxic,omitempty"`
 	PetPoisonToxic   *bool     `json:"petPoisonToxic,omitempty"`
@@ -114,10 +110,6 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 
 		newResponse := AdminPlantSpeciesViewResponse{
 			ID:               oldRecord.ID,
-			CreatedAt:        oldRecord.CreatedAt,
-			UpdatedAt:        oldRecord.UpdatedAt,
-			CreatedBy:        oldRecord.CreatedBy,
-			UpdatedBy:        oldRecord.UpdatedBy,
 			SpeciesName:      oldRecord.SpeciesName,
 			HumanPoisonToxic: humanPT,
 			HumanEdible:      humanE,
