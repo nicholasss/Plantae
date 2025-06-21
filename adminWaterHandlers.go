@@ -146,3 +146,96 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 	w.WriteHeader(http.StatusOK)
 	w.Write(waterData)
 }
+
+func (cfg *apiConfig) adminWaterViewHandler(w http.ResponseWriter, r *http.Request) {
+	requestUserID, err := cfg.getUserIDFromToken(r)
+	if err != nil {
+		log.Printf("Could not get User ID from token due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	waterRecords, err := cfg.db.GetAllWaterNeedsOrderedByCreated(r.Context())
+	if err != nil {
+		log.Printf("Could not get water need records due to: %q", err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// NOTE: may not be the most effificent
+	var waterResponses []AdminWaterResponse
+	for _, record := range waterRecords {
+		mmRecord := strings.ToLower(record.PlantType) == "tropical" || strings.ToLower(record.PlantType) == "temperate"
+		dayRecord := strings.ToLower(record.PlantType) == "semi-arid" || strings.ToLower(record.PlantType) == "arid"
+
+		if mmRecord {
+			drySoilMM := record.DrySoilMm.Int32
+			newRecord := AdminWaterResponse{
+				ID:          record.ID,
+				PlantType:   record.PlantType,
+				Description: record.Description,
+				DrySoilMM:   &drySoilMM,
+			}
+			waterResponses = append(waterResponses, newRecord)
+		} else if dayRecord {
+			drySoilDays := record.DrySoilDays.Int32
+			newRecord := AdminWaterResponse{
+				ID:          record.ID,
+				PlantType:   record.PlantType,
+				Description: record.Description,
+				DrySoilDays: &drySoilDays,
+			}
+			waterResponses = append(waterResponses, newRecord)
+		} else {
+			log.Printf("Unknown plant type of %q in returned from query", record.PlantType)
+		}
+	}
+
+	waterData, err := json.Marshal(waterResponses)
+	if err != nil {
+		log.Printf("Could not marshal records to json due to: %q", err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q listed all water needs successfully", requestUserID)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(waterData)
+}
+
+// DELETE /admin/water/{waterID}
+func (cfg *apiConfig) adminWaterDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	requestUserID, err := cfg.getUserIDFromToken(r)
+	if err != nil {
+		log.Printf("Could not get User ID from token due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// water need record to mark as deleted
+	waterIDStr := r.PathValue("waterID")
+	waterID, err := uuid.Parse(waterIDStr)
+	if err != nil {
+		log.Printf("Could not parse light id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// perform delete
+	nullUserID := uuid.NullUUID{UUID: requestUserID, Valid: true}
+	deleteParams := database.MarkWaterNeedAsDeletedByIDParams{
+		ID:        waterID,
+		DeletedBy: nullUserID,
+	}
+	err = cfg.db.MarkWaterNeedAsDeletedByID(r.Context(), deleteParams)
+	if err != nil {
+		log.Printf("Could not mark record as deleted due to: %q", err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	// respond with 204
+	log.Printf("Admin %q successfully deleted water need record %q", requestUserID, waterID)
+	w.WriteHeader(http.StatusNoContent)
+}
