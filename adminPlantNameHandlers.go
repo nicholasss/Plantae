@@ -12,7 +12,7 @@ import (
 
 // === request response types ===
 
-// create request for plant name
+// AdminPlantNamesCreateRequest is for decoding plant name requests.
 type AdminPlantNamesCreateRequest struct {
 	PlantID    uuid.UUID `json:"plantID"`
 	LangCode   string    `json:"langCode"`
