@@ -335,6 +335,27 @@ func (q *Queries) SetPlantSpeciesAsType(ctx context.Context, arg SetPlantSpecies
 	return err
 }
 
+const setPlantSpeciesAsWaterNeed = `-- name: SetPlantSpeciesAsWaterNeed :exec
+update plant_species
+  set water_needs_id = $2,
+  updated_at = now(),
+  updated_by = $3
+where
+  id = $1 and
+  deleted_by is null
+`
+
+type SetPlantSpeciesAsWaterNeedParams struct {
+	ID           uuid.UUID     `json:"id"`
+	WaterNeedsID uuid.NullUUID `json:"waterNeedsId"`
+	UpdatedBy    uuid.UUID     `json:"updatedBy"`
+}
+
+func (q *Queries) SetPlantSpeciesAsWaterNeed(ctx context.Context, arg SetPlantSpeciesAsWaterNeedParams) error {
+	_, err := q.db.ExecContext(ctx, setPlantSpeciesAsWaterNeed, arg.ID, arg.WaterNeedsID, arg.UpdatedBy)
+	return err
+}
+
 const unsetPlantSpeciesAsLightNeed = `-- name: UnsetPlantSpeciesAsLightNeed :exec
 update plant_species
   set light_needs_id = null,
@@ -372,6 +393,26 @@ type UnsetPlantSpeciesAsTypeParams struct {
 
 func (q *Queries) UnsetPlantSpeciesAsType(ctx context.Context, arg UnsetPlantSpeciesAsTypeParams) error {
 	_, err := q.db.ExecContext(ctx, unsetPlantSpeciesAsType, arg.ID, arg.UpdatedBy)
+	return err
+}
+
+const unsetPlantSpeciesAsWaterNeed = `-- name: UnsetPlantSpeciesAsWaterNeed :exec
+update plant_species
+  set water_needs_id = null,
+  updated_at = now(),
+  updated_by = $2
+where
+  id = $1 and
+  deleted_by is null
+`
+
+type UnsetPlantSpeciesAsWaterNeedParams struct {
+	ID        uuid.UUID `json:"id"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
+}
+
+func (q *Queries) UnsetPlantSpeciesAsWaterNeed(ctx context.Context, arg UnsetPlantSpeciesAsWaterNeedParams) error {
+	_, err := q.db.ExecContext(ctx, unsetPlantSpeciesAsWaterNeed, arg.ID, arg.UpdatedBy)
 	return err
 }
 

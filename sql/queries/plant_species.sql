@@ -105,3 +105,21 @@ update plant_species
 where
   id = $1 and
   deleted_by is null;
+
+-- name: SetPlantSpeciesAsWaterNeed :exec
+update plant_species
+  set water_needs_id = $2,
+  updated_at = now(),
+  updated_by = $3
+where
+  id = $1 and
+  deleted_by is null;
+
+-- name: UnsetPlantSpeciesAsWaterNeed :exec
+update plant_species
+  set water_needs_id = null,
+  updated_at = now(),
+  updated_by = $2
+where
+  id = $1 and
+  deleted_by is null;
