@@ -239,3 +239,103 @@ func (cfg *apiConfig) adminWaterDeleteHandler(w http.ResponseWriter, r *http.Req
 	log.Printf("Admin %q successfully deleted water need record %q", requestUserID, waterID)
 	w.WriteHeader(http.StatusNoContent)
 }
+
+// POST /admin/water/{water id} ? plant species id = uuid
+func (cfg *apiConfig) adminSetPlantAsWaterNeedHandler(w http.ResponseWriter, r *http.Request) {
+	// plant type
+	waterIDStr := r.PathValue("waterID")
+	waterID, err := uuid.Parse(waterIDStr)
+	if err != nil {
+		log.Printf("Could not parse water need id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// plant species
+	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
+	if plantSpeciesIDStr == "" {
+		log.Print("No plant species id was specified in url query")
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		return
+	}
+	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant species id from url query due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// user id
+	requestUserID, err := cfg.getUserIDFromToken(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// perform set
+	nullWaterID := uuid.NullUUID{UUID: waterID, Valid: true}
+	setParams := database.SetPlantSpeciesAsWaterNeedParams{
+		ID:           plantSpeciesID,
+		WaterNeedsID: nullWaterID,
+		UpdatedBy:    requestUserID,
+	}
+	err = cfg.db.SetPlantSpeciesAsWaterNeed(r.Context(), setParams)
+	if err != nil {
+		log.Printf("Could not set water needs %q for plant species %q due to: %q", waterID, plantSpeciesID, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q successfully set water need %q for species %q ", requestUserID, waterID, plantSpeciesID)
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// DELETE /admin/water/{water id} ? plant species id = uuid
+func (cfg *apiConfig) adminUnsetPlantAsWaterNeedHandler(w http.ResponseWriter, r *http.Request) {
+	// plant type
+	waterIDStr := r.PathValue("waterID")
+	waterID, err := uuid.Parse(waterIDStr)
+	if err != nil {
+		log.Printf("Could not parse water need id from url path due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// plant species
+	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
+	if plantSpeciesIDStr == "" {
+		log.Print("No plant species id was specified in url query")
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		return
+	}
+	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
+	if err != nil {
+		log.Printf("Could not parse plant species id from url query due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// user id
+	requestUserID, err := cfg.getUserIDFromToken(r)
+	if err != nil {
+		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
+		respondWithError(err, http.StatusBadRequest, w)
+		return
+	}
+
+	// perform unset
+	unsetParams := database.UnsetPlantSpeciesAsWaterNeedParams{
+		ID:        plantSpeciesID,
+		UpdatedBy: requestUserID,
+	}
+	err = cfg.db.UnsetPlantSpeciesAsWaterNeed(r.Context(), unsetParams)
+	if err != nil {
+		log.Printf("Could not unset water need %q for plant species %q due to: %q", waterID, plantSpeciesID, err)
+		respondWithError(err, http.StatusInternalServerError, w)
+		return
+	}
+
+	log.Printf("Admin %q successfully unset water need %q for species %q ", requestUserID, waterID, plantSpeciesID)
+	w.WriteHeader(http.StatusNoContent)
+}

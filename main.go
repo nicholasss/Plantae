@@ -93,9 +93,9 @@ func main() {
 
 	// admin set/unset plant species to watering need
 	// set plant species to watering need
-	// -- POST /admin/water/{water id} ? plant species id = uuid
+	mux.Handle("POST /api/v1/admin/water/link/{waterID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminSetPlantAsWaterNeedHandler))))
 	// unset plant species to watering need
-	// -- DELETE /admin/water ? plant species id = uuid
+	mux.Handle("DELETE /api/v1/admin/water/link/{waterID}", cfg.logMW(cfg.authNormalAdminMW(http.HandlerFunc(cfg.adminUnsetPlantAsWaterNeedHandler))))
 
 	// === user endpoints ===
 
