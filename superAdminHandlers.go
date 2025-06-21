@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"log"
 	"net/http"
 )
@@ -171,7 +171,7 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 
 	// check that user is not already admin
 	if userRecord.IsAdmin {
-		respondWithError(fmt.Errorf("user is already admin"), http.StatusBadRequest, w)
+		respondWithError(errors.New("user is already admin"), http.StatusBadRequest, w)
 		return
 	}
 
@@ -205,7 +205,7 @@ func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Re
 
 	// check that user is not demoted was never promoted
 	if !userRecord.IsAdmin {
-		respondWithError(fmt.Errorf("user is already not-admin"), http.StatusBadRequest, w)
+		respondWithError(errors.New("user is already not-admin"), http.StatusBadRequest, w)
 		return
 	}
 

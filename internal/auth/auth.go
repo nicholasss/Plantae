@@ -46,7 +46,7 @@ func GetAuthKeysValue(headers http.Header, prefix string) (string, error) {
 
 	authHeader := headers.Get("Authorization")
 	if authHeader == "" {
-		return "", fmt.Errorf("header field 'Authorization' is absent")
+		return "", errors.New("header field 'Authorization' is absent")
 	}
 
 	keyString, ok := strings.CutPrefix(authHeader, prefix+" ")
@@ -153,13 +153,13 @@ func MakeRefreshToken() (string, error) {
 func HashPassword(rawPassword string) (string, error) {
 	if rawPassword == "" {
 		log.Print("Empty password provided.")
-		return "", fmt.Errorf("unable to hash empty password")
+		return "", errors.New("unable to hash empty password")
 	}
 
 	rawPasswordData := []byte(rawPassword)
 	rawPassword = "" // GC collection
 	if len(rawPasswordData) > 72 {
-		return "", fmt.Errorf("unable to hash password longer than 72 bytes")
+		return "", errors.New("unable to hash password longer than 72 bytes")
 	}
 
 	hashedPasswordData, err := bcrypt.GenerateFromPassword(rawPasswordData, bcrypt.DefaultCost)

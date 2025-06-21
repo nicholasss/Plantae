@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -65,7 +64,7 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 
 	if !userRecord.IsAdmin {
 		log.Print("Could not view plants due to user not being admin.")
-		respondWithError(fmt.Errorf("unauthorized"), http.StatusUnauthorized, w)
+		respondWithError(errors.New("unauthorized"), http.StatusUnauthorized, w)
 		return
 	}
 	// user is now authenticated below here

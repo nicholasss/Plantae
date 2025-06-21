@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"log"
 	"net/http"
 	"strings"
@@ -245,12 +245,12 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 		// this may present a bug
 		log.Print("!!! potential bug, check POST /api/refresh handler")
 		log.Print("Refresh token will be revoked in the future.")
-		respondWithError(fmt.Errorf("potential error in refresh token database. token revoked in the future"), http.StatusInternalServerError, w)
+		respondWithError(errors.New("potential error in refresh token database. token revoked in the future"), http.StatusInternalServerError, w)
 		return
 	}
 
 	if time.Now().UTC().After(refreshTokenRecord.ExpiresAt) {
-		respondWithError(fmt.Errorf("bad request"), http.StatusBadRequest, w)
+		respondWithError(errors.New("bad request"), http.StatusBadRequest, w)
 		return
 	}
 

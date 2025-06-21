@@ -36,8 +36,8 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 
 ### Cleanup efforts
 
-- [ ] Fix respondWithError utility function to not reveal the error value to client
-- [ ] Replace all fmt.Errorf with errors.New where formatting or wrapping is not needed
+- [x] Fix respondWithError utility function to not reveal the error value to client
+- [x] Replace all fmt.Errorf with errors.New where formatting or wrapping is not needed
 - [ ] Transition JSON, SQL, and scripting variables to a single style. Either camelCase or snake_case.
 - [ ] Add 'application/json; charset=utf-8' Content-Type assert in all of the tests and fix where needed
 - [ ] Rename 'authorizeNormalAdmin' utility function or rewrite to actually authorize normal admins.
