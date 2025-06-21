@@ -27,10 +27,11 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [x] Implement basic admin account management.
 - [x] Implement plant species management.
 - [x] Implement plant name management.
-- [ ] Implement plant type management.
-- [ ] Implement plant light need management.
+- [x] Implement plant type management.
+- [x] Implement plant light need management.
+- [x] Implement plant water need management.
 - [ ] Implement basic end-user's plant tracking.
-- [ ] Begin entering plant information into plant table.
+- [ ] Implement script to place 5 plant's data into database.
 - [ ] Create a backup scheme for the universal plant species data.
 
 ### Cleanup efforts
@@ -40,3 +41,4 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [ ] Transition JSON, SQL, and scripting variables to a single style. Either camelCase or snake_case.
 - [ ] Add 'application/json; charset=utf-8' Content-Type assert in all of the tests and fix where needed
 - [ ] Rename 'authorizeNormalAdmin' utility function or rewrite to actually authorize normal admins.
+- [ ] log -> log/slog package for logging level, and logging to file
