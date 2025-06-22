@@ -2,7 +2,7 @@
 # Verify that server is online
 GET http://localhost:8080/api/v1/health
 HTTP 200
-Content-Type: text/html; charset=UTF-8
+Content-Type: text/html; charset=utf-8
 [Asserts]
 xpath "string(/html/body)" contains "OK"
 
@@ -45,7 +45,7 @@ HTTP 204
 #
 # Create user account
 POST http://localhost:8080/api/v1/auth/register
-Content-Type: application/json; charset=UTF-8
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "email": "{{lisa_email}}",
@@ -53,7 +53,7 @@ Content-Type: application/json; charset=UTF-8
 }
 ```
 HTTP 201
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 [Captures]
 lisa_id: jsonpath "$.id"
 [Asserts]
@@ -63,7 +63,7 @@ jsonpath "$.email" == "{{lisa_email}}"
 #
 # Login to user account
 POST http://localhost:8080/api/v1/auth/login
-Content-Type: application/json; charset=UTF-8
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "email": "{{lisa_email}}",
@@ -71,7 +71,7 @@ Content-Type: application/json; charset=UTF-8
 }
 ```
 HTTP 200
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 [Captures]
 lisa_token: jsonpath "$.token"
 lisa_refresh_token: jsonpath "$.refreshToken"
@@ -84,7 +84,7 @@ jsonpath "$.refreshTokenExpiresAt" exists
 # Promote user account to admin account
 POST http://localhost:8080/api/v1/super-admin/promote-user
 Authorization: SuperAdminToken {{super_admin_token}}
-Content-Type: application/json; charset=UTF-8
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "id": "{{lisa_id}}"
@@ -107,6 +107,7 @@ HTTP 204
 # -- with all details
 POST http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "speciesName": "{{1_species_name}}",
@@ -124,6 +125,7 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Captures]
 1_plant_species_id: jsonpath "$[0].id"
 [Asserts]
@@ -139,6 +141,7 @@ jsonpath "$[0].petEdible" == {{1_pet_edible}}
 # -- with required details
 POST http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "speciesName": "{{2_species_name}}"
@@ -152,6 +155,7 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Captures]
 2_plant_species_id: jsonpath "$[0].id"
 [Asserts]
@@ -162,6 +166,7 @@ jsonpath "$[0].speciesName" == "{{2_species_name}}"
 # Updating plant with new information
 PUT http://localhost:8080/api/v1/admin/plant-species/{{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "humanPoisonToxic": {{2_human_poison_toxic}},
@@ -178,6 +183,7 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 2
 jsonpath "$[0].speciesName" == "{{2_species_name}}"
