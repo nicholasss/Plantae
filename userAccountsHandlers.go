@@ -116,7 +116,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	log.Printf("User %q was registered successfully.", userRecord.ID)
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(userData)
 }
@@ -215,7 +215,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("User %q successfully logged in.", userRecord.ID)
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write(userLoginResponseData)
 }
@@ -276,7 +276,7 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	log.Printf("User %q	refreshed their access token successfully.", refreshTokenRecord.UserID)
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write(refreshResponseData)
 }
