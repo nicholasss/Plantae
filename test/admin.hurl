@@ -203,6 +203,7 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 1
 jsonpath "$[0].speciesName" == "{{2_species_name}}"
@@ -219,6 +220,7 @@ jsonpath "$[0].petEdible" == {{2_pet_edible}}
 # Adding common names in english & spanish for 2_plant_species
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "plantID": "{{1_plant_species_id}}",
@@ -230,6 +232,7 @@ HTTP 204
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "plantID": "{{1_plant_species_id}}",
@@ -241,6 +244,7 @@ HTTP 204
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "plantID": "{{1_plant_species_id}}",
@@ -252,6 +256,7 @@ HTTP 204
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "plantID": "{{1_plant_species_id}}",
@@ -263,6 +268,7 @@ HTTP 204
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "plantID": "{{1_plant_species_id}}",
@@ -274,6 +280,7 @@ HTTP 204
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "plantID": "{{1_plant_species_id}}",
@@ -288,8 +295,8 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json"
 jsonpath "$" count == 6
 
 #
@@ -297,8 +304,8 @@ jsonpath "$" count == 6
 GET http://localhost:8080/api/v1/admin/plant-names?lang=en
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json"
 jsonpath "$" count == 3
 jsonpath "$[0].plantId" == "{{1_plant_species_id}}"
 jsonpath "$[0].commonName" == "{{1c_species_common_name}}"
@@ -319,8 +326,8 @@ jsonpath "$[2].langCode" == "en"
 GET http://localhost:8080/api/v1/admin/plant-names?lang=es
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json"
 jsonpath "$" count == 3
 jsonpath "$[0].plantId" == "{{1_plant_species_id}}"
 jsonpath "$[0].commonName" == "{{1f_species_common_name}}"
@@ -355,8 +362,8 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json"
 jsonpath "$" count == 3
 jsonpath "$[0].langCode" == "es"
 jsonpath "$[1].langCode" == "es"
@@ -381,8 +388,8 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json"
 jsonpath "$" == null
 
 # testing plant names
@@ -393,6 +400,7 @@ jsonpath "$" == null
 # adding plant type 1 with minimal information
 POST http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{1_plant_type_name}}",
@@ -405,6 +413,7 @@ HTTP 204
 # adding plant type 2 with minimal information
 POST http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{2_plant_type_name}}",
@@ -417,6 +426,7 @@ HTTP 204
 # adding plant type 3 with minimal information
 POST http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{3_plant_type_name}}",
@@ -429,6 +439,7 @@ HTTP 204
 # adding plant type 4 with minimal information
 POST http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{4_plant_type_name}}",
@@ -442,8 +453,8 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json"
 jsonpath "$" count == 4
 [Captures]
 1_plant_type_id: jsonpath "$[3].id"
@@ -455,6 +466,7 @@ jsonpath "$" count == 4
 # adding more information to plant type 1
 PUT http://localhost:8080/api/v1/admin/plant-types/{{1_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "maxTemperatureCelsius": {{1_plant_type_maxtc}},
@@ -472,6 +484,7 @@ HTTP 204
 # adding more information to plant type 2
 PUT http://localhost:8080/api/v1/admin/plant-types/{{2_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "maxTemperatureCelsius": {{2_plant_type_maxtc}},
@@ -489,6 +502,7 @@ HTTP 204
 # adding more information to plant type 3
 PUT http://localhost:8080/api/v1/admin/plant-types/{{3_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "maxTemperatureCelsius": {{3_plant_type_maxtc}},
@@ -506,6 +520,7 @@ HTTP 204
 # adding more information to plant type 4
 PUT http://localhost:8080/api/v1/admin/plant-types/{{4_plant_type_id}}
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "maxTemperatureCelsius": {{4_plant_type_maxtc}},
@@ -524,8 +539,8 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json"
 jsonpath "$" count == 4
 jsonpath "$[3].id" == "{{1_plant_type_id}}"
 jsonpath "$[3].name" == "{{1_plant_type_name}}"
@@ -585,8 +600,8 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json"
 jsonpath "$" count == 2
 jsonpath "$[1].id" == "{{3_plant_type_id}}"
 jsonpath "$[1].name" == "{{3_plant_type_name}}"
@@ -630,6 +645,7 @@ HTTP 204
 # -- with all details
 POST http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "speciesName": "{{1_species_name}}",
@@ -646,6 +662,7 @@ HTTP 204
 # -- with all details
 POST http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "speciesName": "{{2_species_name}}",
@@ -661,6 +678,7 @@ HTTP 204
 # adding plant type 1 with full information
 POST http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{1_plant_type_name}}",
@@ -680,6 +698,7 @@ HTTP 204
 # adding plant type 2 with full information
 POST http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{2_plant_type_name}}",
@@ -753,6 +772,7 @@ HTTP 204
 # -- with all details
 POST http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "speciesName": "{{1_species_name}}",
@@ -769,6 +789,7 @@ HTTP 204
 # -- with all details
 POST http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "speciesName": "{{2_species_name}}",
@@ -784,6 +805,7 @@ HTTP 204
 # add light 1 to light_needs table
 POST http://localhost:8080/api/v1/admin/light
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{1_light_name}}",
@@ -796,6 +818,7 @@ HTTP 204
 # add light 2 to light_needs table
 POST http://localhost:8080/api/v1/admin/light
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{2_light_name}}",
@@ -808,6 +831,7 @@ HTTP 204
 # add light 2 to light_needs table
 POST http://localhost:8080/api/v1/admin/light
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{3_light_name}}",
@@ -820,6 +844,7 @@ HTTP 204
 # add light 4 to light_needs table
 POST http://localhost:8080/api/v1/admin/light
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{4_light_name}}",
@@ -833,8 +858,8 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/light
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json; charset=utf-8"
 jsonpath "$" count == 4
 jsonpath "$[0].name" == "{{4_light_name}}"
 jsonpath "$[0].description" == "{{4_light_description}}"
@@ -854,6 +879,7 @@ jsonpath "$[3].description" == "{{1_light_description}}"
 # update light 1
 PUT http://localhost:8080/api/v1/admin/light/{{1_light_id}}
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{1_light_name}}",
@@ -866,6 +892,7 @@ HTTP 204
 # update light 2
 PUT http://localhost:8080/api/v1/admin/light/{{2_light_id}}
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{2_light_name}}",
@@ -878,6 +905,7 @@ HTTP 204
 # update light 3
 PUT http://localhost:8080/api/v1/admin/light/{{3_light_id}}
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{3_light_name}}",
@@ -890,6 +918,7 @@ HTTP 204
 # update light 4
 PUT http://localhost:8080/api/v1/admin/light/{{4_light_id}}
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "name": "{{4_light_name}}",
@@ -903,8 +932,8 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/light
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json; charset=utf-8"
 jsonpath "$" count == 4
 jsonpath "$[0].id" == "{{4_light_id}}"
 jsonpath "$[0].name" == "{{4_light_name}}"
@@ -948,8 +977,8 @@ HTTP 204
 GET http://localhost:8080/api/v1/admin/light
 Authorization: Bearer {{lisa_token}}
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-header "Content-Type" == "application/json; charset=utf-8"
 jsonpath "$" == null
 
 # testing setting plant to light need
@@ -960,6 +989,7 @@ jsonpath "$" == null
 # adding water record for plant 1
 POST http://localhost:8080/api/v1/admin/water
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "plantType": "{{1_plant_water_type}}",
@@ -968,6 +998,7 @@ Authorization: Bearer {{lisa_token}}
 }
 ```
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Captures]
 1_water_id: jsonpath "$.id"
 
@@ -975,6 +1006,7 @@ HTTP 200
 # adding water record for plant 2
 POST http://localhost:8080/api/v1/admin/water
 Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
 ```json
 {
   "plantType": "{{2_plant_water_type}}",
@@ -983,6 +1015,7 @@ Authorization: Bearer {{lisa_token}}
 }
 ```
 HTTP 200
+Content-Type: application/json; charset=utf-8
 [Captures]
 2_water_id: jsonpath "$.id"
 

@@ -255,7 +255,7 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 
 	log.Printf("Admin %q listed plant types list successfully.", requestUserID)
 	// log.Printf("DEBUG: list of plants types: %s", string(plantTypesData))
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write(plantTypesData)
 }
