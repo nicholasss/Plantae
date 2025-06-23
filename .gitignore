@@ -10,3 +10,4 @@ openapi/report.html
 # other ignores
 .DS_Store
 tmp
+log
