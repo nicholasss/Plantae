@@ -3,7 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -216,6 +218,7 @@ type apiConfig struct {
 	accessTokenDuration  time.Duration
 	refreshTokenDuration time.Duration
 	db                   *database.Queries
+	sl                   *slog.Logger
 	localAddr            string
 	platform             string
 	port                 string
@@ -263,6 +266,17 @@ func loadAPIConfig() (*apiConfig, error) {
 		return nil, err
 	}
 
+	// connect to log file and write out to it
+	logFile, err := os.OpenFile("log/server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Unable to open log file: %q", err)
+	}
+	defer logFile.Close()
+
+	logWriter := io.MultiWriter(os.Stdout, logFile)
+	opts := slog.HandlerOptions{Level: slog.LevelDebug}
+	sl := slog.New(slog.NewTextHandler(logWriter, &opts))
+
 	// connecting to database
 	dbURL := os.Getenv("GOOSE_DBSTRING")
 	if dbURL == "" {
@@ -274,14 +288,14 @@ func loadAPIConfig() (*apiConfig, error) {
 		return nil, err
 	}
 	dbQueries := database.New(db)
-	log.Print("Connected to database succesfully.")
+	sl.Info("Connected to database succesfully")
 
 	// additional vars, configuration, and return
-
 	cfg := &apiConfig{
 		accessTokenDuration:  time.Hour * 2,
 		refreshTokenDuration: time.Hour * 24 * 30,
 		db:                   dbQueries,
+		sl:                   sl,
 		localAddr:            os.Getenv("LOCAL_ADDRESS"),
 		platform:             os.Getenv("PLATFORM"),
 		port:                 ":" + os.Getenv("PORT"),
@@ -291,24 +305,24 @@ func loadAPIConfig() (*apiConfig, error) {
 
 	// checking the config
 	if cfg.localAddr == "" {
-		log.Panic("ERROR: 'LOCAL_ADDRESS' is empty, please check .env")
+		log.Fatal("ERROR: 'LOCAL_ADDRESS' is empty, please check .env")
 	}
 	if cfg.platform == "" {
-		log.Panic("ERROR: 'PLATFORM' is empty, please check .env")
+		log.Fatal("ERROR: 'PLATFORM' is empty, please check .env")
 	} else if cfg.platform != "production" && cfg.platform != "testing" && cfg.platform != "development" {
-		log.Panic("ERROR: 'PLATFORM' is unexpected value, please check .env")
+		log.Fatal("ERROR: 'PLATFORM' is unexpected value, please check .env")
 	}
 	if cfg.port == "" {
-		log.Panic("ERROR: 'PORT' is empty, please check .env")
+		log.Fatal("ERROR: 'PORT' is empty, please check .env")
 	}
 	if cfg.JWTSecret == "" {
-		log.Panic("ERROR: 'JWT_SECRET' is empty, please check .env")
+		log.Fatal("ERROR: 'JWT_SECRET' is empty, please check .env")
 	}
 	if cfg.superAdminToken == "" {
-		log.Panic("ERROR: 'SUPER_ADMIN_TOKEN' is empty, please check .env")
+		log.Fatal("ERROR: 'SUPER_ADMIN_TOKEN' is empty, please check .env")
 	}
 
-	log.Printf("Platform loaded as %q.", cfg.platform)
+	cfg.sl.Info("Config is loaded")
 
 	return cfg, nil
 }

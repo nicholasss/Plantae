@@ -1,11 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	_ "github.com/lib/pq"
 )
+
+var logo = `
+$$$$$$$\  $$\                      $$\
+$$  __$$\ $$ |                     $$ |
+$$ |  $$ |$$ | $$$$$$\  $$$$$$$\ $$$$$$\    $$$$$$\   $$$$$$\
+$$$$$$$  |$$ | \____$$\ $$  __$$\\_$$  _|   \____$$\ $$  __$$\
+$$  ____/ $$ | $$$$$$$ |$$ |  $$ | $$ |     $$$$$$$ |$$$$$$$$ |
+$$ |      $$ |$$  __$$ |$$ |  $$ | $$ |$$\ $$  __$$ |$$   ____|
+$$ |      $$ |\$$$$$$$ |$$ |  $$ | \$$$$  |\$$$$$$$ |\$$$$$$$\
+\__|      \__| \_______|\__|  \__|  \____/  \_______| \_______|`
 
 // === Handler Functions ===
 
@@ -18,7 +29,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 // === Main Function ===
 
 func main() {
-	log.Printf("Staring server\n")
+	fmt.Printf("%s\n\n", logo)
 
 	cfg, err := loadAPIConfig()
 	if err != nil {
@@ -127,6 +138,7 @@ func main() {
 	// /plants
 	// /plants/{plant id}
 
-	log.Printf("Server is now online at http://%s%s.\n", cfg.localAddr, cfg.port)
+	serverAddress := fmt.Sprintf("http://%s%s", cfg.localAddr, cfg.port)
+	cfg.sl.Info("Server is now online", "address", serverAddress)
 	log.Fatal(http.ListenAndServe(cfg.port, mux))
 }
