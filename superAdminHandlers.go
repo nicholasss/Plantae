@@ -13,7 +13,7 @@ func (cfg *apiConfig) resetPlantTypesHandler(w http.ResponseWriter, r *http.Requ
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
 		cfg.sl.Debug("Unable to reset plant_types table due to wrong platform", "platform", cfg.platform)
-		respondWithError(nil, http.StatusForbidden, w)
+		respondWithError(nil, http.StatusForbidden, w, cfg.sl)
 		return
 	}
 
@@ -21,7 +21,7 @@ func (cfg *apiConfig) resetPlantTypesHandler(w http.ResponseWriter, r *http.Requ
 	err := cfg.db.ResetPlantTypesTable(r.Context())
 	if err != nil {
 		cfg.sl.Debug("Unable to reset plant_types table", "error", err)
-		respondWithError(nil, http.StatusInternalServerError, w)
+		respondWithError(nil, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -36,7 +36,7 @@ func (cfg *apiConfig) resetLightNeedsHandler(w http.ResponseWriter, r *http.Requ
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
 		cfg.sl.Debug("Unable to reset light_needs table due to wrong platform", "platform", cfg.platform)
-		respondWithError(nil, http.StatusForbidden, w)
+		respondWithError(nil, http.StatusForbidden, w, cfg.sl)
 		return
 	}
 
@@ -44,7 +44,7 @@ func (cfg *apiConfig) resetLightNeedsHandler(w http.ResponseWriter, r *http.Requ
 	err := cfg.db.ResetLightNeedsTable(r.Context())
 	if err != nil {
 		cfg.sl.Debug("Unable to reset light_needs table", "error", err)
-		respondWithError(nil, http.StatusInternalServerError, w)
+		respondWithError(nil, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -59,7 +59,7 @@ func (cfg *apiConfig) resetWaterNeedsHandler(w http.ResponseWriter, r *http.Requ
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
 		cfg.sl.Debug("Unable to reset water_needs table due to wrong platform", "platform", cfg.platform)
-		respondWithError(nil, http.StatusForbidden, w)
+		respondWithError(nil, http.StatusForbidden, w, cfg.sl)
 		return
 	}
 
@@ -67,7 +67,7 @@ func (cfg *apiConfig) resetWaterNeedsHandler(w http.ResponseWriter, r *http.Requ
 	err := cfg.db.ResetWaterNeedsTable(r.Context())
 	if err != nil {
 		cfg.sl.Debug("Unable to reset water_needs table", "error", err)
-		respondWithError(nil, http.StatusInternalServerError, w)
+		respondWithError(nil, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -82,7 +82,7 @@ func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Re
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
 		cfg.sl.Debug("Unable to reset plant_species table due to wrong platform", "platform", cfg.platform)
-		respondWithError(nil, http.StatusForbidden, w)
+		respondWithError(nil, http.StatusForbidden, w, cfg.sl)
 		return
 	}
 
@@ -90,7 +90,7 @@ func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Re
 	err := cfg.db.ResetPlantSpeciesTable(r.Context())
 	if err != nil {
 		cfg.sl.Debug("Unable to reset plant_species table", "error", err)
-		respondWithError(nil, http.StatusInternalServerError, w)
+		respondWithError(nil, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -106,14 +106,14 @@ func (cfg *apiConfig) resetPlantNamesHandler(w http.ResponseWriter, r *http.Requ
 	// ensure development platform
 	if platformProduction(cfg) {
 		cfg.sl.Debug("Unable to reset plant_names table due to wrong platform", "platform", cfg.platform)
-		respondWithError(nil, http.StatusForbidden, w)
+		respondWithError(nil, http.StatusForbidden, w, cfg.sl)
 		return
 	}
 
 	err := cfg.db.ResetPlantNamesTable(r.Context())
 	if err != nil {
 		cfg.sl.Debug("Unable to reset plant_names table", "error", err)
-		respondWithError(nil, http.StatusInternalServerError, w)
+		respondWithError(nil, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -129,7 +129,7 @@ func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) 
 	// ensure development platform
 	if platformProduction(cfg) {
 		cfg.sl.Debug("Unable to reset users table due to wrong platform", "platform", cfg.platform)
-		respondWithError(nil, http.StatusForbidden, w)
+		respondWithError(nil, http.StatusForbidden, w, cfg.sl)
 		return
 	}
 
@@ -137,7 +137,7 @@ func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) 
 	err := cfg.db.ResetUsersTable(r.Context())
 	if err != nil {
 		cfg.sl.Debug("Unable to reset users table", "error", err)
-		respondWithError(nil, http.StatusInternalServerError, w)
+		respondWithError(nil, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -150,7 +150,7 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 	var adminStatusRequest AdminStatusRequest
 	err := json.NewDecoder(r.Body).Decode(&adminStatusRequest)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	defer r.Body.Close()
@@ -158,19 +158,19 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 	// validate that id is a users id
 	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusRequest.ID)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// check that user is not already admin
 	if userRecord.IsAdmin {
-		respondWithError(errors.New("user is already admin"), http.StatusBadRequest, w)
+		respondWithError(errors.New("user is already admin"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	err = cfg.db.PromoteUserToAdminByID(r.Context(), adminStatusRequest.ID)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -184,26 +184,26 @@ func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Re
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&adminStatusRequest)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// validate that id is a users id
 	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), adminStatusRequest.ID)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// check that user is not demoted was never promoted
 	if !userRecord.IsAdmin {
-		respondWithError(errors.New("user is already not-admin"), http.StatusBadRequest, w)
+		respondWithError(errors.New("user is already not-admin"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	err = cfg.db.DemoteUserFromAdminByID(r.Context(), adminStatusRequest.ID)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
