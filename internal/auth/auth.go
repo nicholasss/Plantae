@@ -1,3 +1,6 @@
+/*
+Package auth provides cryptographically secure functions for passwords or javascript web tokens.
+*/
 package auth
 
 import (
@@ -7,7 +10,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -19,13 +22,13 @@ import (
 
 // === Admin Token Functions ===
 
-func ValidateSuperAdmin(superAdminToken string, requestToken string) bool {
 // ValidateSuperAdmin is a cryptographicall secure function to check
 // whether the token provided is the SuperAdminToken.
+func ValidateSuperAdmin(superAdminToken string, requestToken string, sl *slog.Logger) bool {
 	token1, err1 := base64.StdEncoding.DecodeString(superAdminToken)
 	token2, err2 := base64.StdEncoding.DecodeString(requestToken)
 	if err1 != nil || err2 != nil {
-		log.Print("Could not authenticate Super Admin.")
+		sl.Debug("One of the provided tokens is empty")
 		return false
 	}
 
@@ -34,11 +37,11 @@ func ValidateSuperAdmin(superAdminToken string, requestToken string) bool {
 
 // === Token & Key Functions ===
 
-func GetAuthKeysValue(headers http.Header, prefix string) (string, error) {
 // GetAuthKeysValue returns the value in the 'Authorization' header of a request.
 // Optionally provide a prefix to use before a token.
 // i.e. "Bearer <token>", "ApiKey <token>", or "SuperAdminToken <token>"
 // TODO: merge with function below
+func GetAuthKeysValue(headers http.Header, prefix string, sl *slog.Logger) (string, error) {
 	// value will look like:
 	//   ApiKey <key string>
 	if prefix == "" {
@@ -52,16 +55,16 @@ func GetAuthKeysValue(headers http.Header, prefix string) (string, error) {
 
 	keyString, ok := strings.CutPrefix(authHeader, prefix+" ")
 	if !ok {
-		log.Printf("Unable to cut prefix off. Before: '%s' After: '%s'", authHeader, keyString)
+		sl.Debug("Unable to cut prefix from Authorization header")
 		return "", errors.New("unable to find key in headers")
 	}
 
 	return keyString, nil
 }
 
-func GetBearerToken(headers http.Header) (string, error) {
 // GetBearerToken returns the access token from a requests headers.
 // TODO: merge with function above
+func GetBearerToken(headers http.Header, sl *slog.Logger) (string, error) {
 	// value will look like
 	//   Bearer <token_string>
 
@@ -73,11 +76,10 @@ func GetBearerToken(headers http.Header) (string, error) {
 	tokenString, ok := strings.CutPrefix(authHeader, "Bearer ")
 	if !ok {
 		if strings.Contains(authHeader, "SuperAdminToken") {
-			log.Println("Super-admin token supplied where admin's access token is required.")
 			return "", errors.New("super-admin token provided, please provide admin's access token instead")
 		}
 
-		log.Printf("Unable to cut prefix off. Before: '%s' After: '%s'\n", authHeader, tokenString)
+		sl.Debug("Unable to cut prefix from Authorization header")
 		return "", errors.New("unable to find token in headers")
 	}
 
@@ -85,8 +87,8 @@ func GetBearerToken(headers http.Header) (string, error) {
 	return tokenString, nil
 }
 
-func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (string, error) {
 // MakeJWT provides a fresh access token to a particular user for a given duration.
+func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration, sl *slog.Logger) (string, error) {
 	currentTime := time.Now().UTC()
 	expirationTime := currentTime.UTC().Add(expiresIn)
 
@@ -102,7 +104,7 @@ func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (str
 	// HMAC signing method requires the type []byte
 	signedToken, err := token.SignedString([]byte(tokenSecret))
 	if err != nil {
-		log.Printf("Error signing JWT: %s", err)
+		sl.Debug("Unable to sign JWT", "error", err)
 		return "", err
 	}
 
@@ -110,9 +112,9 @@ func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (str
 	return signedToken, nil
 }
 
-func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 // ValidateJWT checks a users access token and ensures that it is valid.
 // It will return a user id (uuid) when successful.
+func ValidateJWT(tokenString, tokenSecret string, sl *slog.Logger) (uuid.UUID, error) {
 	claims := jwt.RegisteredClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, &claims,
@@ -139,11 +141,12 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 	return userUUID, nil
 }
 
-func MakeRefreshToken() (string, error) {
 // MakeRefreshToken provides a fresh refresh token.
+func MakeRefreshToken(sl *slog.Logger) (string, error) {
 	data := make([]byte, 32)
 	_, err := rand.Read(data)
 	if err != nil {
+		sl.Debug("Unable to read random data", "error", err)
 		return "", err
 	}
 
@@ -153,10 +156,10 @@ func MakeRefreshToken() (string, error) {
 
 // === User Password Functions ===
 
-func HashPassword(rawPassword string) (string, error) {
 // HashPassword takes a raw password and returns a hashed version, utilizing bcrypt.
+func HashPassword(rawPassword string, sl *slog.Logger) (string, error) {
 	if rawPassword == "" {
-		log.Print("Empty password provided.")
+		sl.Debug("Empty password was passed in")
 		return "", errors.New("unable to hash empty password")
 	}
 
@@ -168,7 +171,7 @@ func HashPassword(rawPassword string) (string, error) {
 
 	hashedPasswordData, err := bcrypt.GenerateFromPassword(rawPasswordData, bcrypt.DefaultCost)
 	if err != nil {
-		log.Printf("Unable to hash password: %s", err)
+		sl.Debug("Unable to hash password", "error", err)
 		return "", err
 	}
 	rawPasswordData = nil // GC collection
@@ -176,14 +179,14 @@ func HashPassword(rawPassword string) (string, error) {
 	return string(hashedPasswordData), nil
 }
 
-func CheckPasswordHash(password, hashedPassword string) error {
 // CheckPasswordHash takes a raw password from a client, and a hashed password from the server.
 // If the hased raw password (from client) does not match the stored hashed password (from database),
 // it will return an error.
 // If they match, then it will return nil.
+func CheckPasswordHash(password, hashedPassword string, sl *slog.Logger) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	if err != nil {
-		log.Printf("Unable to compare hash and password: %s", err)
+		sl.Debug("Unable to compare provided raw password and hashed password", "error", err)
 		return err
 	}
 
