@@ -249,12 +249,12 @@ func platformNotProduction(cfg *apiConfig) bool {
 
 // check header for admin access token
 func (cfg *apiConfig) getUserIDFromToken(r *http.Request) (uuid.UUID, error) {
-	requestAccessToken, err := auth.GetBearerToken(r.Header)
+	requestAccessToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
 
-	requestUserID, err := auth.ValidateJWT(requestAccessToken, cfg.JWTSecret)
+	requestUserID, err := auth.ValidateJWT(requestAccessToken, cfg.JWTSecret, cfg.sl)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
@@ -332,8 +332,8 @@ func loadAPIConfig() (*apiConfig, error) {
 
 // === Utility Response Handlers ===
 
-func respondWithError(err error, code int, w http.ResponseWriter) {
-	log.Printf("Error has occured during request: %q", err)
+func respondWithError(err error, code int, w http.ResponseWriter, sl *slog.Logger) {
+	sl.Debug("Error has occured during request", "error", err)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 
