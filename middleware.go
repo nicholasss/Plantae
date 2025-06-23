@@ -11,14 +11,14 @@ import (
 // auth super admin middleware
 func (cfg *apiConfig) authSuperAdminMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestToken, err := auth.GetAuthKeysValue(r.Header, "SuperAdminToken")
+		requestToken, err := auth.GetAuthKeysValue(r.Header, "SuperAdminToken", cfg.sl)
 		if err != nil {
 			cfg.sl.Debug("Unable to get superadmin token from headers", "error", err)
 			respondWithError(err, http.StatusBadRequest, w)
 			return
 		}
 
-		if ok := auth.ValidateSuperAdmin(cfg.superAdminToken, requestToken); !ok {
+		if ok := auth.ValidateSuperAdmin(cfg.superAdminToken, requestToken, cfg.sl); !ok {
 			cfg.sl.Debug("Unable to validate superadmin token in request")
 			respondWithError(err, http.StatusForbidden, w)
 			return
