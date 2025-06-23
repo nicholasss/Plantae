@@ -19,9 +19,9 @@ import (
 
 // === Admin Token Functions ===
 
-// check admin token
-// TODO: hash the superAdminToken for storage in memory and the requestToken
 func ValidateSuperAdmin(superAdminToken string, requestToken string) bool {
+// ValidateSuperAdmin is a cryptographicall secure function to check
+// whether the token provided is the SuperAdminToken.
 	token1, err1 := base64.StdEncoding.DecodeString(superAdminToken)
 	token2, err2 := base64.StdEncoding.DecodeString(requestToken)
 	if err1 != nil || err2 != nil {
@@ -34,10 +34,11 @@ func ValidateSuperAdmin(superAdminToken string, requestToken string) bool {
 
 // === Token & Key Functions ===
 
-// api or superAdminToken key retrieval.
-// if prefix is not provided (""), then it will use "ApiKey" as the prefix.
-// "unable to find key in headers", may mean the prefix is either wrong or mispelled.
 func GetAuthKeysValue(headers http.Header, prefix string) (string, error) {
+// GetAuthKeysValue returns the value in the 'Authorization' header of a request.
+// Optionally provide a prefix to use before a token.
+// i.e. "Bearer <token>", "ApiKey <token>", or "SuperAdminToken <token>"
+// TODO: merge with function below
 	// value will look like:
 	//   ApiKey <key string>
 	if prefix == "" {
@@ -58,8 +59,9 @@ func GetAuthKeysValue(headers http.Header, prefix string) (string, error) {
 	return keyString, nil
 }
 
-// user access token or refresh token retrieval
 func GetBearerToken(headers http.Header) (string, error) {
+// GetBearerToken returns the access token from a requests headers.
+// TODO: merge with function above
 	// value will look like
 	//   Bearer <token_string>
 
@@ -83,8 +85,8 @@ func GetBearerToken(headers http.Header) (string, error) {
 	return tokenString, nil
 }
 
-// creates and returns a JWT
 func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (string, error) {
+// MakeJWT provides a fresh access token to a particular user for a given duration.
 	currentTime := time.Now().UTC()
 	expirationTime := currentTime.UTC().Add(expiresIn)
 
@@ -109,6 +111,8 @@ func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (str
 }
 
 func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
+// ValidateJWT checks a users access token and ensures that it is valid.
+// It will return a user id (uuid) when successful.
 	claims := jwt.RegisteredClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, &claims,
@@ -135,8 +139,8 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 	return userUUID, nil
 }
 
-// returns a created refresh token
 func MakeRefreshToken() (string, error) {
+// MakeRefreshToken provides a fresh refresh token.
 	data := make([]byte, 32)
 	_, err := rand.Read(data)
 	if err != nil {
@@ -149,8 +153,8 @@ func MakeRefreshToken() (string, error) {
 
 // === User Password Functions ===
 
-// hashes password using the bcrypt golang library
 func HashPassword(rawPassword string) (string, error) {
+// HashPassword takes a raw password and returns a hashed version, utilizing bcrypt.
 	if rawPassword == "" {
 		log.Print("Empty password provided.")
 		return "", errors.New("unable to hash empty password")
@@ -172,8 +176,11 @@ func HashPassword(rawPassword string) (string, error) {
 	return string(hashedPasswordData), nil
 }
 
-// password is from a request, hash is from the db
 func CheckPasswordHash(password, hashedPassword string) error {
+// CheckPasswordHash takes a raw password from a client, and a hashed password from the server.
+// If the hased raw password (from client) does not match the stored hashed password (from database),
+// it will return an error.
+// If they match, then it will return nil.
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	if err != nil {
 		log.Printf("Unable to compare hash and password: %s", err)
