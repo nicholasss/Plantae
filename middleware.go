@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/nicholasss/plantae/internal/auth"
@@ -12,23 +11,20 @@ import (
 // auth super admin middleware
 func (cfg *apiConfig) authSuperAdminMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// get token from header
-		// log.Print("Getting SuperAdmin authentication token...")
 		requestToken, err := auth.GetAuthKeysValue(r.Header, "SuperAdminToken")
 		if err != nil {
-			log.Printf("Error with SuperAdminToken: %q", err)
+			cfg.sl.Debug("Unable to get superadmin token from headers", "error", err)
 			respondWithError(err, http.StatusBadRequest, w)
 			return
 		}
 
-		// authenticate request
-		// log.Print("Checking SuperAdmin token for authentication...")
 		if ok := auth.ValidateSuperAdmin(cfg.superAdminToken, requestToken); !ok {
+			cfg.sl.Debug("Unable to validate superadmin token in request")
 			respondWithError(err, http.StatusForbidden, w)
 			return
 		}
 
-		log.Print("Authenticated Super Admin successfully.")
+		cfg.sl.Debug("Authenticated Super Admin successfully")
 		next.ServeHTTP(w, r)
 	})
 }
@@ -38,32 +34,32 @@ func (cfg *apiConfig) authNormalAdminMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestUserID, err := cfg.getUserIDFromToken(r)
 		if err != nil {
-			log.Printf("Could not authorize user in request due to: %q", err)
+			cfg.sl.Debug("Could not authorize user in request", "error", err)
 			respondWithError(err, http.StatusBadRequest, w)
 			return
 		}
 
 		userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), requestUserID)
 		if err != nil {
-			log.Printf("Could not find user record for user id %q due to %q", requestUserID, err)
+			cfg.sl.Debug("Could not find user record", "user id", requestUserID, "error", err)
 			respondWithError(err, http.StatusInternalServerError, w)
 			return
 		}
 
 		if !userRecord.IsAdmin {
-			log.Printf("Non-Admin %q [ID %q] is performing requests to admin endpoints.", userRecord.Email, requestUserID)
+			cfg.sl.Debug("Non-Admin is performing requests to admin endpoints", "email", userRecord.Email, "id", requestUserID)
 			respondWithError(err, http.StatusUnauthorized, w)
 			return
 		}
 
-		log.Print("Authenticated normal admin successfully.")
+		cfg.sl.Debug("Authenticated normal admin successfully")
 		next.ServeHTTP(w, r)
 	})
 }
 
 func (cfg *apiConfig) logMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Request: %s %s", r.Method, r.URL.Path)
+		cfg.sl.Debug("Incoming request", "method", r.Method, "path", r.URL.Path)
 		next.ServeHTTP(w, r)
 	})
 }
