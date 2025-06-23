@@ -16,6 +16,9 @@ import (
 	"github.com/nicholasss/plantae/internal/database"
 )
 
+// Global logging level.
+var loggingLevel = slog.LevelDebug
+
 // === Global Variabes ===
 
 // LangCodes is a map of their ISO 639 codes to its full language name.
@@ -274,7 +277,7 @@ func loadAPIConfig() (*apiConfig, error) {
 	defer logFile.Close()
 
 	logWriter := io.MultiWriter(os.Stdout, logFile)
-	opts := slog.HandlerOptions{Level: slog.LevelDebug}
+	opts := slog.HandlerOptions{Level: loggingLevel}
 	sl := slog.New(slog.NewTextHandler(logWriter, &opts))
 
 	// connecting to database
