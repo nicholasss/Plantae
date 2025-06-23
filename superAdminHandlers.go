@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 )
 
@@ -13,7 +12,7 @@ import (
 func (cfg *apiConfig) resetPlantTypesHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
-		log.Printf("Unable to reset plant_types table due to platform: %q", cfg.platform)
+		cfg.sl.Debug("Unable to reset plant_types table due to wrong platform", "platform", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
 	}
@@ -21,13 +20,12 @@ func (cfg *apiConfig) resetPlantTypesHandler(w http.ResponseWriter, r *http.Requ
 	// drop records from plant types table
 	err := cfg.db.ResetPlantTypesTable(r.Context())
 	if err != nil {
-		log.Printf("Unable to reset plant_types table due to error: %q", err)
+		cfg.sl.Debug("Unable to reset plant_types table", "error", err)
 		respondWithError(nil, http.StatusInternalServerError, w)
 		return
 	}
 
-	// reset successfully
-	log.Print("Reset plant_types table successfully.")
+	cfg.sl.Info("Reset plant_types table successfully")
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -37,7 +35,7 @@ func (cfg *apiConfig) resetPlantTypesHandler(w http.ResponseWriter, r *http.Requ
 func (cfg *apiConfig) resetLightNeedsHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
-		log.Printf("Unable to reset light_needs table due to platform: %q", cfg.platform)
+		cfg.sl.Debug("Unable to reset light_needs table due to wrong platform", "platform", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
 	}
@@ -45,13 +43,12 @@ func (cfg *apiConfig) resetLightNeedsHandler(w http.ResponseWriter, r *http.Requ
 	// drop records from db
 	err := cfg.db.ResetLightNeedsTable(r.Context())
 	if err != nil {
-		log.Printf("Unable to reset light_needs table due to error: %q", err)
+		cfg.sl.Debug("Unable to reset light_needs table", "error", err)
 		respondWithError(nil, http.StatusInternalServerError, w)
 		return
 	}
 
-	// reset successfully
-	log.Print("Reset light_needs table successfully.")
+	cfg.sl.Info("Reset light_needs table successfully")
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -61,7 +58,7 @@ func (cfg *apiConfig) resetLightNeedsHandler(w http.ResponseWriter, r *http.Requ
 func (cfg *apiConfig) resetWaterNeedsHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
-		log.Printf("Unable to reset water_needs table due to platform: %q", cfg.platform)
+		cfg.sl.Debug("Unable to reset water_needs table due to wrong platform", "platform", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
 	}
@@ -69,13 +66,12 @@ func (cfg *apiConfig) resetWaterNeedsHandler(w http.ResponseWriter, r *http.Requ
 	// drop records from db
 	err := cfg.db.ResetWaterNeedsTable(r.Context())
 	if err != nil {
-		log.Printf("Unable to reset water_needs table due to error: %q", err)
+		cfg.sl.Debug("Unable to reset water_needs table", "error", err)
 		respondWithError(nil, http.StatusInternalServerError, w)
 		return
 	}
 
-	// reset successfully
-	log.Print("Reset water_needs table successfully.")
+	cfg.sl.Info("Reset water_needs table successfully")
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -85,7 +81,7 @@ func (cfg *apiConfig) resetWaterNeedsHandler(w http.ResponseWriter, r *http.Requ
 func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
-		log.Printf("Unable to reset plant_species table due to platform: %q", cfg.platform)
+		cfg.sl.Debug("Unable to reset plant_species table due to wrong platform", "platform", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
 	}
@@ -93,13 +89,12 @@ func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Re
 	// drop records from db
 	err := cfg.db.ResetPlantSpeciesTable(r.Context())
 	if err != nil {
-		log.Printf("Unable to reset plant_species table due to error: %q", err)
+		cfg.sl.Debug("Unable to reset plant_species table", "error", err)
 		respondWithError(nil, http.StatusInternalServerError, w)
 		return
 	}
 
-	// reset successfully
-	log.Print("Reset plant_species table successfully.")
+	cfg.sl.Info("Reset plant_species table successfully")
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -110,20 +105,19 @@ func (cfg *apiConfig) resetPlantNamesHandler(w http.ResponseWriter, r *http.Requ
 	// super-admin pre-authenticated before the handler is used
 	// ensure development platform
 	if platformProduction(cfg) {
-		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
+		cfg.sl.Debug("Unable to reset plant_names table due to wrong platform", "platform", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
 	}
 
 	err := cfg.db.ResetPlantNamesTable(r.Context())
 	if err != nil {
-		log.Printf("Unable to reset user table due to error: %q", err)
+		cfg.sl.Debug("Unable to reset plant_names table", "error", err)
 		respondWithError(nil, http.StatusInternalServerError, w)
 		return
 	}
 
-	// reset successfully
-	log.Print("Reset plant_names table successfully.")
+	cfg.sl.Info("Reset plant_names table successfully")
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -134,7 +128,7 @@ func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) 
 	// super-admin pre-authenticated before the handler is used
 	// ensure development platform
 	if platformProduction(cfg) {
-		log.Printf("Unable to reset user table due to platform: %q", cfg.platform)
+		cfg.sl.Debug("Unable to reset users table due to wrong platform", "platform", cfg.platform)
 		respondWithError(nil, http.StatusForbidden, w)
 		return
 	}
@@ -142,13 +136,12 @@ func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) 
 	// drop records from db
 	err := cfg.db.ResetUsersTable(r.Context())
 	if err != nil {
-		log.Printf("Unable to reset user table due to error: %q", err)
+		cfg.sl.Debug("Unable to reset users table", "error", err)
 		respondWithError(nil, http.StatusInternalServerError, w)
 		return
 	}
 
-	// reset successfully
-	log.Print("Reset users table successfully.")
+	cfg.sl.Info("Reset users table successfully")
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -175,14 +168,13 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	// make user admin
 	err = cfg.db.PromoteUserToAdminByID(r.Context(), adminStatusRequest.ID)
 	if err != nil {
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
 
-	// successful
+	cfg.sl.Info("Successfully promoted user to admin", "user id", userRecord.ID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -209,13 +201,12 @@ func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	// demote user
 	err = cfg.db.DemoteUserFromAdminByID(r.Context(), adminStatusRequest.ID)
 	if err != nil {
 		respondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
 
-	// successful
+	cfg.sl.Info("Successfully demoted user from admin", "user id", userRecord.ID)
 	w.WriteHeader(http.StatusNoContent)
 }
