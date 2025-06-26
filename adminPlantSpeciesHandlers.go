@@ -118,7 +118,7 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 	w.Write(plantSpeciesData)
 }
 
-// POST /api/v1/admin/plants/{plantSpeciesID}
+// PUT /api/v1/admin/plants/{plantSpeciesID}
 func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter, r *http.Request) {
 	plantSpeciesIDStr := r.PathValue("plantSpeciesID")
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
