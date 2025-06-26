@@ -63,7 +63,7 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	// NOTE: not the most effecient way to convert
+	// TODO: not the most efficient way to convert, is there another way?
 	plantSpeciesResponse := make([]AdminPlantSpeciesViewResponse, 0)
 	for _, oldRecord := range plantSpeciesRecords {
 		// converting sql.NullBool to bool reference

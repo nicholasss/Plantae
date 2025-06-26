@@ -194,6 +194,7 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
+	// TODO: not the most efficient way to convert, is there another way?
 	plantTypesResponse := make([]AdminPlantTypeViewResponse, 0)
 	for _, oldRecord := range plantTypeRecords {
 		var MaxTemperatureCelsius *int32
