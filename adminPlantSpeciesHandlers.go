@@ -51,20 +51,6 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), requestUserID)
-	if err != nil {
-		log.Printf("Could not get user record via user id due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
-		return
-	}
-
-	if !userRecord.IsAdmin {
-		log.Print("Could not view plants due to user not being admin.")
-		respondWithError(errors.New("unauthorized"), http.StatusUnauthorized, w, cfg.sl)
-		return
-	}
-	// user is now authenticated below here
-
 	plantSpeciesRecords, err := cfg.db.GetAllPlantSpeciesOrderedByCreated(r.Context())
 	if err != nil {
 		log.Printf("Could not get plant species records due to: %q", err)
