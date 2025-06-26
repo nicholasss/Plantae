@@ -68,7 +68,7 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -76,7 +76,7 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 	err = json.NewDecoder(r.Body).Decode(&createRequest)
 	if err != nil {
 		log.Printf("Could not decode body of request due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	defer r.Body.Close()
@@ -84,12 +84,12 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 	// checking body properties
 	if createRequest.Name == "" {
 		log.Print("Request Body missing name property.")
-		respondWithError(errors.New("no name provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no name provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	if createRequest.Description == "" {
 		log.Print("Request body missing description property.")
-		respondWithError(errors.New("no description provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no description provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -161,7 +161,7 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 	_, err = cfg.db.CreatePlantType(r.Context(), createParams)
 	if err != nil {
 		log.Printf("Could not create plant type record due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -177,14 +177,14 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	plantTypeRecords, err := cfg.db.GetAllPlantTypesOrderedByCreated(r.Context())
 	if err != nil {
 		log.Printf("Could not get plant type records due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -249,7 +249,7 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 	plantTypesData, err := json.Marshal(plantTypesResponse)
 	if err != nil {
 		log.Printf("Could not marshal records to json due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -266,7 +266,7 @@ func (cfg *apiConfig) adminPlantTypesUpdateHandler(w http.ResponseWriter, r *htt
 	plantTypeID, err := uuid.Parse(plantTypeIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant type id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -274,7 +274,7 @@ func (cfg *apiConfig) adminPlantTypesUpdateHandler(w http.ResponseWriter, r *htt
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -282,7 +282,7 @@ func (cfg *apiConfig) adminPlantTypesUpdateHandler(w http.ResponseWriter, r *htt
 	err = json.NewDecoder(r.Body).Decode(&updateRequest)
 	if err != nil {
 		log.Printf("Could not decode body of request due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	defer r.Body.Close()
@@ -353,7 +353,7 @@ func (cfg *apiConfig) adminPlantTypesUpdateHandler(w http.ResponseWriter, r *htt
 	err = cfg.db.UpdatePlantTypesPropertiesByID(r.Context(), updateParams)
 	if err != nil {
 		log.Printf("Could not update plant type record %q due to: %q", plantTypeID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -367,7 +367,7 @@ func (cfg *apiConfig) adminPlantTypeDeleteHandler(w http.ResponseWriter, r *http
 	plantTypeID, err := uuid.Parse(plantTypeIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant type id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -375,7 +375,7 @@ func (cfg *apiConfig) adminPlantTypeDeleteHandler(w http.ResponseWriter, r *http
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -388,7 +388,7 @@ func (cfg *apiConfig) adminPlantTypeDeleteHandler(w http.ResponseWriter, r *http
 	err = cfg.db.MarkPlantTypeAsDeletedByID(r.Context(), deleteParams)
 	if err != nil {
 		log.Printf("Could not mark plant type %q as deleted due to: %q", plantTypeID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -403,7 +403,7 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 	plantTypeID, err := uuid.Parse(plantTypeIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant type id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -411,13 +411,13 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
 	if plantSpeciesIDStr == "" {
 		log.Print("No plant species id was specified in url query")
-		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant species id from url query due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -425,7 +425,7 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -439,7 +439,7 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 	err = cfg.db.SetPlantSpeciesAsType(r.Context(), setPlantTypeParams)
 	if err != nil {
 		log.Printf("Could not set type %q for plant species %q due to: %q", plantTypeID, plantSpeciesID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -454,7 +454,7 @@ func (cfg *apiConfig) adminUnsetPlantAsTypeHandler(w http.ResponseWriter, r *htt
 	plantTypeID, err := uuid.Parse(plantTypeIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant type id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -462,13 +462,13 @@ func (cfg *apiConfig) adminUnsetPlantAsTypeHandler(w http.ResponseWriter, r *htt
 	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
 	if plantSpeciesIDStr == "" {
 		log.Print("No plant species id was specified in url query")
-		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant species id from url query due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -476,7 +476,7 @@ func (cfg *apiConfig) adminUnsetPlantAsTypeHandler(w http.ResponseWriter, r *htt
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -488,7 +488,7 @@ func (cfg *apiConfig) adminUnsetPlantAsTypeHandler(w http.ResponseWriter, r *htt
 	err = cfg.db.UnsetPlantSpeciesAsType(r.Context(), unsetPlantTypeParams)
 	if err != nil {
 		log.Printf("Could not unset type %q for plant species %q due to: %q", plantTypeID, plantSpeciesID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 

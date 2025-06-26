@@ -47,20 +47,20 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), requestUserID)
 	if err != nil {
 		log.Printf("Could not get user record via user id due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	if !userRecord.IsAdmin {
 		log.Print("Could not view plants due to user not being admin.")
-		respondWithError(errors.New("unauthorized"), http.StatusUnauthorized, w)
+		respondWithError(errors.New("unauthorized"), http.StatusUnauthorized, w, cfg.sl)
 		return
 	}
 	// user is now authenticated below here
@@ -68,7 +68,7 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 	plantSpeciesRecords, err := cfg.db.GetAllPlantSpeciesOrderedByCreated(r.Context())
 	if err != nil {
 		log.Printf("Could not get plant species records due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -123,7 +123,7 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 	plantSpeciesData, err := json.Marshal(plantSpeciesResponse)
 	if err != nil {
 		log.Printf("Could not marshal records to json due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -140,7 +140,7 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant species id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -148,7 +148,7 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -156,7 +156,7 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 	err = json.NewDecoder(r.Body).Decode(&updateRequest)
 	if err != nil {
 		log.Printf("Could not decode body of request due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	defer r.Body.Close()
@@ -204,7 +204,7 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 	err = cfg.db.UpdatePlantSpeciesPropertiesByID(r.Context(), updateRequestParams)
 	if err != nil {
 		log.Printf("Could not update plant species record %q due to: %q", plantSpeciesID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -218,7 +218,7 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant species id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -226,7 +226,7 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	requestUserNullUUID := uuid.NullUUID{
@@ -242,7 +242,7 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 	err = cfg.db.MarkPlantSpeciesAsDeletedByID(r.Context(), deleteRequestParams)
 	if err != nil {
 		log.Printf("Could not mark plant species %q as deleted due to: %q", plantSpeciesID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -256,7 +256,7 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -264,7 +264,7 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 	err = json.NewDecoder(r.Body).Decode(&createRequest)
 	if err != nil {
 		log.Printf("Could not decode body of request due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	defer r.Body.Close()
@@ -272,7 +272,7 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 	// check all of the request properties
 	if createRequest.SpeciesName == "" {
 		log.Print("Request body was missing species name.")
-		respondWithError(errors.New("no species name provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no species name provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -327,7 +327,7 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 	_, err = cfg.db.CreatePlantSpecies(r.Context(), createRequestParams)
 	if err != nil {
 		log.Printf("Could not create plant_species record in database due to %q.", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 

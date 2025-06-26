@@ -46,7 +46,7 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -54,7 +54,7 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 	err = json.NewDecoder(r.Body).Decode(&createRequest)
 	if err != nil {
 		log.Printf("Could not decode body of request due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	defer r.Body.Close()
@@ -62,12 +62,12 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 	// checking body
 	if createRequest.PlantType == "" {
 		log.Print("Request Body missing plant type property.")
-		respondWithError(errors.New("no plant type provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no plant type provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	if createRequest.Description == "" {
 		log.Print("Request Body missing description property.")
-		respondWithError(errors.New("no description provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no description provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -79,7 +79,7 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 	if dayRequest {
 		if createRequest.DrySoilDays == nil {
 			log.Print("Request Body missing dry soil days property.")
-			respondWithError(errors.New("no dry soil days provided"), http.StatusBadRequest, w)
+			respondWithError(errors.New("no dry soil days provided"), http.StatusBadRequest, w, cfg.sl)
 			return
 		}
 
@@ -93,7 +93,7 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 		waterRecord, err := cfg.db.CreateWaterDryDays(r.Context(), createParams)
 		if err != nil {
 			log.Printf("Could not create water need record due to: %q", err)
-			respondWithError(err, http.StatusInternalServerError, w)
+			respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 			return
 		}
 
@@ -105,7 +105,7 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 	} else if mmRequest {
 		if createRequest.DrySoilMM == nil {
 			log.Print("Request Body missing dry soil mm property.")
-			respondWithError(errors.New("no dry soil mm provided"), http.StatusBadRequest, w)
+			respondWithError(errors.New("no dry soil mm provided"), http.StatusBadRequest, w, cfg.sl)
 			return
 		}
 
@@ -119,7 +119,7 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 		waterRecord, err := cfg.db.CreateWaterDryMM(r.Context(), createParams)
 		if err != nil {
 			log.Printf("Could not create water need record due to: %q", err)
-			respondWithError(err, http.StatusInternalServerError, w)
+			respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 			return
 		}
 
@@ -130,14 +130,14 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 
 	} else {
 		log.Printf("Invalid plant type of %q", createRequest.PlantType)
-		respondWithError(errors.New("invalid plant type"), http.StatusBadRequest, w)
+		respondWithError(errors.New("invalid plant type"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	waterData, err := json.Marshal(&waterResponse)
 	if err != nil {
 		log.Printf("Could not marshal records to json due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -151,14 +151,14 @@ func (cfg *apiConfig) adminWaterViewHandler(w http.ResponseWriter, r *http.Reque
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	waterRecords, err := cfg.db.GetAllWaterNeedsOrderedByCreated(r.Context())
 	if err != nil {
 		log.Printf("Could not get water need records due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -194,7 +194,7 @@ func (cfg *apiConfig) adminWaterViewHandler(w http.ResponseWriter, r *http.Reque
 	waterData, err := json.Marshal(waterResponses)
 	if err != nil {
 		log.Printf("Could not marshal records to json due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -209,7 +209,7 @@ func (cfg *apiConfig) adminWaterDeleteHandler(w http.ResponseWriter, r *http.Req
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -218,7 +218,7 @@ func (cfg *apiConfig) adminWaterDeleteHandler(w http.ResponseWriter, r *http.Req
 	waterID, err := uuid.Parse(waterIDStr)
 	if err != nil {
 		log.Printf("Could not parse water id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -231,7 +231,7 @@ func (cfg *apiConfig) adminWaterDeleteHandler(w http.ResponseWriter, r *http.Req
 	err = cfg.db.MarkWaterNeedAsDeletedByID(r.Context(), deleteParams)
 	if err != nil {
 		log.Printf("Could not mark record as deleted due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -247,7 +247,7 @@ func (cfg *apiConfig) adminSetPlantAsWaterNeedHandler(w http.ResponseWriter, r *
 	waterID, err := uuid.Parse(waterIDStr)
 	if err != nil {
 		log.Printf("Could not parse water need id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -255,13 +255,13 @@ func (cfg *apiConfig) adminSetPlantAsWaterNeedHandler(w http.ResponseWriter, r *
 	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
 	if plantSpeciesIDStr == "" {
 		log.Print("No plant species id was specified in url query")
-		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant species id from url query due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -269,7 +269,7 @@ func (cfg *apiConfig) adminSetPlantAsWaterNeedHandler(w http.ResponseWriter, r *
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -283,7 +283,7 @@ func (cfg *apiConfig) adminSetPlantAsWaterNeedHandler(w http.ResponseWriter, r *
 	err = cfg.db.SetPlantSpeciesAsWaterNeed(r.Context(), setParams)
 	if err != nil {
 		log.Printf("Could not set water needs %q for plant species %q due to: %q", waterID, plantSpeciesID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -298,7 +298,7 @@ func (cfg *apiConfig) adminUnsetPlantAsWaterNeedHandler(w http.ResponseWriter, r
 	waterID, err := uuid.Parse(waterIDStr)
 	if err != nil {
 		log.Printf("Could not parse water need id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -306,13 +306,13 @@ func (cfg *apiConfig) adminUnsetPlantAsWaterNeedHandler(w http.ResponseWriter, r
 	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
 	if plantSpeciesIDStr == "" {
 		log.Print("No plant species id was specified in url query")
-		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant species id from url query due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -320,7 +320,7 @@ func (cfg *apiConfig) adminUnsetPlantAsWaterNeedHandler(w http.ResponseWriter, r
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -332,7 +332,7 @@ func (cfg *apiConfig) adminUnsetPlantAsWaterNeedHandler(w http.ResponseWriter, r
 	err = cfg.db.UnsetPlantSpeciesAsWaterNeed(r.Context(), unsetParams)
 	if err != nil {
 		log.Printf("Could not unset water need %q for plant species %q due to: %q", waterID, plantSpeciesID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 

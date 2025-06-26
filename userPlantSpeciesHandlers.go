@@ -16,22 +16,22 @@ func (cfg *apiConfig) usersPlantsCreateHandler(w http.ResponseWriter, r *http.Re
 // requires access token in auth header
 // returns the users list of plants
 func (cfg *apiConfig) usersPlantsListHandler(w http.ResponseWriter, r *http.Request) {
-	accessTokenProvided, err := auth.GetBearerToken(r.Header)
+	accessTokenProvided, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
-	requestUserID, err := auth.ValidateJWT(accessTokenProvided, cfg.JWTSecret)
+	requestUserID, err := auth.ValidateJWT(accessTokenProvided, cfg.JWTSecret, cfg.sl)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// get list of plants in user_plants table
 	usersPlants, err := cfg.db.GetAllUsersPlantsOrderedByUpdated(r.Context(), requestUserID)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -42,7 +42,7 @@ func (cfg *apiConfig) usersPlantsListHandler(w http.ResponseWriter, r *http.Requ
 
 	usersPlantsData, err := json.Marshal(usersPlants)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 

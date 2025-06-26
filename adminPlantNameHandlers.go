@@ -24,7 +24,7 @@ func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *htt
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -32,7 +32,7 @@ func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *htt
 	err = json.NewDecoder(r.Body).Decode(&createRequest)
 	if err != nil {
 		log.Printf("Could not decode body of request due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	defer r.Body.Close()
@@ -40,17 +40,17 @@ func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *htt
 	// check all request properties
 	if createRequest.PlantID == uuid.Nil {
 		log.Print("Request body missing plant id.")
-		respondWithError(errors.New("no plant id provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no plant id provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	if createRequest.LangCode == "" {
 		log.Print("Request body missing lang code.")
-		respondWithError(errors.New("no lang code provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no lang code provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	if createRequest.CommonName == "" {
 		log.Print("Request body missing common name.")
-		respondWithError(errors.New("no common name provided"), http.StatusBadRequest, w)
+		respondWithError(errors.New("no common name provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -64,7 +64,7 @@ func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *htt
 	_, err = cfg.db.CreatePlantName(r.Context(), createRequestParams)
 	if err != nil {
 		log.Printf("Could not create plant name record for plant id %q due to: %q", createRequest.PlantID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -77,7 +77,7 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -93,14 +93,16 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 		plantNameRecords, err := cfg.db.GetAllPlantNamesOrderedByCreated(r.Context())
 		if err != nil {
 			log.Printf("Could not get plant name records without language code due to %q.", err)
-			respondWithError(err, http.StatusInternalServerError, w)
+			respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+
 			return
 		}
 
 		plantNameData, err := json.Marshal(plantNameRecords)
 		if err != nil {
 			log.Printf("Could not marshall plant name records due to %q.", err)
-			respondWithError(err, http.StatusInternalServerError, w)
+			respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+
 			return
 		}
 
@@ -115,7 +117,7 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 	requestedLangName, ok := LangCodes[requestedLangCode]
 	if !ok {
 		log.Printf("Unable to find language code of %q from query.", requestedLangCode)
-		respondWithError(errors.New("language code requested does not exist"), http.StatusBadRequest, w)
+		respondWithError(errors.New("language code requested does not exist"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -123,14 +125,14 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 	plantNameRecords, err := cfg.db.GetAllPlantNamesForLanguageOrderedByCreated(r.Context(), requestedLangCode)
 	if err != nil {
 		log.Printf("Could not get plant name records with language code %q due to %q.", requestedLangCode, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	plantNameData, err := json.Marshal(plantNameRecords)
 	if err != nil {
 		log.Printf("Could not marshall plant name records due to %q.", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -145,7 +147,7 @@ func (cfg *apiConfig) adminPlantNamesDeleteHandler(w http.ResponseWriter, r *htt
 	plantNameID, err := uuid.Parse(plantNameIDStr)
 	if err != nil {
 		log.Printf("Could not parse plant name id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -153,7 +155,7 @@ func (cfg *apiConfig) adminPlantNamesDeleteHandler(w http.ResponseWriter, r *htt
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
 		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	requestUserNullUUID := uuid.NullUUID{
@@ -168,7 +170,7 @@ func (cfg *apiConfig) adminPlantNamesDeleteHandler(w http.ResponseWriter, r *htt
 	err = cfg.db.MarkPlantNameAsDeletedByID(r.Context(), requestParams)
 	if err != nil {
 		log.Printf("Could not mark plant name %q as deleted due to: %q", plantNameID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 

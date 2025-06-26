@@ -68,21 +68,21 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	// check request params
 	if createUserRequest.Email == "" {
 		log.Print("Email received was empty.")
-		respondWithError(nil, http.StatusBadRequest, w)
+		respondWithError(nil, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	if createUserRequest.RawPassword == "" {
 		log.Print("Password received was empty.")
-		respondWithError(nil, http.StatusBadRequest, w)
+		respondWithError(nil, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// hash password
-	hashedPassword, err := auth.HashPassword(createUserRequest.RawPassword)
+	hashedPassword, err := auth.HashPassword(createUserRequest.RawPassword, cfg.sl)
 	createUserRequest.RawPassword = "" // GC collection
 	if err != nil {
 		log.Printf("Error hashing password for creating a user: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -90,7 +90,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	newUserUUID, err := uuid.NewUUID()
 	if err != nil {
 		log.Printf("Unable to create a UUID for a user due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -104,14 +104,14 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	// add user to database
 	userRecord, err := cfg.db.CreateUser(r.Context(), createUserParams)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	// return the userRecord without password
 	userData, err := json.Marshal(userRecord)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -126,27 +126,27 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	var userLoginRequest UserLoginRequest
 	err := json.NewDecoder(r.Body).Decode(&userLoginRequest)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// ensure login items arent empty
 	if userLoginRequest.Email == "" || userLoginRequest.RawPassword == "" {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	userRecord, err := cfg.db.GetUserByEmailWithPassword(r.Context(), userLoginRequest.Email)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	// hash & check password
-	err = auth.CheckPasswordHash(userLoginRequest.RawPassword, userRecord.HashedPassword)
+	err = auth.CheckPasswordHash(userLoginRequest.RawPassword, userRecord.HashedPassword, cfg.sl)
 	if err != nil {
 		log.Print("Login attempt failed with mis-matching password hashes.")
-		respondWithError(err, http.StatusForbidden, w)
+		respondWithError(err, http.StatusForbidden, w, cfg.sl)
 		return
 	}
 	// password checked, removing from memory
@@ -157,7 +157,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	userRecord.Email = strings.ToLower(userRecord.Email)
 	if userRecord.Email != userLoginRequest.Email {
 		log.Printf("Login attempt failed for %q with email %q", userRecord.Email, userLoginRequest.Email)
-		respondWithError(err, http.StatusForbidden, w)
+		respondWithError(err, http.StatusForbidden, w, cfg.sl)
 		return
 	}
 
@@ -166,9 +166,9 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Generating tokens for user...")
 
 	// refresh token
-	userRefreshToken, err := auth.MakeRefreshToken()
+	userRefreshToken, err := auth.MakeRefreshToken(cfg.sl)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -183,15 +183,15 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: check for prexisting token, if exists then revoke it and replace
 	_, err = cfg.db.CreateRefreshToken(r.Context(), createRefreshToken)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	// access token
 	accessTokenExpiresAt := time.Now().Add(cfg.accessTokenDuration)
-	userAccessToken, err := auth.MakeJWT(userRecord.ID, cfg.JWTSecret, cfg.accessTokenDuration)
+	userAccessToken, err := auth.MakeJWT(userRecord.ID, cfg.JWTSecret, cfg.accessTokenDuration, cfg.sl)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -206,7 +206,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	userLoginResponseData, err := json.Marshal(userLoginResponse)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -223,15 +223,15 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 // accepts refresh token as authentication
 // responds with a new access token if authorized
 func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request) {
-	providedRefreshToken, err := auth.GetBearerToken(r.Header)
+	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	refreshTokenRecord, err := cfg.db.GetUserFromRefreshToken(r.Context(), providedRefreshToken)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -239,7 +239,7 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 		// is marked as revoked
 		if time.Now().After(refreshTokenRecord.RevokedAt.Time) {
 			log.Print("Refresh token sent to POST /api/v1/auth/refresh was revoked.")
-			respondWithError(err, http.StatusUnauthorized, w)
+			respondWithError(err, http.StatusUnauthorized, w, cfg.sl)
 			return
 		}
 
@@ -248,19 +248,19 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 		// this may present a bug
 		log.Print("!!! potential bug, check POST /api/refresh handler")
 		log.Print("Refresh token will be revoked in the future.")
-		respondWithError(errors.New("potential error in refresh token database. token revoked in the future"), http.StatusInternalServerError, w)
+		respondWithError(errors.New("potential error in refresh token database. token revoked in the future"), http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	if time.Now().UTC().After(refreshTokenRecord.ExpiresAt) {
-		respondWithError(errors.New("bad request"), http.StatusBadRequest, w)
+		respondWithError(errors.New("bad request"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	accessTokenExpiresAt := time.Now().UTC().Add(cfg.accessTokenDuration)
-	newAccessToken, err := auth.MakeJWT(refreshTokenRecord.UserID, cfg.JWTSecret, cfg.accessTokenDuration)
+	newAccessToken, err := auth.MakeJWT(refreshTokenRecord.UserID, cfg.JWTSecret, cfg.accessTokenDuration, cfg.sl)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -271,7 +271,7 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 	}
 	refreshResponseData, err := json.Marshal(refreshResponse)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
@@ -284,9 +284,9 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 // accepts refresh token as authentication
 // responds with 204 No Content if successfully revoked
 func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) {
-	providedRefreshToken, err := auth.GetBearerToken(r.Header)
+	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -294,7 +294,7 @@ func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) 
 	err = json.NewDecoder(r.Body).Decode(&revokeRequest)
 	defer r.Body.Close()
 	if err != nil {
-		respondWithError(err, http.StatusBadRequest, w)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -304,7 +304,7 @@ func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) 
 	}
 	revokeRecordUserID, err := cfg.db.RevokeRefreshTokenWithToken(r.Context(), revokeRefreshTokenParams)
 	if err != nil {
-		respondWithError(err, http.StatusUnauthorized, w)
+		respondWithError(err, http.StatusUnauthorized, w, cfg.sl)
 		return
 	}
 
