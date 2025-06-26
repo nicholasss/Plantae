@@ -31,10 +31,11 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	fmt.Printf("%s\n\n", logo)
 
-	cfg, err := loadAPIConfig()
+	cfg, closeLogFile, err := loadAPIConfig()
 	if err != nil {
 		log.Fatalf("Issue loading config: %q", err)
 	}
+	defer closeLogFile()
 	cfg.sl.Info("Starting server...")
 
 	mux := http.NewServeMux()
