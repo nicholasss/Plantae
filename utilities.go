@@ -262,11 +262,11 @@ func (cfg *apiConfig) getUserIDFromToken(r *http.Request) (uuid.UUID, error) {
 	return requestUserID, nil
 }
 
-func loadAPIConfig() (*apiConfig, error) {
+func loadAPIConfig() (*apiConfig, func() error, error) {
 	// loading vars from .env
 	err := godotenv.Load(".env")
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// connect to log file and write out to it
@@ -274,7 +274,6 @@ func loadAPIConfig() (*apiConfig, error) {
 	if err != nil {
 		log.Fatalf("Unable to open log file: %q", err)
 	}
-	defer logFile.Close()
 
 	logWriter := io.MultiWriter(os.Stdout, logFile)
 	opts := slog.HandlerOptions{Level: loggingLevel}
@@ -283,12 +282,12 @@ func loadAPIConfig() (*apiConfig, error) {
 	// connecting to database
 	dbURL := os.Getenv("GOOSE_DBSTRING")
 	if dbURL == "" {
-		return nil, err
+		return nil, nil, err
 	}
 
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	dbQueries := database.New(db)
 	sl.Info("Connected to database succesfully")
@@ -327,7 +326,7 @@ func loadAPIConfig() (*apiConfig, error) {
 
 	cfg.sl.Info("Config is loaded")
 
-	return cfg, nil
+	return cfg, logFile.Close, nil
 }
 
 // === Utility Response Handlers ===
