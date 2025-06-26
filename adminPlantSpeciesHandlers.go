@@ -215,16 +215,15 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
+
 	requestUserNullUUID := uuid.NullUUID{
 		UUID:  requestUserID,
 		Valid: true,
 	}
-
 	deleteRequestParams := database.MarkPlantSpeciesAsDeletedByIDParams{
 		ID:        plantSpeciesID,
 		DeletedBy: requestUserNullUUID,
 	}
-
 	err = cfg.db.MarkPlantSpeciesAsDeletedByID(r.Context(), deleteRequestParams)
 	if err != nil {
 		log.Printf("Could not mark plant species %q as deleted due to: %q", plantSpeciesID, err)
