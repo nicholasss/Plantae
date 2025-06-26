@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"time"
 
@@ -175,14 +174,14 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 	// check header for admin access token
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not get User ID from token due to: %q", err)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	plantTypeRecords, err := cfg.db.GetAllPlantTypesOrderedByCreated(r.Context())
 	if err != nil {
-		cfg.sl.Debug("Could not get user id from token", "error", err)
+		cfg.sl.Debug("Could not get plant type records", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
@@ -438,7 +437,6 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 	err = cfg.db.SetPlantSpeciesAsType(r.Context(), setPlantTypeParams)
 	if err != nil {
 		cfg.sl.Debug("Could not set plant type for plant species", "error", err, "plant type id", plantTypeID, "plant species id", plantSpeciesID)
-		log.Printf("Could not set type %q for plant species %q due to: %q", plantTypeID, plantSpeciesID, err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
