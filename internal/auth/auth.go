@@ -83,7 +83,7 @@ func GetBearerToken(headers http.Header, sl *slog.Logger) (string, error) {
 		return "", errors.New("unable to find token in headers")
 	}
 
-	// log.Printf("Returned the JWT successfuly from headers.\n")
+	// sl.Debug("Returned the JWT successfuly from headers.")
 	return tokenString, nil
 }
 
@@ -108,7 +108,7 @@ func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration, sl *
 		return "", err
 	}
 
-	// log.Printf("Generated new token: %s", signedToken)
+	// sl.Debug("Generated new token", "raw access token", signedToken)
 	return signedToken, nil
 }
 
