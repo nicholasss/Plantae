@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -61,18 +60,19 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&createUserRequest)
 	if err != nil {
-		// respond with error
+		cfg.sl.Debug("Could not decode body of request", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
 	}
-	// log.Print("Decoded create user request...")
 
 	// check request params
 	if createUserRequest.Email == "" {
-		log.Print("Email received was empty.")
+		cfg.sl.Debug("Request body missing email")
 		respondWithError(nil, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	if createUserRequest.RawPassword == "" {
-		log.Print("Password received was empty.")
+		cfg.sl.Debug("Request body missing password")
 		respondWithError(nil, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -81,7 +81,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	hashedPassword, err := auth.HashPassword(createUserRequest.RawPassword, cfg.sl)
 	createUserRequest.RawPassword = "" // GC collection
 	if err != nil {
-		log.Printf("Error hashing password for creating a user: %q", err)
+		cfg.sl.Debug("Error hashing user's password", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
@@ -89,21 +89,20 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	// user uuid generation
 	newUserUUID, err := uuid.NewUUID()
 	if err != nil {
-		log.Printf("Unable to create a UUID for a user due to: %q", err)
+		cfg.sl.Debug("Unable to generate a new uuid for user", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	// CreateUserParams struct
+	// add user to database
 	createUserParams := database.CreateUserParams{
 		ID:             newUserUUID,
 		Email:          createUserRequest.Email,
 		HashedPassword: hashedPassword,
 	}
-
-	// add user to database
 	userRecord, err := cfg.db.CreateUser(r.Context(), createUserParams)
 	if err != nil {
+		cfg.sl.Debug("Could not create user in database", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
@@ -111,11 +110,12 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	// return the userRecord without password
 	userData, err := json.Marshal(userRecord)
 	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("User %q was registered successfully.", userRecord.ID)
+	cfg.sl.Debug("User successfully registered", "user id", userRecord.ID)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(userData)
@@ -126,18 +126,21 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	var userLoginRequest UserLoginRequest
 	err := json.NewDecoder(r.Body).Decode(&userLoginRequest)
 	if err != nil {
+		cfg.sl.Debug("Could not decode body of request", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// ensure login items arent empty
 	if userLoginRequest.Email == "" || userLoginRequest.RawPassword == "" {
+		cfg.sl.Debug("Request body missing email or password")
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	userRecord, err := cfg.db.GetUserByEmailWithPassword(r.Context(), userLoginRequest.Email)
 	if err != nil {
+		cfg.sl.Debug("Unable to retreive user record with email", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
@@ -145,7 +148,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	// hash & check password
 	err = auth.CheckPasswordHash(userLoginRequest.RawPassword, userRecord.HashedPassword, cfg.sl)
 	if err != nil {
-		log.Print("Login attempt failed with mis-matching password hashes.")
+		cfg.sl.Debug("User's login attempt failed due to mis-matching passwords", "error", err)
 		respondWithError(err, http.StatusForbidden, w, cfg.sl)
 		return
 	}
@@ -156,18 +159,19 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	userLoginRequest.Email = strings.ToLower(userLoginRequest.Email)
 	userRecord.Email = strings.ToLower(userRecord.Email)
 	if userRecord.Email != userLoginRequest.Email {
-		log.Printf("Login attempt failed for %q with email %q", userRecord.Email, userLoginRequest.Email)
+		cfg.sl.Debug("User's login attempt failed due to mis-matching email", "request email", userLoginRequest.Email, "account email", userRecord)
+		cfg.sl.Warn("User record details may be mis-matching queried values")
 		respondWithError(err, http.StatusForbidden, w, cfg.sl)
 		return
 	}
 
 	// user logged in, generate tokens
-	// log.Printf("Successfully logged in user: %q", userRecord.ID)
-	log.Printf("Generating tokens for user...")
+	cfg.sl.Debug("User logged in, generating new tokens")
 
 	// refresh token
 	userRefreshToken, err := auth.MakeRefreshToken(cfg.sl)
 	if err != nil {
+		cfg.sl.Debug("Unable to create new refresh token for user", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
@@ -183,6 +187,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: check for prexisting token, if exists then revoke it and replace
 	_, err = cfg.db.CreateRefreshToken(r.Context(), createRefreshToken)
 	if err != nil {
+		cfg.sl.Warn("Unable to put a user's new refresh token into database", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
@@ -191,6 +196,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	accessTokenExpiresAt := time.Now().Add(cfg.accessTokenDuration)
 	userAccessToken, err := auth.MakeJWT(userRecord.ID, cfg.JWTSecret, cfg.accessTokenDuration, cfg.sl)
 	if err != nil {
+		cfg.sl.Debug("Unable to create a new access token for user's login", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
@@ -206,15 +212,16 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	userLoginResponseData, err := json.Marshal(userLoginResponse)
 	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	if platformNotProduction(cfg) {
-		// log.Printf("DEBUG: User logged in: %q, accessToken: %q, refreshToken: %q", userLoginResponse.ID, userLoginResponse.AccessToken, userLoginResponse.RefreshToken)
+		cfg.sl.Debug("Listing user info at login", "user id", userLoginResponse.ID, "user access token", userLoginResponse.AccessToken, "user refresh token", userLoginResponse.RefreshToken)
 	}
 
-	log.Printf("User %q successfully logged in.", userRecord.ID)
+	cfg.sl.Debug("User successfully logged in", "user id", userRecord.ID)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write(userLoginResponseData)
@@ -225,12 +232,14 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request) {
 	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
+		cfg.sl.Debug("Could not get refresh token from headers", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	refreshTokenRecord, err := cfg.db.GetUserFromRefreshToken(r.Context(), providedRefreshToken)
 	if err != nil {
+		cfg.sl.Debug("Could not get refresh token record from database", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -238,7 +247,7 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 	if refreshTokenRecord.RevokedAt.Valid {
 		// is marked as revoked
 		if time.Now().After(refreshTokenRecord.RevokedAt.Time) {
-			log.Print("Refresh token sent to POST /api/v1/auth/refresh was revoked.")
+			cfg.sl.Debug("Refresh token was revoked for user", "user id", refreshTokenRecord.UserID)
 			respondWithError(err, http.StatusUnauthorized, w, cfg.sl)
 			return
 		}
@@ -246,13 +255,14 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 		// has been marked as revoked but in the future
 		// these tokens should not be accepted
 		// this may present a bug
-		log.Print("!!! potential bug, check POST /api/refresh handler")
-		log.Print("Refresh token will be revoked in the future.")
-		respondWithError(errors.New("potential error in refresh token database. token revoked in the future"), http.StatusInternalServerError, w, cfg.sl)
+		// one place to check is the POST /refresh handler
+		cfg.sl.Warn("Refresh token is maked as revoked but is still valid.")
+		respondWithError(errors.New("valid token will be revoked in the future"), http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	if time.Now().UTC().After(refreshTokenRecord.ExpiresAt) {
+		cfg.sl.Debug("Refresh token has expired")
 		respondWithError(errors.New("bad request"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -260,6 +270,7 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 	accessTokenExpiresAt := time.Now().UTC().Add(cfg.accessTokenDuration)
 	newAccessToken, err := auth.MakeJWT(refreshTokenRecord.UserID, cfg.JWTSecret, cfg.accessTokenDuration, cfg.sl)
 	if err != nil {
+		cfg.sl.Debug("Could not create a new access token", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
@@ -271,11 +282,12 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 	}
 	refreshResponseData, err := json.Marshal(refreshResponse)
 	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("User %q	refreshed their access token successfully.", refreshTokenRecord.UserID)
+	cfg.sl.Debug("User successfully refreshed their access token", "user id", refreshTokenRecord.UserID)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write(refreshResponseData)
@@ -286,17 +298,19 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) {
 	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
+		cfg.sl.Debug("Could not get refresh token from headers", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	var revokeRequest AuthRevokeRequest
 	err = json.NewDecoder(r.Body).Decode(&revokeRequest)
-	defer r.Body.Close()
 	if err != nil {
+		cfg.sl.Debug("Could not decode body of request", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
+	defer r.Body.Close()
 
 	revokeRefreshTokenParams := database.RevokeRefreshTokenWithTokenParams{
 		RefreshToken: providedRefreshToken,
@@ -304,11 +318,12 @@ func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) 
 	}
 	revokeRecordUserID, err := cfg.db.RevokeRefreshTokenWithToken(r.Context(), revokeRefreshTokenParams)
 	if err != nil {
+		cfg.sl.Debug("Could not revoke refresh token in database", "error", err, "refresh token id", revokeRequest.ID)
 		respondWithError(err, http.StatusUnauthorized, w, cfg.sl)
 		return
 	}
 
 	// token was revoked
-	log.Printf("User %q revoked their refresh token successfully.", revokeRecordUserID)
+	cfg.sl.Debug("User successfully revoked their refresh token", "user	id", revokeRecordUserID)
 	w.WriteHeader(http.StatusNoContent)
 }
