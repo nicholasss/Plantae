@@ -268,34 +268,26 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 	petE := sql.NullBool{}
 
 	if createRequest.HumanPoisonToxic == nil {
-		// log.Print("Warning: human_poison_toxic field missing.")
 		humanPT.Valid = false
 	} else {
-		// log.Print("Request body has human_poison_toxic is present.")
 		humanPT.Valid = true
 		humanPT.Bool = *createRequest.HumanPoisonToxic
 	}
 	if createRequest.PetPoisonToxic == nil {
-		// log.Print("Warning: pet_poison_toxic field missing.")
 		petPT.Valid = false
 	} else {
-		// log.Print("Request body has pet_poison_toxic is present.")
 		petPT.Valid = true
 		petPT.Bool = *createRequest.PetPoisonToxic
 	}
 	if createRequest.HumanEdible == nil {
-		// log.Print("Warning: human_edible field missing.")
 		humanE.Valid = false
 	} else {
-		// log.Print("Request body has human_edible is present.")
 		humanE.Valid = true
 		humanE.Bool = *createRequest.HumanEdible
 	}
 	if createRequest.PetEdible == nil {
-		// log.Print("Warning: pet_edible field missing.")
 		petE.Valid = false
 	} else {
-		// log.Print("Request body has pet_edible is present.")
 		petE.Valid = true
 		petE.Bool = *createRequest.PetEdible
 	}
