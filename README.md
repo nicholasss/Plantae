@@ -41,4 +41,4 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [ ] Transition JSON, SQL, and scripting variables to a single style. Either camelCase or snake_case.
 - [x] Add 'application/json; charset=utf-8' Content-Type assert in all of the tests and fix where needed
 - [x] Rename 'authorizeNormalAdmin' utility function or rewrite to actually authorize normal admins.
-- [ ] log -> log/slog package for logging level, and logging to file
+- [x] log -> log/slog package for logging level, and logging to file
