@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -46,20 +45,20 @@ type AdminPlantSpeciesViewResponse struct {
 func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *http.Request) {
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not get User ID from token due to: %q", err)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	plantSpeciesRecords, err := cfg.db.GetAllPlantSpeciesOrderedByCreated(r.Context())
 	if err != nil {
-		log.Printf("Could not get plant species records due to: %q", err)
+		cfg.sl.Debug("Could not get plant species records", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	if len(plantSpeciesRecords) <= 0 {
-		log.Print("Admin listed empty plant species list successfully.")
+		cfg.sl.Debug("Admin successfully listed empty plant species list", "admin id", requestUserID)
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
@@ -108,13 +107,12 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 
 	plantSpeciesData, err := json.Marshal(plantSpeciesResponse)
 	if err != nil {
-		log.Printf("Could not marshal records to json due to: %q", err)
+		cfg.sl.Debug("Could not marshal data", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q listed plant species list successfully.", requestUserID)
-	// log.Printf("DEBUG: plant species: %s", string(plantSpeciesData))
+	cfg.sl.Debug("Admin successfully listed plant species list", "admin id", requestUserID)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write(plantSpeciesData)
@@ -125,7 +123,7 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 	plantSpeciesIDStr := r.PathValue("plantSpeciesID")
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
-		log.Printf("Could not parse plant species id from url path due to: %q", err)
+		cfg.sl.Debug("Could not parse species id from url path", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -133,7 +131,7 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 	// check header for admin access token
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not get User ID from token due to: %q", err)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -141,7 +139,7 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 	var updateRequest AdminPlantSpeciesUpdateRequest
 	err = json.NewDecoder(r.Body).Decode(&updateRequest)
 	if err != nil {
-		log.Printf("Could not decode body of request due to: %q", err)
+		cfg.sl.Debug("Could not decode body of request", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -189,12 +187,12 @@ func (cfg *apiConfig) adminReplacePlantSpeciesInfoHandler(w http.ResponseWriter,
 
 	err = cfg.db.UpdatePlantSpeciesPropertiesByID(r.Context(), updateRequestParams)
 	if err != nil {
-		log.Printf("Could not update plant species record %q due to: %q", plantSpeciesID, err)
+		cfg.sl.Debug("Could not update plant species record", "error", err, "plant species id", plantSpeciesID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q updated plant species %q successfully.", requestUserID, plantSpeciesID)
+	cfg.sl.Debug("Admin successfully updated plant species", "admin id", requestUserID, "plant species id", plantSpeciesID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -203,7 +201,7 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 	plantSpeciesIDStr := r.PathValue("plantSpeciesID")
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
-		log.Printf("Could not parse plant species id from url path due to: %q", err)
+		cfg.sl.Debug("Could not parse species id from url path", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -211,7 +209,7 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 	// check header for admin access token
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not get User ID from token due to: %q", err)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -226,12 +224,12 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 	}
 	err = cfg.db.MarkPlantSpeciesAsDeletedByID(r.Context(), deleteRequestParams)
 	if err != nil {
-		log.Printf("Could not mark plant species %q as deleted due to: %q", plantSpeciesID, err)
+		cfg.sl.Debug("Could not mark plant species as deleted", "error", err, "plant species id", plantSpeciesID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q successfully marked plant species %q as deleted.", requestUserID, plantSpeciesID)
+	cfg.sl.Debug("Admin successfully marked plant species as deleted", "admin id", requestUserID, "plant species id", plantSpeciesID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -240,7 +238,7 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 	// check header for admin access token
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not get User ID from token to: %q", err)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -248,7 +246,7 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 	var createRequest AdminPlantSpeciesCreateRequest
 	err = json.NewDecoder(r.Body).Decode(&createRequest)
 	if err != nil {
-		log.Printf("Could not decode body of request due to: %q", err)
+		cfg.sl.Debug("Could not decode body of request", "error", err)
 		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -256,7 +254,7 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 
 	// check all of the request properties
 	if createRequest.SpeciesName == "" {
-		log.Print("Request body was missing species name.")
+		cfg.sl.Debug("Request body missing species name")
 		respondWithError(errors.New("no species name provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
@@ -301,13 +299,13 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 		HumanEdible:      humanE,
 		PetEdible:        petE,
 	}
-	_, err = cfg.db.CreatePlantSpecies(r.Context(), createRequestParams)
+	speciesRecord, err := cfg.db.CreatePlantSpecies(r.Context(), createRequestParams)
 	if err != nil {
-		log.Printf("Could not create plant_species record in database due to %q.", err)
+		cfg.sl.Debug("Could not create plant species in database", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q created a plant species %q.", requestUserID, createRequest.SpeciesName)
+	cfg.sl.Debug("Admin successfully created plant species", "admin id", requestUserID, "species id", speciesRecord.ID, "species name", speciesRecord.SpeciesName)
 	w.WriteHeader(http.StatusNoContent)
 }
