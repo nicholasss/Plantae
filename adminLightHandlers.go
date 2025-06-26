@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -34,29 +33,29 @@ type AdminLightUpdateRequest struct {
 func (cfg *apiConfig) adminLightCreateHandler(w http.ResponseWriter, r *http.Request) {
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	var createRequest AdminLightCreateRequest
 	err = json.NewDecoder(r.Body).Decode(&createRequest)
 	if err != nil {
-		log.Printf("Could not decode body of request due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not decode body of request", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	defer r.Body.Close()
 
 	// checking body properties
 	if createRequest.Name == "" {
-		log.Print("Request Body missing name property.")
-		respondWithError(errors.New("no name provided"), http.StatusBadRequest, w)
+		cfg.sl.Debug("Request midding name property")
+		respondWithError(errors.New("no name property provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	if createRequest.Description == "" {
-		log.Print("Request body missing description property.")
-		respondWithError(errors.New("no description provided"), http.StatusBadRequest, w)
+		cfg.sl.Debug("Request midding description property")
+		respondWithError(errors.New("no description property provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -65,14 +64,14 @@ func (cfg *apiConfig) adminLightCreateHandler(w http.ResponseWriter, r *http.Req
 		Name:        createRequest.Name,
 		Description: createRequest.Description,
 	}
-	lightRecord, err := cfg.db.CreateLightNeed(r.Context(), createParams)
+	_, err = cfg.db.CreateLightNeed(r.Context(), createParams)
 	if err != nil {
-		log.Printf("Could not create light needs record due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		cfg.sl.Debug("Could not create record in light_needs", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q successfully created lighting %q", requestUserID, lightRecord.ID)
+	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -80,26 +79,26 @@ func (cfg *apiConfig) adminLightCreateHandler(w http.ResponseWriter, r *http.Req
 func (cfg *apiConfig) adminLightViewHandler(w http.ResponseWriter, r *http.Request) {
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	lightRecords, err := cfg.db.GetAllLightNeedsOrderedByCreated(r.Context())
 	if err != nil {
-		log.Printf("Could not get light needs records due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		cfg.sl.Debug("Could not get light_needs record", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	lightData, err := json.Marshal(lightRecords)
 	if err != nil {
-		log.Printf("Could not marshal records to json due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		cfg.sl.Debug("Could not marshal records to json", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q listed light needs successfully.", requestUserID)
+	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write(lightData)
@@ -110,37 +109,37 @@ func (cfg *apiConfig) adminLightUpdateHandler(w http.ResponseWriter, r *http.Req
 	lightIDStr := r.PathValue("lightID")
 	lightID, err := uuid.Parse(lightIDStr)
 	if err != nil {
-		log.Printf("Could not parse light id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not parse lightID from url path", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// check header for admin access token
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	var updateRequest AdminLightUpdateRequest
 	err = json.NewDecoder(r.Body).Decode(&updateRequest)
 	if err != nil {
-		log.Printf("Could not decode body of request due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not decode body of request", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	defer r.Body.Close()
 
 	// checking body properties
 	if updateRequest.Name == "" {
-		log.Print("Request Body missing name property.")
-		respondWithError(errors.New("no name provided"), http.StatusBadRequest, w)
+		cfg.sl.Debug("Request body missing name property")
+		respondWithError(errors.New("no name provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	if updateRequest.Description == "" {
-		log.Print("Request body missing description property.")
-		respondWithError(errors.New("no description provided"), http.StatusBadRequest, w)
+		cfg.sl.Debug("Request body missing description property")
+		respondWithError(errors.New("no description provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -152,12 +151,12 @@ func (cfg *apiConfig) adminLightUpdateHandler(w http.ResponseWriter, r *http.Req
 	}
 	err = cfg.db.UpdateLightNeedsByID(r.Context(), updateParams)
 	if err != nil {
-		log.Printf("Could not update light needs record due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		cfg.sl.Debug("Could not update light needs record", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q successfully updated light needs record %q", requestUserID, lightID)
+	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -166,16 +165,16 @@ func (cfg *apiConfig) adminLightDeleteHandler(w http.ResponseWriter, r *http.Req
 	lightIDStr := r.PathValue("lightID")
 	lightID, err := uuid.Parse(lightIDStr)
 	if err != nil {
-		log.Printf("Could not parse light id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not parse light id from url path", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// check header for admin access token
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not get User ID from token due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -186,12 +185,12 @@ func (cfg *apiConfig) adminLightDeleteHandler(w http.ResponseWriter, r *http.Req
 	}
 	err = cfg.db.MarkLightNeedAsDeletedByID(r.Context(), deleteParams)
 	if err != nil {
-		log.Printf("Could not delete light needs record due to: %q", err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		cfg.sl.Debug("Could not delete light needs records", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q successfully deleted light needs record %q", requestUserID, lightID)
+	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -201,30 +200,30 @@ func (cfg *apiConfig) adminSetPlantAsLightNeedHandler(w http.ResponseWriter, r *
 	lightIDStr := r.PathValue("lightID")
 	lightID, err := uuid.Parse(lightIDStr)
 	if err != nil {
-		log.Printf("Could not parse light id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not parse light id from url path", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// plant species
 	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
 	if plantSpeciesIDStr == "" {
-		log.Print("No plant species id was specified in url query")
-		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		cfg.sl.Debug("No plant species id was specified in url query")
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
-		log.Printf("Could not parse plant species id from url query due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not parse plant species id from url query", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// user id
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -240,12 +239,12 @@ func (cfg *apiConfig) adminSetPlantAsLightNeedHandler(w http.ResponseWriter, r *
 	}
 	err = cfg.db.SetPlantSpeciesAsLightNeed(r.Context(), setParams)
 	if err != nil {
-		log.Printf("Could not set light need %q for plant species %q due to: %q", lightID, plantSpeciesID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		cfg.sl.Debug("Could not set light need for plant species id", "error", err, "light need id", lightID, "plant species id", plantSpeciesID)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q successfully set light need %q for species %q ", requestUserID, lightID, plantSpeciesID)
+	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -255,30 +254,30 @@ func (cfg *apiConfig) adminUnsetPlantAsLightNeedHandler(w http.ResponseWriter, r
 	lightIDStr := r.PathValue("lightID")
 	lightID, err := uuid.Parse(lightIDStr)
 	if err != nil {
-		log.Printf("Could not parse light id from url path due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not parse light id from url path", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// plant species
 	plantSpeciesIDStr := r.URL.Query().Get("plant-species-id")
 	if plantSpeciesIDStr == "" {
-		log.Print("No plant species id was specified in url query")
-		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w)
+		cfg.sl.Debug("No plant species id was specified in url query")
+		respondWithError(errors.New("no plant species id was provided"), http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 	plantSpeciesID, err := uuid.Parse(plantSpeciesIDStr)
 	if err != nil {
-		log.Printf("Could not parse plant species id from url query due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not parse plant species id from url query", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
 	// user id
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
-		log.Printf("Could not authorize normal (non-superadmin) due to: %q", err)
-		respondWithError(err, http.StatusBadRequest, w)
+		cfg.sl.Debug("Could not get user id from token", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
 
@@ -289,11 +288,11 @@ func (cfg *apiConfig) adminUnsetPlantAsLightNeedHandler(w http.ResponseWriter, r
 	}
 	err = cfg.db.UnsetPlantSpeciesAsLightNeed(r.Context(), unsetParams)
 	if err != nil {
-		log.Printf("Could not unset light need %q for plant species %q due to: %q", lightID, plantSpeciesID, err)
-		respondWithError(err, http.StatusInternalServerError, w)
+		cfg.sl.Debug("Could not unset light need for plant species id", "error", err, "light need id", lightID, "plant species id", plantSpeciesID)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	log.Printf("Admin %q successfully unset light need %q for species %q ", requestUserID, lightID, plantSpeciesID)
+	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
 	w.WriteHeader(http.StatusNoContent)
 }
