@@ -35,6 +35,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Issue loading config: %q", err)
 	}
+	cfg.sl.Info("Starting server...")
 
 	mux := http.NewServeMux()
 
