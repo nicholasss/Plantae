@@ -250,6 +250,7 @@ jsonpath "$.plantID" == "{{1_plant_species_id}}"
 jsonpath "$.langCode" == "{{1a_species_common_langcode}}"
 jsonpath "$.commonName" == "{{1a_species_common_name}}"
 
+#
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 Content-Type: application/json; charset=utf-8
@@ -267,6 +268,7 @@ jsonpath "$.plantID" == "{{1_plant_species_id}}"
 jsonpath "$.langCode" == "{{1b_species_common_langcode}}"
 jsonpath "$.commonName" == "{{1b_species_common_name}}"
 
+#
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 Content-Type: application/json; charset=utf-8
@@ -284,6 +286,7 @@ jsonpath "$.plantID" == "{{1_plant_species_id}}"
 jsonpath "$.langCode" == "{{1c_species_common_langcode}}"
 jsonpath "$.commonName" == "{{1c_species_common_name}}"
 
+#
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 Content-Type: application/json; charset=utf-8
@@ -301,6 +304,7 @@ jsonpath "$.plantID" == "{{1_plant_species_id}}"
 jsonpath "$.langCode" == "{{1d_species_common_langcode}}"
 jsonpath "$.commonName" == "{{1d_species_common_name}}"
 
+#
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 Content-Type: application/json; charset=utf-8
@@ -318,6 +322,7 @@ jsonpath "$.plantID" == "{{1_plant_species_id}}"
 jsonpath "$.langCode" == "{{1e_species_common_langcode}}"
 jsonpath "$.commonName" == "{{1e_species_common_name}}"
 
+#
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
 Content-Type: application/json; charset=utf-8
@@ -394,10 +399,12 @@ DELETE http://localhost:8080/api/v1/admin/plant-names/{{1a_species_common_name_i
 Authorization: Bearer {{lisa_token}}
 HTTP 204
 
+#
 DELETE http://localhost:8080/api/v1/admin/plant-names/{{1b_species_common_name_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 204
 
+#
 DELETE http://localhost:8080/api/v1/admin/plant-names/{{1c_species_common_name_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 204
