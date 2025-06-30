@@ -229,6 +229,7 @@ jsonpath "$[0].petEdible" == {{2_pet_edible}}
 # testing plant species
 # ========================================================================
 # testing plant names
+# -- using previous tests species
 
 #
 # Adding common names in english & spanish for 2_plant_species
@@ -244,6 +245,10 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$.plantID" == "{{1_plant_species_id}}"
+jsonpath "$.langCode" == "{{1a_species_common_langcode}}"
+jsonpath "$.commonName" == "{{1a_species_common_name}}"
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -257,6 +262,10 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$.plantID" == "{{1_plant_species_id}}"
+jsonpath "$.langCode" == "{{1b_species_common_langcode}}"
+jsonpath "$.commonName" == "{{1b_species_common_name}}"
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -270,6 +279,10 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$.plantID" == "{{1_plant_species_id}}"
+jsonpath "$.langCode" == "{{1c_species_common_langcode}}"
+jsonpath "$.commonName" == "{{1c_species_common_name}}"
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -283,6 +296,10 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$.plantID" == "{{1_plant_species_id}}"
+jsonpath "$.langCode" == "{{1d_species_common_langcode}}"
+jsonpath "$.commonName" == "{{1d_species_common_name}}"
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -296,6 +313,10 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$.plantID" == "{{1_plant_species_id}}"
+jsonpath "$.langCode" == "{{1e_species_common_langcode}}"
+jsonpath "$.commonName" == "{{1e_species_common_name}}"
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -309,6 +330,10 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$.plantID" == "{{1_plant_species_id}}"
+jsonpath "$.langCode" == "{{1f_species_common_langcode}}"
+jsonpath "$.commonName" == "{{1f_species_common_name}}"
 
 #
 # Get all common names of plants
