@@ -26,32 +26,33 @@ insert into plant_names (
   $2,
   $3,
   $4
-) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, plant_id, lang_code, common_name
+) returning id, plant_id, lang_code, common_name
 `
 
 type CreatePlantNameParams struct {
 	CreatedBy  uuid.UUID `json:"createdBy"`
-	PlantID    uuid.UUID `json:"plantId"`
+	PlantID    uuid.UUID `json:"plantID"`
 	LangCode   string    `json:"langCode"`
 	CommonName string    `json:"commonName"`
 }
 
-func (q *Queries) CreatePlantName(ctx context.Context, arg CreatePlantNameParams) (PlantName, error) {
+type CreatePlantNameRow struct {
+	ID         uuid.UUID `json:"id"`
+	PlantID    uuid.UUID `json:"plantID"`
+	LangCode   string    `json:"langCode"`
+	CommonName string    `json:"commonName"`
+}
+
+func (q *Queries) CreatePlantName(ctx context.Context, arg CreatePlantNameParams) (CreatePlantNameRow, error) {
 	row := q.db.QueryRowContext(ctx, createPlantName,
 		arg.CreatedBy,
 		arg.PlantID,
 		arg.LangCode,
 		arg.CommonName,
 	)
-	var i PlantName
+	var i CreatePlantNameRow
 	err := row.Scan(
 		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.CreatedBy,
-		&i.UpdatedBy,
-		&i.DeletedBy,
 		&i.PlantID,
 		&i.LangCode,
 		&i.CommonName,
@@ -73,7 +74,7 @@ from plant_names
 
 type GetAllPlantNamesForLanguageOrderedByCreatedRow struct {
 	ID         uuid.UUID `json:"id"`
-	PlantID    uuid.UUID `json:"plantId"`
+	PlantID    uuid.UUID `json:"plantID"`
 	LangCode   string    `json:"langCode"`
 	CommonName string    `json:"commonName"`
 }
@@ -119,7 +120,7 @@ from plant_names
 
 type GetAllPlantNamesOrderedByCreatedRow struct {
 	ID         uuid.UUID `json:"id"`
-	PlantID    uuid.UUID `json:"plantId"`
+	PlantID    uuid.UUID `json:"plantID"`
 	LangCode   string    `json:"langCode"`
 	CommonName string    `json:"commonName"`
 }

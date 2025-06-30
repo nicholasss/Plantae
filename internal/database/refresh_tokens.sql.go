@@ -43,7 +43,7 @@ type CreateRefreshTokenRow struct {
 	CreatedBy    uuid.UUID `json:"createdBy"`
 	UpdatedBy    uuid.UUID `json:"updatedBy"`
 	ExpiresAt    time.Time `json:"expiresAt"`
-	UserID       uuid.UUID `json:"userId"`
+	UserID       uuid.UUID `json:"userID"`
 }
 
 func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error) {

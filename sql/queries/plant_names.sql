@@ -13,7 +13,7 @@ insert into plant_names (
   $2,
   $3,
   $4
-) returning *;
+) returning id, plant_id, lang_code, common_name;
 
 -- name: ResetPlantNamesTable :exec
 delete from plant_names;

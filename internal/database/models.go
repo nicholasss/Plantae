@@ -31,7 +31,7 @@ type PlantName struct {
 	CreatedBy  uuid.UUID     `json:"createdBy"`
 	UpdatedBy  uuid.UUID     `json:"updatedBy"`
 	DeletedBy  uuid.NullUUID `json:"deletedBy"`
-	PlantID    uuid.UUID     `json:"plantId"`
+	PlantID    uuid.UUID     `json:"plantID"`
 	LangCode   string        `json:"langCode"`
 	CommonName string        `json:"commonName"`
 }
@@ -49,9 +49,9 @@ type PlantSpecy struct {
 	PetPoisonToxic   sql.NullBool  `json:"petPoisonToxic"`
 	HumanEdible      sql.NullBool  `json:"humanEdible"`
 	PetEdible        sql.NullBool  `json:"petEdible"`
-	PlantTypeID      uuid.NullUUID `json:"plantTypeId"`
-	LightNeedsID     uuid.NullUUID `json:"lightNeedsId"`
-	WaterNeedsID     uuid.NullUUID `json:"waterNeedsId"`
+	PlantTypeID      uuid.NullUUID `json:"plantTypeID"`
+	LightNeedsID     uuid.NullUUID `json:"lightNeedsID"`
+	WaterNeedsID     uuid.NullUUID `json:"waterNeedsID"`
 }
 
 type PlantType struct {
@@ -84,7 +84,7 @@ type RefreshToken struct {
 	RevokedAt    sql.NullTime  `json:"revokedAt"`
 	RevokedBy    uuid.NullUUID `json:"revokedBy"`
 	ExpiresAt    time.Time     `json:"expiresAt"`
-	UserID       uuid.UUID     `json:"userId"`
+	UserID       uuid.UUID     `json:"userID"`
 }
 
 type User struct {
@@ -109,8 +109,8 @@ type UsersPlant struct {
 	CreatedBy    uuid.UUID      `json:"createdBy"`
 	UpdatedBy    uuid.UUID      `json:"updatedBy"`
 	DeletedBy    uuid.NullUUID  `json:"deletedBy"`
-	PlantID      uuid.UUID      `json:"plantId"`
-	UserID       uuid.UUID      `json:"userId"`
+	PlantID      uuid.UUID      `json:"plantID"`
+	UserID       uuid.UUID      `json:"userID"`
 	AdoptionDate sql.NullTime   `json:"adoptionDate"`
 	Name         sql.NullString `json:"name"`
 }

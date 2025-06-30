@@ -305,7 +305,7 @@ where
 
 type SetPlantSpeciesAsLightNeedParams struct {
 	ID           uuid.UUID     `json:"id"`
-	LightNeedsID uuid.NullUUID `json:"lightNeedsId"`
+	LightNeedsID uuid.NullUUID `json:"lightNeedsID"`
 	UpdatedBy    uuid.UUID     `json:"updatedBy"`
 }
 
@@ -326,7 +326,7 @@ where
 
 type SetPlantSpeciesAsTypeParams struct {
 	ID          uuid.UUID     `json:"id"`
-	PlantTypeID uuid.NullUUID `json:"plantTypeId"`
+	PlantTypeID uuid.NullUUID `json:"plantTypeID"`
 	UpdatedBy   uuid.UUID     `json:"updatedBy"`
 }
 
@@ -347,7 +347,7 @@ where
 
 type SetPlantSpeciesAsWaterNeedParams struct {
 	ID           uuid.UUID     `json:"id"`
-	WaterNeedsID uuid.NullUUID `json:"waterNeedsId"`
+	WaterNeedsID uuid.NullUUID `json:"waterNeedsID"`
 	UpdatedBy    uuid.UUID     `json:"updatedBy"`
 }
 
