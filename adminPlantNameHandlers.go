@@ -26,7 +26,6 @@ type AdminPlantNamesCreateResponse struct {
 	CommonName string    `json:"commonName"`
 }
 
-// TODO: ensure resource is sent back
 // POST /api/v1/admin/plant-names
 func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *http.Request) {
 	// check header for admin access token
