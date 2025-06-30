@@ -154,7 +154,7 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 
 	cfg.sl.Debug("Admin successfully created water need", "admin id", requestUserID)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 	w.Write(waterData)
 }
 
