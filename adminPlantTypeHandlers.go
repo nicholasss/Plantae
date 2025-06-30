@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/nicholasss/plantae/internal/database"
@@ -31,12 +30,21 @@ type AdminPlantTypeCreateRequest struct {
 	SoilDrainageMix       *string `json:"soilDrainageMix"`
 }
 
+type AdminPlantTypeCreateResponse struct {
+	ID                    uuid.UUID `json:"id"`
+	Name                  string    `json:"name"`
+	Description           string    `json:"description"`
+	MaxTemperatureCelsius *int32    `json:"maxTemperatureCelsius,omitempty"`
+	MinTemperatureCelsius *int32    `json:"minTemperatureCelsius,omitempty"`
+	MaxHumidityPercent    *int32    `json:"maxHumidityPercent,omitempty"`
+	MinHumidityPercent    *int32    `json:"minHumidityPercent,omitempty"`
+	SoilOrganicMix        *string   `json:"soilOrganicMix,omitempty"`
+	SoilGritMix           *string   `json:"soilGritMix,omitempty"`
+	SoilDrainageMix       *string   `json:"soilDrainageMix,omitempty"`
+}
+
 type AdminPlantTypeViewResponse struct {
 	ID                    uuid.UUID `json:"id"`
-	CreatedAt             time.Time `json:"createdAt"`
-	UpdatedAt             time.Time `json:"updatedAt"`
-	CreatedBy             uuid.UUID `json:"createdBy"`
-	UpdatedBy             uuid.UUID `json:"updatedBy"`
 	Name                  string    `json:"name"`
 	Description           string    `json:"description"`
 	MaxTemperatureCelsius *int32    `json:"maxTemperatureCelsius,omitempty"`
@@ -60,7 +68,6 @@ type AdminPlantTypeUpdateRequest struct {
 
 // === handler functions ===
 
-// TODO: ensure resource is sent back
 // POST /api/v1/admin/plant-types
 // Create plant type request
 func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *http.Request) {
@@ -164,9 +171,61 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
+	var MaxTemperatureCelsius *int32
+	var MinTemperatureCelsius *int32
+	var MaxHumidityPercent *int32
+	var MinHumidityPercent *int32
+	var SoilOrganicMix *string
+	var SoilGritMix *string
+	var SoilDrainageMix *string
+
+	if typeRecord.MaxTemperatureCelsius.Valid {
+		MaxTemperatureCelsius = &typeRecord.MaxTemperatureCelsius.Int32
+	}
+	if typeRecord.MinTemperatureCelsius.Valid {
+		MinTemperatureCelsius = &typeRecord.MinTemperatureCelsius.Int32
+	}
+	if typeRecord.MaxHumidityPercent.Valid {
+		MaxHumidityPercent = &typeRecord.MaxHumidityPercent.Int32
+	}
+	if typeRecord.MinHumidityPercent.Valid {
+		MinHumidityPercent = &typeRecord.MinHumidityPercent.Int32
+	}
+	if typeRecord.SoilOrganicMix.Valid {
+		SoilOrganicMix = &typeRecord.SoilOrganicMix.String
+	}
+	if typeRecord.SoilGritMix.Valid {
+		SoilGritMix = &typeRecord.SoilGritMix.String
+	}
+	if typeRecord.SoilDrainageMix.Valid {
+		SoilDrainageMix = &typeRecord.SoilDrainageMix.String
+	}
+
+	typeResponse := AdminPlantTypeViewResponse{
+		ID:                    typeRecord.ID,
+		Name:                  typeRecord.Name,
+		Description:           typeRecord.Description,
+		MaxTemperatureCelsius: MaxTemperatureCelsius,
+		MinTemperatureCelsius: MinTemperatureCelsius,
+		MaxHumidityPercent:    MaxHumidityPercent,
+		MinHumidityPercent:    MinHumidityPercent,
+		SoilOrganicMix:        SoilOrganicMix,
+		SoilGritMix:           SoilGritMix,
+		SoilDrainageMix:       SoilDrainageMix,
+	}
+
+	plantTypesData, err := json.Marshal(typeResponse)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
 	// created successfully
 	cfg.sl.Debug("Admin successfully create plant type", "admin id", requestUserID, "plant type id", typeRecord.ID)
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusCreated)
+	w.Write(plantTypesData)
 }
 
 // GET /admin/plant-type
@@ -228,10 +287,6 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 
 		newRecord := AdminPlantTypeViewResponse{
 			ID:                    oldRecord.ID,
-			CreatedAt:             oldRecord.CreatedAt,
-			UpdatedAt:             oldRecord.UpdatedAt,
-			CreatedBy:             oldRecord.CreatedBy,
-			UpdatedBy:             oldRecord.UpdatedBy,
 			Name:                  oldRecord.Name,
 			Description:           oldRecord.Description,
 			MaxTemperatureCelsius: MaxTemperatureCelsius,
