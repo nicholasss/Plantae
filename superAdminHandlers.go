@@ -8,9 +8,9 @@ import (
 
 // === Plant Types Management Handlers ===
 
-// TODO: ensure resource is sent back
 // reset plant types table
 // POST /api/v1/super-admin/reset-plant-types
+// 204 No Content is ok in context
 func (cfg *apiConfig) resetPlantTypesHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
@@ -33,9 +33,9 @@ func (cfg *apiConfig) resetPlantTypesHandler(w http.ResponseWriter, r *http.Requ
 
 // === Light Needs Management Handlers ===
 
-// TODO: ensure resource is sent back
 // reset light needs table
 // POST /api/v1/super-admin/reset-light
+// 204 No Content is ok in context
 func (cfg *apiConfig) resetLightNeedsHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
@@ -58,9 +58,9 @@ func (cfg *apiConfig) resetLightNeedsHandler(w http.ResponseWriter, r *http.Requ
 
 // === Water Needs Management Handlers ===
 
-// TODO: ensure resource is sent back
 // reset water needs table
 // POST /api/v1/super-admin/reset-water
+// 204 No Content is ok in context
 func (cfg *apiConfig) resetWaterNeedsHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
@@ -83,9 +83,9 @@ func (cfg *apiConfig) resetWaterNeedsHandler(w http.ResponseWriter, r *http.Requ
 
 // === Plant Species Management Handlers ===
 
-// TODO: ensure resource is sent back
 // resets plant species table
 // POST /api/v1/super-admin/reset-plant-species
+// 204 No Content is ok in context
 func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	if platformProduction(cfg) {
@@ -108,9 +108,9 @@ func (cfg *apiConfig) resetPlantSpeciesHandler(w http.ResponseWriter, r *http.Re
 
 // === Plant Names Management Handlers ===
 
-// TODO: ensure resource is sent back
 // resets plant names table
 // POST /api/v1/super-admin/reset-plant-names
+// 204 No Content is ok in context
 func (cfg *apiConfig) resetPlantNamesHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	// ensure development platform
@@ -133,9 +133,9 @@ func (cfg *apiConfig) resetPlantNamesHandler(w http.ResponseWriter, r *http.Requ
 
 // === User/Admin management Handlers ===
 
-// TODO: ensure resource is sent back
 // resets user table
 // POST /api/v1/super-admin/reset-users
+// 204 No Content is ok in context
 func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	// super-admin pre-authenticated before the handler is used
 	// ensure development platform
@@ -160,6 +160,7 @@ func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) 
 // TODO: ensure resource is sent back
 // promotes user to admin
 // POST /api/v1/super-admin/promote-user
+// 200 OK makes sense in context
 func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
 	var adminStatusRequest AdminStatusRequest
 	err := json.NewDecoder(r.Body).Decode(&adminStatusRequest)
@@ -195,6 +196,7 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 // TODO: ensure resource is sent back
 // demotes user from admin
 // POST /api/v1/super-admin/demote-user
+// 200 OK makes sense in context
 func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Request) {
 	var adminStatusRequest AdminStatusRequest
 	decoder := json.NewDecoder(r.Body)
