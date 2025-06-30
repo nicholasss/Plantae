@@ -123,9 +123,10 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	w.Write(userData)
 }
 
-// TODO: ensure resource is sent back
 // logs in user and provides tokens
 // POST /api/v1/auth/login
+// POST /login is an exception
+// -- it typically responds with HTTP 200 and response
 func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	var userLoginRequest UserLoginRequest
 	err := json.NewDecoder(r.Body).Decode(&userLoginRequest)
