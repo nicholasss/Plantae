@@ -316,13 +316,13 @@ HTTP 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 3
-jsonpath "$[0].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[0].plantID" == "{{1_plant_species_id}}"
 jsonpath "$[0].commonName" == "{{1c_species_common_name}}"
 jsonpath "$[0].langCode" == "en"
-jsonpath "$[1].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[1].plantID" == "{{1_plant_species_id}}"
 jsonpath "$[1].commonName" == "{{1b_species_common_name}}"
 jsonpath "$[1].langCode" == "en"
-jsonpath "$[2].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[2].plantID" == "{{1_plant_species_id}}"
 jsonpath "$[2].commonName" == "{{1a_species_common_name}}"
 jsonpath "$[2].langCode" == "en"
 [Captures]
@@ -338,13 +338,13 @@ HTTP 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 3
-jsonpath "$[0].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[0].plantID" == "{{1_plant_species_id}}"
 jsonpath "$[0].commonName" == "{{1f_species_common_name}}"
 jsonpath "$[0].langCode" == "es"
-jsonpath "$[1].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[1].plantID" == "{{1_plant_species_id}}"
 jsonpath "$[1].commonName" == "{{1e_species_common_name}}"
 jsonpath "$[1].langCode" == "es"
-jsonpath "$[2].plantId" == "{{1_plant_species_id}}"
+jsonpath "$[2].plantID" == "{{1_plant_species_id}}"
 jsonpath "$[2].commonName" == "{{1d_species_common_name}}"
 jsonpath "$[2].langCode" == "es"
 [Captures]
