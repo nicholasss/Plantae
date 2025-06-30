@@ -163,6 +163,7 @@ Content-Type: application/json; charset=utf-8
 2_plant_species_id: jsonpath "$[0].id"
 [Asserts]
 jsonpath "$" count == 2
+jsonpath "$[0].id" exists
 jsonpath "$[0].speciesName" == "{{2_species_name}}"
 
 #
@@ -730,7 +731,6 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
-
 
 #
 # set 1_plant_species as type
