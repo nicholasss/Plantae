@@ -14,11 +14,6 @@ import (
 
 // === request response types
 
-// AdminStatusRequest is for promotion or demotion requests of a user, from an super-admin.
-type AdminStatusRequest struct {
-	ID uuid.UUID `json:"id"`
-}
-
 // CreateUserRequest is for decoding create user requests.
 type CreateUserRequest struct {
 	Email       string `json:"email"`
