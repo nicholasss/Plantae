@@ -18,6 +18,14 @@ type AdminPlantNamesCreateRequest struct {
 	CommonName string    `json:"commonName"`
 }
 
+// AdminPlantNamesCreateResponse is for encoding plant name responses.
+type AdminPlantNamesCreateResponse struct {
+	ID         uuid.UUID `json:"ID"`
+	PlantID    uuid.UUID `json:"plantID"`
+	LangCode   string    `json:"langCode"`
+	CommonName string    `json:"commonName"`
+}
+
 // TODO: ensure resource is sent back
 // POST /api/v1/admin/plant-names
 func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *http.Request) {
@@ -62,15 +70,24 @@ func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *htt
 		CommonName: createRequest.CommonName,
 	}
 
-	_, err = cfg.db.CreatePlantName(r.Context(), createRequestParams)
+	plantNameRecord, err := cfg.db.CreatePlantName(r.Context(), createRequestParams)
 	if err != nil {
 		cfg.sl.Debug("Could not create plant name record for plant id", "error", err, "plant id", createRequest.PlantID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
+	nameData, err := json.Marshal(&plantNameRecord)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
 	cfg.sl.Debug("Admin created plant name record", "admin id", requestUserID, "common name", createRequest.CommonName, "plant id", createRequest.PlantID)
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusCreated)
+	w.Write(nameData)
 }
 
 func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.Request) {
