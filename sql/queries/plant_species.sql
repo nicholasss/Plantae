@@ -70,56 +70,62 @@ update plant_species
   deleted_by = $2
 where id = $1;
 
--- name: SetPlantSpeciesAsType :exec
+-- name: SetPlantSpeciesAsType :one
 update plant_species
   set plant_type_id = $2,
   updated_at = now(),
   updated_by = $3
 where
   id = $1 and
-  deleted_by is null;
+  deleted_by is null
+returning id, species_name, plant_type_id;
 
--- name: UnsetPlantSpeciesAsType :exec
+-- name: UnsetPlantSpeciesAsType :one
 update plant_species
   set plant_type_id = null,
   updated_at = now(),
   updated_by = $2
 where
   id = $1 and
-  deleted_by is null;
+  deleted_by is null
+returning id, species_name;
 
--- name: SetPlantSpeciesAsLightNeed :exec
+-- name: SetPlantSpeciesAsLightNeed :one
 update plant_species
   set light_needs_id = $2,
   updated_at = now(),
   updated_by = $3
 where
   id = $1 and
-  deleted_by is null;
+  deleted_by is null
+returning id, species_name, light_needs_id;
 
--- name: UnsetPlantSpeciesAsLightNeed :exec
+-- name: UnsetPlantSpeciesAsLightNeed :one
 update plant_species
   set light_needs_id = null,
   updated_at = now(),
   updated_by = $2
 where
   id = $1 and
-  deleted_by is null;
+  deleted_by is null
+returning id, species_name;
 
--- name: SetPlantSpeciesAsWaterNeed :exec
+-- name: SetPlantSpeciesAsWaterNeed :one
 update plant_species
   set water_needs_id = $2,
   updated_at = now(),
   updated_by = $3
 where
   id = $1 and
-  deleted_by is null;
+  deleted_by is null
+returning id, species_name, water_needs_id;
 
--- name: UnsetPlantSpeciesAsWaterNeed :exec
+-- name: UnsetPlantSpeciesAsWaterNeed :one
 update plant_species
   set water_needs_id = null,
   updated_at = now(),
   updated_by = $2
 where
   id = $1 and
-  deleted_by is null;
+  deleted_by is null
+returning id, species_name;

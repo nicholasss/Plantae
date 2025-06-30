@@ -293,7 +293,7 @@ func (q *Queries) ResetPlantSpeciesTable(ctx context.Context) error {
 	return err
 }
 
-const setPlantSpeciesAsLightNeed = `-- name: SetPlantSpeciesAsLightNeed :exec
+const setPlantSpeciesAsLightNeed = `-- name: SetPlantSpeciesAsLightNeed :one
 update plant_species
   set light_needs_id = $2,
   updated_at = now(),
@@ -301,6 +301,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
+returning id, species_name, light_needs_id
 `
 
 type SetPlantSpeciesAsLightNeedParams struct {
@@ -309,12 +310,20 @@ type SetPlantSpeciesAsLightNeedParams struct {
 	UpdatedBy    uuid.UUID     `json:"updatedBy"`
 }
 
-func (q *Queries) SetPlantSpeciesAsLightNeed(ctx context.Context, arg SetPlantSpeciesAsLightNeedParams) error {
-	_, err := q.db.ExecContext(ctx, setPlantSpeciesAsLightNeed, arg.ID, arg.LightNeedsID, arg.UpdatedBy)
-	return err
+type SetPlantSpeciesAsLightNeedRow struct {
+	ID           uuid.UUID     `json:"id"`
+	SpeciesName  string        `json:"speciesName"`
+	LightNeedsID uuid.NullUUID `json:"lightNeedsID"`
 }
 
-const setPlantSpeciesAsType = `-- name: SetPlantSpeciesAsType :exec
+func (q *Queries) SetPlantSpeciesAsLightNeed(ctx context.Context, arg SetPlantSpeciesAsLightNeedParams) (SetPlantSpeciesAsLightNeedRow, error) {
+	row := q.db.QueryRowContext(ctx, setPlantSpeciesAsLightNeed, arg.ID, arg.LightNeedsID, arg.UpdatedBy)
+	var i SetPlantSpeciesAsLightNeedRow
+	err := row.Scan(&i.ID, &i.SpeciesName, &i.LightNeedsID)
+	return i, err
+}
+
+const setPlantSpeciesAsType = `-- name: SetPlantSpeciesAsType :one
 update plant_species
   set plant_type_id = $2,
   updated_at = now(),
@@ -322,6 +331,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
+returning id, species_name, plant_type_id
 `
 
 type SetPlantSpeciesAsTypeParams struct {
@@ -330,12 +340,20 @@ type SetPlantSpeciesAsTypeParams struct {
 	UpdatedBy   uuid.UUID     `json:"updatedBy"`
 }
 
-func (q *Queries) SetPlantSpeciesAsType(ctx context.Context, arg SetPlantSpeciesAsTypeParams) error {
-	_, err := q.db.ExecContext(ctx, setPlantSpeciesAsType, arg.ID, arg.PlantTypeID, arg.UpdatedBy)
-	return err
+type SetPlantSpeciesAsTypeRow struct {
+	ID          uuid.UUID     `json:"id"`
+	SpeciesName string        `json:"speciesName"`
+	PlantTypeID uuid.NullUUID `json:"plantTypeID"`
 }
 
-const setPlantSpeciesAsWaterNeed = `-- name: SetPlantSpeciesAsWaterNeed :exec
+func (q *Queries) SetPlantSpeciesAsType(ctx context.Context, arg SetPlantSpeciesAsTypeParams) (SetPlantSpeciesAsTypeRow, error) {
+	row := q.db.QueryRowContext(ctx, setPlantSpeciesAsType, arg.ID, arg.PlantTypeID, arg.UpdatedBy)
+	var i SetPlantSpeciesAsTypeRow
+	err := row.Scan(&i.ID, &i.SpeciesName, &i.PlantTypeID)
+	return i, err
+}
+
+const setPlantSpeciesAsWaterNeed = `-- name: SetPlantSpeciesAsWaterNeed :one
 update plant_species
   set water_needs_id = $2,
   updated_at = now(),
@@ -343,6 +361,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
+returning id, species_name, water_needs_id
 `
 
 type SetPlantSpeciesAsWaterNeedParams struct {
@@ -351,12 +370,20 @@ type SetPlantSpeciesAsWaterNeedParams struct {
 	UpdatedBy    uuid.UUID     `json:"updatedBy"`
 }
 
-func (q *Queries) SetPlantSpeciesAsWaterNeed(ctx context.Context, arg SetPlantSpeciesAsWaterNeedParams) error {
-	_, err := q.db.ExecContext(ctx, setPlantSpeciesAsWaterNeed, arg.ID, arg.WaterNeedsID, arg.UpdatedBy)
-	return err
+type SetPlantSpeciesAsWaterNeedRow struct {
+	ID           uuid.UUID     `json:"id"`
+	SpeciesName  string        `json:"speciesName"`
+	WaterNeedsID uuid.NullUUID `json:"waterNeedsID"`
 }
 
-const unsetPlantSpeciesAsLightNeed = `-- name: UnsetPlantSpeciesAsLightNeed :exec
+func (q *Queries) SetPlantSpeciesAsWaterNeed(ctx context.Context, arg SetPlantSpeciesAsWaterNeedParams) (SetPlantSpeciesAsWaterNeedRow, error) {
+	row := q.db.QueryRowContext(ctx, setPlantSpeciesAsWaterNeed, arg.ID, arg.WaterNeedsID, arg.UpdatedBy)
+	var i SetPlantSpeciesAsWaterNeedRow
+	err := row.Scan(&i.ID, &i.SpeciesName, &i.WaterNeedsID)
+	return i, err
+}
+
+const unsetPlantSpeciesAsLightNeed = `-- name: UnsetPlantSpeciesAsLightNeed :one
 update plant_species
   set light_needs_id = null,
   updated_at = now(),
@@ -364,6 +391,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
+returning id, species_name
 `
 
 type UnsetPlantSpeciesAsLightNeedParams struct {
@@ -371,12 +399,19 @@ type UnsetPlantSpeciesAsLightNeedParams struct {
 	UpdatedBy uuid.UUID `json:"updatedBy"`
 }
 
-func (q *Queries) UnsetPlantSpeciesAsLightNeed(ctx context.Context, arg UnsetPlantSpeciesAsLightNeedParams) error {
-	_, err := q.db.ExecContext(ctx, unsetPlantSpeciesAsLightNeed, arg.ID, arg.UpdatedBy)
-	return err
+type UnsetPlantSpeciesAsLightNeedRow struct {
+	ID          uuid.UUID `json:"id"`
+	SpeciesName string    `json:"speciesName"`
 }
 
-const unsetPlantSpeciesAsType = `-- name: UnsetPlantSpeciesAsType :exec
+func (q *Queries) UnsetPlantSpeciesAsLightNeed(ctx context.Context, arg UnsetPlantSpeciesAsLightNeedParams) (UnsetPlantSpeciesAsLightNeedRow, error) {
+	row := q.db.QueryRowContext(ctx, unsetPlantSpeciesAsLightNeed, arg.ID, arg.UpdatedBy)
+	var i UnsetPlantSpeciesAsLightNeedRow
+	err := row.Scan(&i.ID, &i.SpeciesName)
+	return i, err
+}
+
+const unsetPlantSpeciesAsType = `-- name: UnsetPlantSpeciesAsType :one
 update plant_species
   set plant_type_id = null,
   updated_at = now(),
@@ -384,6 +419,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
+returning id, species_name
 `
 
 type UnsetPlantSpeciesAsTypeParams struct {
@@ -391,12 +427,19 @@ type UnsetPlantSpeciesAsTypeParams struct {
 	UpdatedBy uuid.UUID `json:"updatedBy"`
 }
 
-func (q *Queries) UnsetPlantSpeciesAsType(ctx context.Context, arg UnsetPlantSpeciesAsTypeParams) error {
-	_, err := q.db.ExecContext(ctx, unsetPlantSpeciesAsType, arg.ID, arg.UpdatedBy)
-	return err
+type UnsetPlantSpeciesAsTypeRow struct {
+	ID          uuid.UUID `json:"id"`
+	SpeciesName string    `json:"speciesName"`
 }
 
-const unsetPlantSpeciesAsWaterNeed = `-- name: UnsetPlantSpeciesAsWaterNeed :exec
+func (q *Queries) UnsetPlantSpeciesAsType(ctx context.Context, arg UnsetPlantSpeciesAsTypeParams) (UnsetPlantSpeciesAsTypeRow, error) {
+	row := q.db.QueryRowContext(ctx, unsetPlantSpeciesAsType, arg.ID, arg.UpdatedBy)
+	var i UnsetPlantSpeciesAsTypeRow
+	err := row.Scan(&i.ID, &i.SpeciesName)
+	return i, err
+}
+
+const unsetPlantSpeciesAsWaterNeed = `-- name: UnsetPlantSpeciesAsWaterNeed :one
 update plant_species
   set water_needs_id = null,
   updated_at = now(),
@@ -404,6 +447,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
+returning id, species_name
 `
 
 type UnsetPlantSpeciesAsWaterNeedParams struct {
@@ -411,9 +455,16 @@ type UnsetPlantSpeciesAsWaterNeedParams struct {
 	UpdatedBy uuid.UUID `json:"updatedBy"`
 }
 
-func (q *Queries) UnsetPlantSpeciesAsWaterNeed(ctx context.Context, arg UnsetPlantSpeciesAsWaterNeedParams) error {
-	_, err := q.db.ExecContext(ctx, unsetPlantSpeciesAsWaterNeed, arg.ID, arg.UpdatedBy)
-	return err
+type UnsetPlantSpeciesAsWaterNeedRow struct {
+	ID          uuid.UUID `json:"id"`
+	SpeciesName string    `json:"speciesName"`
+}
+
+func (q *Queries) UnsetPlantSpeciesAsWaterNeed(ctx context.Context, arg UnsetPlantSpeciesAsWaterNeedParams) (UnsetPlantSpeciesAsWaterNeedRow, error) {
+	row := q.db.QueryRowContext(ctx, unsetPlantSpeciesAsWaterNeed, arg.ID, arg.UpdatedBy)
+	var i UnsetPlantSpeciesAsWaterNeedRow
+	err := row.Scan(&i.ID, &i.SpeciesName)
+	return i, err
 }
 
 const updatePlantSpeciesPropertiesByID = `-- name: UpdatePlantSpeciesPropertiesByID :exec
