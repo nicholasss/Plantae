@@ -66,6 +66,17 @@ type AdminPlantTypeUpdateRequest struct {
 	SoilDrainageMix       *string `json:"soilDrainageMix"`
 }
 
+type AdminSetPlantTypeResponse struct {
+	PlantTypeID      uuid.UUID `json:"plantTypeID"`
+	PlantSpeciesID   uuid.UUID `json:"plantSpeciesID"`
+	PlantSpeciesName string    `json:"plantSpeciesName"`
+}
+
+type AdminUnsetPlantTypeResponse struct {
+	PlantSpeciesID   uuid.UUID `json:"plantSpeciesID"`
+	PlantSpeciesName string    `json:"plantSpeciesName"`
+}
+
 // === handler functions ===
 
 // POST /api/v1/admin/plant-types
@@ -491,15 +502,30 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 		PlantTypeID: nullPlantTypeID,
 		UpdatedBy:   requestUserID,
 	}
-	err = cfg.db.SetPlantSpeciesAsType(r.Context(), setPlantTypeParams)
+	speciesRecord, err := cfg.db.SetPlantSpeciesAsType(r.Context(), setPlantTypeParams)
 	if err != nil {
 		cfg.sl.Debug("Could not set plant type for plant species", "error", err, "plant type id", plantTypeID, "plant species id", plantSpeciesID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
-	w.WriteHeader(http.StatusNoContent)
+	setResponse := AdminSetPlantTypeResponse{
+		PlantTypeID:      plantTypeID,
+		PlantSpeciesID:   plantSpeciesID,
+		PlantSpeciesName: speciesRecord.SpeciesName,
+	}
+	setData, err := json.Marshal(setResponse)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	// created successfully
+	cfg.sl.Debug("Admin successfully set plant species to plant type", "admin id", requestUserID, "plant species id", plantSpeciesID, "plant type id", plantTypeID)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(setData)
 }
 
 // DELETE /admin/plant-type/{plant type id} ? plant species id = uuid
@@ -540,13 +566,27 @@ func (cfg *apiConfig) adminUnsetPlantAsTypeHandler(w http.ResponseWriter, r *htt
 		ID:        plantSpeciesID,
 		UpdatedBy: requestUserID,
 	}
-	err = cfg.db.UnsetPlantSpeciesAsType(r.Context(), unsetPlantTypeParams)
+	speciesRecord, err := cfg.db.UnsetPlantSpeciesAsType(r.Context(), unsetPlantTypeParams)
 	if err != nil {
 		cfg.sl.Debug("Could not unset type for plant species", "error", err, "plant type id", plantTypeID, "plant species id", plantSpeciesID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
-	w.WriteHeader(http.StatusNoContent)
+	unsetResponse := AdminUnsetPlantTypeResponse{
+		PlantSpeciesID:   plantSpeciesID,
+		PlantSpeciesName: speciesRecord.SpeciesName,
+	}
+	unsetData, err := json.Marshal(unsetResponse)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	// created successfully
+	cfg.sl.Debug("Admin successfully unset plant species from plant type", "admin id", requestUserID, "plant species id", plantSpeciesID, "plant type id", plantTypeID)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(unsetData)
 }
