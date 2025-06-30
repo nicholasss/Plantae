@@ -21,7 +21,7 @@ insert into users (
   $1, now(), now(),
   $1, $1, now(),
   false, $2, $3
-) returning id, created_at, updated_at, created_by, updated_by, join_date, is_admin, email
+) returning id, join_date, is_admin, email
 `
 
 type CreateUserParams struct {
@@ -31,14 +31,10 @@ type CreateUserParams struct {
 }
 
 type CreateUserRow struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy uuid.UUID `json:"createdBy"`
-	UpdatedBy uuid.UUID `json:"updatedBy"`
-	JoinDate  time.Time `json:"joinDate"`
-	IsAdmin   bool      `json:"isAdmin"`
-	Email     string    `json:"email"`
+	ID       uuid.UUID `json:"id"`
+	JoinDate time.Time `json:"joinDate"`
+	IsAdmin  bool      `json:"isAdmin"`
+	Email    string    `json:"email"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
@@ -46,10 +42,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	var i CreateUserRow
 	err := row.Scan(
 		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.CreatedBy,
-		&i.UpdatedBy,
 		&i.JoinDate,
 		&i.IsAdmin,
 		&i.Email,

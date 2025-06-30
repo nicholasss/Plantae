@@ -31,6 +31,7 @@ Content-Type: application/json; charset=utf-8
 [Captures]
 craig_id: jsonpath "$.id"
 [Asserts]
+jsonpath "$.id" exists
 jsonpath "$.isAdmin" == false
 jsonpath "$.email" == "{{craig_email}}"
 

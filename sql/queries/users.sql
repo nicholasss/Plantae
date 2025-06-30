@@ -7,7 +7,7 @@ insert into users (
   $1, now(), now(),
   $1, $1, now(),
   false, $2, $3
-) returning id, created_at, updated_at, created_by, updated_by, join_date, is_admin, email;
+) returning id, join_date, is_admin, email;
 
 -- name: ResetUsersTable :exec
 delete from users;
