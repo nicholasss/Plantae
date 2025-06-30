@@ -729,6 +729,15 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+1_plant_species_id: jsonpath "$.id" 
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.speciesName" == "{{1_species_name}}"
+jsonpath "$.humanPoisonToxic" == {{1_human_poison_toxic}}
+jsonpath "$.petPoisonToxic" == {{1_pet_poison_toxic}}
+jsonpath "$.humanEdible" == {{1_human_edible}}
+jsonpath "$.petEdible" == {{1_pet_edible}}
 
 #
 # Add plant 2 to the plant_species table
@@ -747,6 +756,15 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+2_plant_species_id: jsonpath "$.id" 
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.speciesName" == "{{2_species_name}}"
+jsonpath "$.humanPoisonToxic" == {{2_human_poison_toxic}}
+jsonpath "$.petPoisonToxic" == {{2_pet_poison_toxic}}
+jsonpath "$.humanEdible" == {{2_human_edible}}
+jsonpath "$.petEdible" == {{2_pet_edible}}
 
 #
 # adding plant type 1 with full information
@@ -768,6 +786,18 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+1_plant_type_id: jsonpath "$.id" 
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.description" == "{{1_plant_type_description}}"
+jsonpath "$.maxTemperatureCelsius" == {{1_plant_type_maxtc}}
+jsonpath "$.minTemperatureCelsius" == {{1_plant_type_mintc}}
+jsonpath "$.maxHumidityPercent" == {{1_plant_type_maxph}}
+jsonpath "$.minHumidityPercent" == {{1_plant_type_minph}}
+jsonpath "$.soilOrganicMix" == "{{1_plant_type_soilom}}"
+jsonpath "$.soilGritMix" == "{{1_plant_type_soilgm}}"
+jsonpath "$.soilDrainageMix" == "{{1_plant_type_soildm}}" 
 
 #
 # adding plant type 2 with full information
@@ -789,6 +819,18 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+2_plant_type_id: jsonpath "$.id" 
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.description" == "{{2_plant_type_description}}"
+jsonpath "$.maxTemperatureCelsius" == {{2_plant_type_maxtc}}
+jsonpath "$.minTemperatureCelsius" == {{2_plant_type_mintc}}
+jsonpath "$.maxHumidityPercent" == {{2_plant_type_maxph}}
+jsonpath "$.minHumidityPercent" == {{2_plant_type_minph}}
+jsonpath "$.soilOrganicMix" == "{{2_plant_type_soilom}}"
+jsonpath "$.soilGritMix" == "{{2_plant_type_soilgm}}"
+jsonpath "$.soilDrainageMix" == "{{2_plant_type_soildm}}" 
 
 #
 # set 1_plant_species as type
