@@ -833,6 +833,72 @@ jsonpath "$.soilGritMix" == "{{2_plant_type_soilgm}}"
 jsonpath "$.soilDrainageMix" == "{{2_plant_type_soildm}}" 
 
 #
+# adding plant type 3 with full information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
+```json
+{
+  "name": "{{3_plant_type_name}}",
+  "description": "{{3_plant_type_description}}",
+  "maxTemperatureCelsius": {{3_plant_type_maxtc}},
+  "minTemperatureCelsius": {{3_plant_type_mintc}},
+  "maxHumidityPercent": {{3_plant_type_maxph}},
+  "minHumidityPercent": {{3_plant_type_minph}},
+  "soilOrganicMix": "{{3_plant_type_soilom}}",
+  "soilGritMix": "{{3_plant_type_soilgm}}",
+  "soilDrainageMix": "{{3_plant_type_soildm}}"
+}
+```
+HTTP 201
+Content-Type: application/json; charset=utf-8
+[Captures]
+3_plant_type_id: jsonpath "$.id" 
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.description" == "{{3_plant_type_description}}"
+jsonpath "$.maxTemperatureCelsius" == {{3_plant_type_maxtc}}
+jsonpath "$.minTemperatureCelsius" == {{3_plant_type_mintc}}
+jsonpath "$.maxHumidityPercent" == {{3_plant_type_maxph}}
+jsonpath "$.minHumidityPercent" == {{3_plant_type_minph}}
+jsonpath "$.soilOrganicMix" == "{{3_plant_type_soilom}}"
+jsonpath "$.soilGritMix" == "{{3_plant_type_soilgm}}"
+jsonpath "$.soilDrainageMix" == "{{3_plant_type_soildm}}" 
+
+#
+# adding plant type 4 with full information
+POST http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+Content-Type: application/json; charset=utf-8
+```json
+{
+  "name": "{{4_plant_type_name}}",
+  "description": "{{4_plant_type_description}}",
+  "maxTemperatureCelsius": {{4_plant_type_maxtc}},
+  "minTemperatureCelsius": {{4_plant_type_mintc}},
+  "maxHumidityPercent": {{4_plant_type_maxph}},
+  "minHumidityPercent": {{4_plant_type_minph}},
+  "soilOrganicMix": "{{4_plant_type_soilom}}",
+  "soilGritMix": "{{4_plant_type_soilgm}}",
+  "soilDrainageMix": "{{4_plant_type_soildm}}"
+}
+```
+HTTP 201
+Content-Type: application/json; charset=utf-8
+[Captures]
+4_plant_type_id: jsonpath "$.id" 
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.description" == "{{4_plant_type_description}}"
+jsonpath "$.maxTemperatureCelsius" == {{4_plant_type_maxtc}}
+jsonpath "$.minTemperatureCelsius" == {{4_plant_type_mintc}}
+jsonpath "$.maxHumidityPercent" == {{4_plant_type_maxph}}
+jsonpath "$.minHumidityPercent" == {{4_plant_type_minph}}
+jsonpath "$.soilOrganicMix" == "{{4_plant_type_soilom}}"
+jsonpath "$.soilGritMix" == "{{4_plant_type_soilgm}}"
+jsonpath "$.soilDrainageMix" == "{{4_plant_type_soildm}}" 
+
+#
 # set 1_plant_species as type
 POST http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
