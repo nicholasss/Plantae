@@ -21,6 +21,16 @@ type AdminPlantSpeciesCreateRequest struct {
 	PetEdible        *bool  `json:"petEdible"`
 }
 
+// AdminPlantSpeciesCreateResponse is for encoding plant species create responses.
+type AdminPlantSpeciesCreateResponse struct {
+	ID               uuid.UUID `json:"ID"`
+	SpeciesName      string    `json:"speciesName"`
+	HumanPoisonToxic *bool     `json:"humanPoisonToxic,omitempty"`
+	PetPoisonToxic   *bool     `json:"petPoisonToxic,omitempty"`
+	HumanEdible      *bool     `json:"humanEdible,omitempty"`
+	PetEdible        *bool     `json:"petEdible,omitempty"`
+}
+
 // AdminPlantSpeciesUpdateRequest is for decoding plant species update requests.
 type AdminPlantSpeciesUpdateRequest struct {
 	HumanPoisonToxic *bool `json:"humanPoisonToxic"`
@@ -233,7 +243,6 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// TODO: ensure resource is sent back
 // POST json to create plant
 // POST /api/v1/admin/plant-species
 func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *http.Request) {
@@ -308,6 +317,50 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 		return
 	}
 
+	var humanPTP *bool
+	var humanEP *bool
+	var petPTP *bool
+	var petEP *bool
+
+	if speciesRecord.HumanPoisonToxic.Valid {
+		humanPTP = &speciesRecord.HumanPoisonToxic.Bool
+	} else {
+		humanPTP = nil
+	}
+	if speciesRecord.HumanEdible.Valid {
+		humanEP = &speciesRecord.HumanEdible.Bool
+	} else {
+		humanEP = nil
+	}
+	if speciesRecord.PetPoisonToxic.Valid {
+		petPTP = &speciesRecord.PetPoisonToxic.Bool
+	} else {
+		petPTP = nil
+	}
+	if speciesRecord.PetEdible.Valid {
+		petEP = &speciesRecord.PetEdible.Bool
+	} else {
+		petEP = nil
+	}
+
+	speciesResponse := AdminPlantSpeciesViewResponse{
+		ID:               speciesRecord.ID,
+		SpeciesName:      speciesRecord.SpeciesName,
+		HumanPoisonToxic: humanPTP,
+		HumanEdible:      humanEP,
+		PetPoisonToxic:   petPTP,
+		PetEdible:        petEP,
+	}
+
+	speciesData, err := json.Marshal(&speciesResponse)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
 	cfg.sl.Debug("Admin successfully created plant species", "admin id", requestUserID, "species id", speciesRecord.ID, "species name", speciesRecord.SpeciesName)
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusCreated)
+	w.Write(speciesData)
 }
