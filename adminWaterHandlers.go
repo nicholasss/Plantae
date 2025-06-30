@@ -38,6 +38,17 @@ type AdminWaterResponse struct {
 	DrySoilDays *int32    `json:"drySoilDays,omitempty"`
 }
 
+type AdminSetWaterResponse struct {
+	WaterNeedID      uuid.UUID `json:"waterNeedID"`
+	PlantSpeciesID   uuid.UUID `json:"plantSpeciesID"`
+	PlantSpeciesName string    `json:"plantSpeciesName"`
+}
+
+type AdminUnsetWaterResponse struct {
+	PlantSpeciesID   uuid.UUID `json:"plantSpeciesID"`
+	PlantSpeciesName string    `json:"plantSpeciesName"`
+}
+
 // === handler functions ===
 
 // TODO: ensure resource is sent back
@@ -281,15 +292,29 @@ func (cfg *apiConfig) adminSetPlantAsWaterNeedHandler(w http.ResponseWriter, r *
 		WaterNeedsID: nullWaterID,
 		UpdatedBy:    requestUserID,
 	}
-	err = cfg.db.SetPlantSpeciesAsWaterNeed(r.Context(), setParams)
+	waterRecord, err := cfg.db.SetPlantSpeciesAsWaterNeed(r.Context(), setParams)
 	if err != nil {
 		cfg.sl.Debug("Could not set water for plant species", "error", err, "water id", waterID, "pant species id", plantSpeciesID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
-	w.WriteHeader(http.StatusNoContent)
+	waterResponse := AdminSetWaterResponse{
+		WaterNeedID:      waterRecord.ID,
+		PlantSpeciesID:   plantSpeciesID,
+		PlantSpeciesName: waterRecord.SpeciesName,
+	}
+	waterData, err := json.Marshal(&waterResponse)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	cfg.sl.Debug("Admin successfully set plant species to water need", "admin id", requestUserID, "plant species id", plantSpeciesID, "water need", waterID)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(waterData)
 }
 
 // DELETE /admin/water/{water id} ? plant species id = uuid
@@ -330,13 +355,26 @@ func (cfg *apiConfig) adminUnsetPlantAsWaterNeedHandler(w http.ResponseWriter, r
 		ID:        plantSpeciesID,
 		UpdatedBy: requestUserID,
 	}
-	err = cfg.db.UnsetPlantSpeciesAsWaterNeed(r.Context(), unsetParams)
+	waterRecord, err := cfg.db.UnsetPlantSpeciesAsWaterNeed(r.Context(), unsetParams)
 	if err != nil {
-		cfg.sl.Debug("Could not unset water for plant species", "error", err, "water id", waterID, "plant species id", plantSpeciesID)
+		cfg.sl.Debug("Could not unset water need for plant species", "error", err, "water id", waterID, "plant species id", plantSpeciesID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
-	w.WriteHeader(http.StatusNoContent)
+	waterResponse := AdminUnsetWaterResponse{
+		PlantSpeciesID:   plantSpeciesID,
+		PlantSpeciesName: waterRecord.SpeciesName,
+	}
+	waterData, err := json.Marshal(&waterResponse)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	cfg.sl.Debug("Admin successfully unset plant species to water need", "admin id", requestUserID, "plant species id", plantSpeciesID, "water need", waterID)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(waterData)
 }

@@ -27,6 +27,17 @@ type AdminLightUpdateRequest struct {
 	Description string `json:"description"`
 }
 
+type AdminSetLightResponse struct {
+	LightNeedID      uuid.UUID `json:"lightNeedID"`
+	PlantSpeciesID   uuid.UUID `json:"plantSpeciesID"`
+	PlantSpeciesName string    `json:"plantSpeciesName"`
+}
+
+type AdminUnsetLightResponse struct {
+	PlantSpeciesID   uuid.UUID `json:"plantSpeciesID"`
+	PlantSpeciesName string    `json:"plantSpeciesName"`
+}
+
 // === handler functions ===
 
 // TODO: ensure resource is sent back
@@ -239,15 +250,29 @@ func (cfg *apiConfig) adminSetPlantAsLightNeedHandler(w http.ResponseWriter, r *
 		LightNeedsID: lightNullID,
 		UpdatedBy:    requestUserID,
 	}
-	err = cfg.db.SetPlantSpeciesAsLightNeed(r.Context(), setParams)
+	lightRecord, err := cfg.db.SetPlantSpeciesAsLightNeed(r.Context(), setParams)
 	if err != nil {
 		cfg.sl.Debug("Could not set light need for plant species id", "error", err, "light need id", lightID, "plant species id", plantSpeciesID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
-	w.WriteHeader(http.StatusNoContent)
+	lightResponse := AdminSetLightResponse{
+		LightNeedID:      lightID,
+		PlantSpeciesID:   plantSpeciesID,
+		PlantSpeciesName: lightRecord.SpeciesName,
+	}
+	lightData, err := json.Marshal(&lightResponse)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	cfg.sl.Debug("Admin successfully set plant species to light need", "admin id", requestUserID, "plant species id", plantSpeciesID, "light need", lightID)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(lightData)
 }
 
 // DELETE /admin/light/link{light id} ? plant species id = uuid
@@ -288,13 +313,26 @@ func (cfg *apiConfig) adminUnsetPlantAsLightNeedHandler(w http.ResponseWriter, r
 		ID:        plantSpeciesID,
 		UpdatedBy: requestUserID,
 	}
-	err = cfg.db.UnsetPlantSpeciesAsLightNeed(r.Context(), unsetParams)
+	lightRecord, err := cfg.db.UnsetPlantSpeciesAsLightNeed(r.Context(), unsetParams)
 	if err != nil {
 		cfg.sl.Debug("Could not unset light need for plant species id", "error", err, "light need id", lightID, "plant species id", plantSpeciesID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
-	w.WriteHeader(http.StatusNoContent)
+	lightResponse := AdminUnsetLightResponse{
+		PlantSpeciesID:   plantSpeciesID,
+		PlantSpeciesName: lightRecord.SpeciesName,
+	}
+	lightData, err := json.Marshal(&lightResponse)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	cfg.sl.Debug("Admin successfully unset plant species to light need", "admin id", requestUserID, "plant species id", plantSpeciesID, "light need", lightID)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(lightData)
 }
