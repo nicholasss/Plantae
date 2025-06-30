@@ -232,10 +232,10 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(userLoginResponseData)
 }
 
-// TODO: ensure resource is sent back
 // accepts refresh token as authentication
 // responds with a new access token if authorized
 // POST /api/v1/auth/refresh
+// POST /refresh is about changing state, not creating a new record on the server
 func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request) {
 	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
@@ -300,10 +300,11 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 	w.Write(refreshResponseData)
 }
 
-// TODO: ensure resource is sent back
 // accepts refresh token as authentication
 // responds with 204 No Content if successfully revoked
 // POST /api/v1/auth/revoke
+// POST /revoke sending 204 No Content makes sense,
+// -- as it is a clean response to changing an existing record on the server
 func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) {
 	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
