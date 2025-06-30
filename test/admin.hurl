@@ -90,7 +90,8 @@ Content-Type: application/json; charset=utf-8
   "id": "{{lisa_id}}"
 }
 ```
-HTTP 204
+HTTP 200
+Content-Type: application/json; charset=utf-8
 
 # setup
 # ========================================================================
@@ -117,7 +118,8 @@ Content-Type: application/json; charset=utf-8
   "petEdible": {{1_pet_edible}}
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # Requesting list of plant species in the table
@@ -147,7 +149,8 @@ Content-Type: application/json; charset=utf-8
   "speciesName": "{{2_species_name}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # Requesting list of plant species in the table
@@ -228,7 +231,8 @@ Content-Type: application/json; charset=utf-8
   "commonName": "{{1a_species_common_name}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -240,7 +244,8 @@ Content-Type: application/json; charset=utf-8
   "commonName": "{{1b_species_common_name}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -252,7 +257,8 @@ Content-Type: application/json; charset=utf-8
   "commonName": "{{1c_species_common_name}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -264,7 +270,8 @@ Content-Type: application/json; charset=utf-8
   "commonName": "{{1d_species_common_name}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -276,7 +283,8 @@ Content-Type: application/json; charset=utf-8
   "commonName": "{{1e_species_common_name}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 POST http://localhost:8080/api/v1/admin/plant-names
 Authorization: Bearer {{lisa_token}}
@@ -288,7 +296,8 @@ Content-Type: application/json; charset=utf-8
   "commonName": "{{1f_species_common_name}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # Get all common names of plants
@@ -407,7 +416,8 @@ Content-Type: application/json; charset=utf-8
   "description": "{{1_plant_type_description}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # adding plant type 2 with minimal information
@@ -420,7 +430,8 @@ Content-Type: application/json; charset=utf-8
   "description": "{{2_plant_type_description}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # adding plant type 3 with minimal information
@@ -433,7 +444,8 @@ Content-Type: application/json; charset=utf-8
   "description": "{{3_plant_type_description}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # adding plant type 4 with minimal information
@@ -446,7 +458,8 @@ Content-Type: application/json; charset=utf-8
   "description": "{{4_plant_type_description}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # listing plant types and capturing ids with minimal data
@@ -655,7 +668,8 @@ Content-Type: application/json; charset=utf-8
   "petEdible": {{1_pet_edible}}
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # Add plant 2 to the plant_species table
@@ -672,7 +686,8 @@ Content-Type: application/json; charset=utf-8
   "petEdible": {{2_pet_edible}}
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # adding plant type 1 with full information
@@ -692,7 +707,8 @@ Content-Type: application/json; charset=utf-8
   "soilDrainageMix": "{{1_plant_type_soildm}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # adding plant type 2 with full information
@@ -712,20 +728,23 @@ Content-Type: application/json; charset=utf-8
   "soilDrainageMix": "{{2_plant_type_soildm}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 
 #
 # set 1_plant_species as type
 POST http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 # 
 # set 2_plant_species as type
 POST http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{1_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # unset 1_plant_species as type
@@ -782,7 +801,8 @@ Content-Type: application/json; charset=utf-8
   "petEdible": {{1_pet_edible}}
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # Add plant 2 to the plant_species table
@@ -799,7 +819,8 @@ Content-Type: application/json; charset=utf-8
   "petEdible": {{2_pet_edible}}
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # add light 1 to light_needs table
@@ -812,7 +833,8 @@ Content-Type: application/json; charset=utf-8
   "description": "{{1_light_description}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # add light 2 to light_needs table
@@ -825,7 +847,8 @@ Content-Type: application/json; charset=utf-8
   "description": "{{2_light_description}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # add light 2 to light_needs table
@@ -838,7 +861,8 @@ Content-Type: application/json; charset=utf-8
   "description": "{{3_light_description}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # add light 4 to light_needs table
@@ -851,7 +875,8 @@ Content-Type: application/json; charset=utf-8
   "description": "{{4_light_description}}"
 }
 ```
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # get list of light needs
@@ -997,7 +1022,7 @@ Content-Type: application/json; charset=utf-8
   "drySoilMM": {{1_plant_water_mm}}
 }
 ```
-HTTP 200
+HTTP 201
 Content-Type: application/json; charset=utf-8
 [Captures]
 1_water_id: jsonpath "$.id"
@@ -1014,7 +1039,7 @@ Content-Type: application/json; charset=utf-8
   "drySoilDays": {{2_plant_water_days}}
 }
 ```
-HTTP 200
+HTTP 201
 Content-Type: application/json; charset=utf-8
 [Captures]
 2_water_id: jsonpath "$.id"
@@ -1023,13 +1048,15 @@ Content-Type: application/json; charset=utf-8
 # set water 1 to plant 1
 POST http://localhost:8080/api/v1/admin/water/link/{{1_water_id}}?plant-species-id={{1_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # set water 2 to plant 2
 POST http://localhost:8080/api/v1/admin/water/link/{{2_water_id}}?plant-species-id={{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
-HTTP 204
+HTTP 201
+Content-Type: application/json; charset=utf-8
 
 #
 # unset water 1 to plant 1
