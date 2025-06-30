@@ -9,7 +9,7 @@ insert into light_needs (
   now(), now(),
   $1, $1,
   $2, $3
-) returning *;
+) returning id, name, description;
 
 -- name: ResetLightNeedsTable :exec
 delete from light_needs;

@@ -22,7 +22,7 @@ insert into light_needs (
   now(), now(),
   $1, $1,
   $2, $3
-) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, name, description
+) returning id, name, description
 `
 
 type CreateLightNeedParams struct {
@@ -31,20 +31,16 @@ type CreateLightNeedParams struct {
 	Description string    `json:"description"`
 }
 
-func (q *Queries) CreateLightNeed(ctx context.Context, arg CreateLightNeedParams) (LightNeed, error) {
+type CreateLightNeedRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+}
+
+func (q *Queries) CreateLightNeed(ctx context.Context, arg CreateLightNeedParams) (CreateLightNeedRow, error) {
 	row := q.db.QueryRowContext(ctx, createLightNeed, arg.CreatedBy, arg.Name, arg.Description)
-	var i LightNeed
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.CreatedBy,
-		&i.UpdatedBy,
-		&i.DeletedBy,
-		&i.Name,
-		&i.Description,
-	)
+	var i CreateLightNeedRow
+	err := row.Scan(&i.ID, &i.Name, &i.Description)
 	return i, err
 }
 
