@@ -30,7 +30,10 @@ insert into plant_types (
   $4, $5,
   $6, $7,
   $8, $9, $10
-) returning id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, name, description, max_temperature_celsius, min_temperature_celsius, max_humidity_percent, min_humidity_percent, soil_organic_mix, soil_grit_mix, soil_drainage_mix
+) returning id, name, description,
+max_temperature_celsius, min_temperature_celsius,
+max_humidity_percent, min_humidity_percent,
+soil_organic_mix, soil_grit_mix, soil_drainage_mix
 `
 
 type CreatePlantTypeParams struct {
@@ -46,7 +49,20 @@ type CreatePlantTypeParams struct {
 	SoilDrainageMix       sql.NullString `json:"soilDrainageMix"`
 }
 
-func (q *Queries) CreatePlantType(ctx context.Context, arg CreatePlantTypeParams) (PlantType, error) {
+type CreatePlantTypeRow struct {
+	ID                    uuid.UUID      `json:"id"`
+	Name                  string         `json:"name"`
+	Description           string         `json:"description"`
+	MaxTemperatureCelsius sql.NullInt32  `json:"maxTemperatureCelsius"`
+	MinTemperatureCelsius sql.NullInt32  `json:"minTemperatureCelsius"`
+	MaxHumidityPercent    sql.NullInt32  `json:"maxHumidityPercent"`
+	MinHumidityPercent    sql.NullInt32  `json:"minHumidityPercent"`
+	SoilOrganicMix        sql.NullString `json:"soilOrganicMix"`
+	SoilGritMix           sql.NullString `json:"soilGritMix"`
+	SoilDrainageMix       sql.NullString `json:"soilDrainageMix"`
+}
+
+func (q *Queries) CreatePlantType(ctx context.Context, arg CreatePlantTypeParams) (CreatePlantTypeRow, error) {
 	row := q.db.QueryRowContext(ctx, createPlantType,
 		arg.CreatedBy,
 		arg.Name,
@@ -59,15 +75,9 @@ func (q *Queries) CreatePlantType(ctx context.Context, arg CreatePlantTypeParams
 		arg.SoilGritMix,
 		arg.SoilDrainageMix,
 	)
-	var i PlantType
+	var i CreatePlantTypeRow
 	err := row.Scan(
 		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.CreatedBy,
-		&i.UpdatedBy,
-		&i.DeletedBy,
 		&i.Name,
 		&i.Description,
 		&i.MaxTemperatureCelsius,

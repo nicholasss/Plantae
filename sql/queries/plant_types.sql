@@ -15,7 +15,10 @@ insert into plant_types (
   $4, $5,
   $6, $7,
   $8, $9, $10
-) returning *;
+) returning id, name, description,
+max_temperature_celsius, min_temperature_celsius,
+max_humidity_percent, min_humidity_percent,
+soil_organic_mix, soil_grit_mix, soil_drainage_mix;
 
 -- name: ResetPlantTypesTable :exec
 delete from plant_types;
