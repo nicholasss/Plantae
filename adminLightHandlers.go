@@ -76,15 +76,24 @@ func (cfg *apiConfig) adminLightCreateHandler(w http.ResponseWriter, r *http.Req
 		Name:        createRequest.Name,
 		Description: createRequest.Description,
 	}
-	_, err = cfg.db.CreateLightNeed(r.Context(), createParams)
+	lightRecord, err := cfg.db.CreateLightNeed(r.Context(), createParams)
 	if err != nil {
 		cfg.sl.Debug("Could not create record in light_needs", "error", err)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
-	cfg.sl.Debug("Admin successfully completed request", "admin id", requestUserID)
-	w.WriteHeader(http.StatusNoContent)
+	lightData, err := json.Marshal(&lightRecord)
+	if err != nil {
+		cfg.sl.Debug("Could not marshal data", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	cfg.sl.Debug("Admin successfully created light need", "admin id", requestUserID, "light need id", lightRecord.ID)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusCreated)
+	w.Write(lightData)
 }
 
 // GET /admin/light
