@@ -121,6 +121,8 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+1_plant_species_id: jsonpath "$.id"
 
 #
 # Requesting list of plant species in the table
@@ -129,10 +131,9 @@ GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 Content-Type: application/json; charset=utf-8
-[Captures]
-1_plant_species_id: jsonpath "$[0].id"
 [Asserts]
 jsonpath "$" count == 1
+jsonpath "$[0].id" exists
 jsonpath "$[0].speciesName" == "{{1_species_name}}"
 jsonpath "$[0].humanPoisonToxic" == {{1_human_poison_toxic}}
 jsonpath "$[0].petPoisonToxic" == {{1_pet_poison_toxic}}
@@ -152,6 +153,8 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+2_plant_species_id: jsonpath "$.id"
 
 #
 # Requesting list of plant species in the table
@@ -160,8 +163,6 @@ GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 Content-Type: application/json; charset=utf-8
-[Captures]
-2_plant_species_id: jsonpath "$[0].id"
 [Asserts]
 jsonpath "$" count == 2
 jsonpath "$[0].id" exists
@@ -191,11 +192,18 @@ HTTP 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 2
+jsonpath "$[0].id" exists
 jsonpath "$[0].speciesName" == "{{2_species_name}}"
 jsonpath "$[0].humanPoisonToxic" == {{2_human_poison_toxic}}
 jsonpath "$[0].petPoisonToxic" == {{2_pet_poison_toxic}}
 jsonpath "$[0].humanEdible" == {{2_human_edible}}
 jsonpath "$[0].petEdible" == {{2_pet_edible}}
+jsonpath "$[1].id" exists
+jsonpath "$[1].speciesName" == "{{1_species_name}}"
+jsonpath "$[1].humanPoisonToxic" == {{1_human_poison_toxic}}
+jsonpath "$[1].petPoisonToxic" == {{1_pet_poison_toxic}}
+jsonpath "$[1].humanEdible" == {{1_human_edible}}
+jsonpath "$[1].petEdible" == {{1_pet_edible}}
 
 #
 # Requesting deletion of a plants species record
@@ -211,6 +219,7 @@ HTTP 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 1
+jsonpath "$[0].id" == "{{2_plant_species_id}}"
 jsonpath "$[0].speciesName" == "{{2_species_name}}"
 jsonpath "$[0].humanPoisonToxic" == {{2_human_poison_toxic}}
 jsonpath "$[0].petPoisonToxic" == {{2_pet_poison_toxic}}
