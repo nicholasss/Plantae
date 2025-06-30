@@ -29,7 +29,8 @@ type AdminLightUpdateRequest struct {
 
 // === handler functions ===
 
-// POST /admin/light
+// TODO: ensure resource is sent back
+// POST /api/v1/admin/light
 func (cfg *apiConfig) adminLightCreateHandler(w http.ResponseWriter, r *http.Request) {
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
@@ -194,6 +195,7 @@ func (cfg *apiConfig) adminLightDeleteHandler(w http.ResponseWriter, r *http.Req
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// TODO: ensure resource is sent back
 // POST /admin/light/link{light id} ? plant species id = uuid
 func (cfg *apiConfig) adminSetPlantAsLightNeedHandler(w http.ResponseWriter, r *http.Request) {
 	// light id

@@ -40,7 +40,8 @@ type AdminWaterResponse struct {
 
 // === handler functions ===
 
-// POST /admin/water
+// TODO: ensure resource is sent back
+// POST /api/v1/admin/water
 func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Request) {
 	requestUserID, err := cfg.getUserIDFromToken(r)
 	if err != nil {
@@ -239,6 +240,7 @@ func (cfg *apiConfig) adminWaterDeleteHandler(w http.ResponseWriter, r *http.Req
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// TODO: ensure resource is sent back
 // POST /admin/water/{water id} ? plant species id = uuid
 func (cfg *apiConfig) adminSetPlantAsWaterNeedHandler(w http.ResponseWriter, r *http.Request) {
 	// plant type

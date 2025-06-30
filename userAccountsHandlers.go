@@ -55,6 +55,8 @@ type AuthRevokeRequest struct {
 
 // === User Handler Functions ===
 
+// TODO: ensure resource is sent back
+// POST /api/v1/auth/register
 func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) {
 	var createUserRequest CreateUserRequest
 	decoder := json.NewDecoder(r.Body)
@@ -121,7 +123,9 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	w.Write(userData)
 }
 
+// TODO: ensure resource is sent back
 // logs in user and provides tokens
+// POST /api/v1/auth/login
 func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	var userLoginRequest UserLoginRequest
 	err := json.NewDecoder(r.Body).Decode(&userLoginRequest)
@@ -227,8 +231,10 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(userLoginResponseData)
 }
 
+// TODO: ensure resource is sent back
 // accepts refresh token as authentication
 // responds with a new access token if authorized
+// POST /api/v1/auth/refresh
 func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request) {
 	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
@@ -293,8 +299,10 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 	w.Write(refreshResponseData)
 }
 
+// TODO: ensure resource is sent back
 // accepts refresh token as authentication
 // responds with 204 No Content if successfully revoked
+// POST /api/v1/auth/revoke
 func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) {
 	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {

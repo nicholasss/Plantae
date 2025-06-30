@@ -233,7 +233,9 @@ func (cfg *apiConfig) adminDeletePlantSpeciesHandler(w http.ResponseWriter, r *h
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// TODO: ensure resource is sent back
 // POST json to create plant
+// POST /api/v1/admin/plant-species
 func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *http.Request) {
 	// check header for admin access token
 	requestUserID, err := cfg.getUserIDFromToken(r)
