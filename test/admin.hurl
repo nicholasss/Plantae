@@ -348,6 +348,12 @@ HTTP 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 6
+jsonpath "$[0].id" exists
+jsonpath "$[1].id" exists
+jsonpath "$[2].id" exists
+jsonpath "$[3].id" exists
+jsonpath "$[4].id" exists
+jsonpath "$[5].id" exists
 
 #
 # Get all common names of plants, in english
@@ -417,8 +423,11 @@ HTTP 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 3
+jsonpath "$[0].id" exists
 jsonpath "$[0].langCode" == "es"
+jsonpath "$[1].id" exists
 jsonpath "$[1].langCode" == "es"
+jsonpath "$[2].id" exists
 jsonpath "$[2].langCode" == "es"
 
 #
@@ -461,6 +470,8 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+1_plant_type_id: jsonpath "$.id"
 
 #
 # adding plant type 2 with minimal information
@@ -475,6 +486,8 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+2_plant_type_id: jsonpath "$.id"
 
 #
 # adding plant type 3 with minimal information
@@ -489,6 +502,8 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+3_plant_type_id: jsonpath "$.id"
 
 #
 # adding plant type 4 with minimal information
@@ -503,6 +518,8 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+4_plant_type_id: jsonpath "$.id"
 
 #
 # listing plant types and capturing ids with minimal data
@@ -512,11 +529,10 @@ HTTP 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 4
-[Captures]
-1_plant_type_id: jsonpath "$[3].id"
-2_plant_type_id: jsonpath "$[2].id"
-3_plant_type_id: jsonpath "$[1].id"
-4_plant_type_id: jsonpath "$[0].id"
+jsonpath "$[3].id" == "{{1_plant_type_id}}"
+jsonpath "$[2].id" == "{{2_plant_type_id}}"
+jsonpath "$[1].id" == "{{3_plant_type_id}}"
+jsonpath "$[0].id" == "{{4_plant_type_id}}"
 
 #
 # adding more information to plant type 1
