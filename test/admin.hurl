@@ -1269,15 +1269,23 @@ jsonpath "$.drySoilDays" == {{2_plant_water_days}}
 # set water 1 to plant 1
 POST http://localhost:8080/api/v1/admin/water/link/{{1_water_id}}?plant-species-id={{1_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
-HTTP 201
+HTTP 200
 Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$.waterNeedID" == "{{1_water_id}}"
+jsonpath "$.plantSpeciesID" == "{{1_plant_species_id}}"
+jsonpath "$.plantSpeciesName" == "{{1_species_name}}"
 
 #
 # set water 2 to plant 2
 POST http://localhost:8080/api/v1/admin/water/link/{{2_water_id}}?plant-species-id={{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
-HTTP 201
+HTTP 200
 Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$.waterNeedID" == "{{2_water_id}}"
+jsonpath "$.plantSpeciesID" == "{{2_plant_species_id}}"
+jsonpath "$.plantSpeciesName" == "{{2_species_name}}"
 
 #
 # unset water 1 to plant 1
@@ -1290,7 +1298,6 @@ HTTP 204
 DELETE http://localhost:8080/api/v1/admin/water/link/{{2_water_id}}?plant-species-id={{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 204
-
 
 #
 # delete water 1
