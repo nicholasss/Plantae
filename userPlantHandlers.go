@@ -1,15 +1,129 @@
 package main
 
 import (
+	"database/sql"
+	"encoding/json"
+	"errors"
 	"net/http"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/nicholasss/plantae/internal/auth"
+	"github.com/nicholasss/plantae/internal/database"
 )
+
+// === request / response structs ===
+
+type UserCreatePlantRequest struct {
+	PlantSpeciesID uuid.UUID  `json:"plantSpeciesID"`
+	AdoptionDate   *time.Time `json:"adoptionDate"`
+	Name           *string    `json:"plantName"`
+}
+
+type UserCreatePlantResponse struct {
+	UsersPlantID     uuid.UUID  `json:"id"`
+	PlantSpeciesID   uuid.UUID  `json:"plantSpeciesID"`
+	PlantSpeciesName string     `json:"plantSpeciesName"`
+	AdoptionDate     *time.Time `json:"adoptionDate,omitempty"`
+	Name             *string    `json:"plantName,omitempty"`
+}
+
+type UserViewPlantResponse struct {
+	UsersPlantID     uuid.UUID  `json:"id"`
+	PlantSpeciesID   uuid.UUID  `json:"plantSpeciesID"`
+	PlantSpeciesName string     `json:"plantSpeciesName"`
+	AdoptionDate     *time.Time `json:"adoptionDate,omitempty"`
+	Name             *string    `json:"plantName,omitempty"`
+}
+
+// performs authentication flow for normal users
+func (cfg *apiConfig) userTokenAuthFlow(header http.Header, w http.ResponseWriter) (uuid.UUID, error) {
+	accessTokenProvided, err := auth.GetBearerToken(header, cfg.sl)
+	if err != nil {
+		cfg.sl.Debug("Could not get token from headers", "error", err)
+		return uuid.Nil, nil
+	}
+
+	userID, err := auth.ValidateJWT(accessTokenProvided, cfg.JWTSecret, cfg.sl)
+	if err != nil {
+		cfg.sl.Debug("Could not get user id from token", "error", err)
+		return uuid.Nil, nil
+	}
+	return userID, nil
+}
 
 // requires access token in auth header
 // creates a user_plant
 func (cfg *apiConfig) usersPlantsCreateHandler(w http.ResponseWriter, r *http.Request) {
-	// todo
+	requestUserID, err := cfg.userTokenAuthFlow(r.Header, w)
+	if err != nil {
+		cfg.sl.Warn("Could not complete user token auth flow during user request")
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	// decode request body
+	var createRequest UserCreatePlantRequest
+	err = json.NewDecoder(r.Body).Decode(&createRequest)
+	if err != nil {
+		cfg.sl.Debug("Could not decode request body")
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+	defer r.Body.Close()
+
+	// check request body
+	if createRequest.PlantSpeciesID == uuid.Nil {
+		cfg.sl.Debug("Request missing plant species id property")
+		respondWithError(errors.New("no name property provided"), http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	// convert to database params
+	adoptionDate := sql.NullTime{}
+	plantName := sql.NullString{}
+
+	if createRequest.AdoptionDate == nil {
+		adoptionDate.Valid = false
+	} else {
+		adoptionDate.Valid = true
+		adoptionDate.Time = *createRequest.AdoptionDate
+	}
+	if createRequest.Name == nil {
+		plantName.Valid = false
+	} else {
+		plantName.Valid = true
+		plantName.String = *createRequest.Name
+	}
+
+	createParams := database.CreateUsersPlantsParams{
+		CreatedBy:    requestUserID,
+		PlantID:      createRequest.PlantSpeciesID,
+		UserID:       requestUserID,
+		AdoptionDate: adoptionDate,
+		Name:         plantName,
+	}
+
+	// perform database update
+	userPlantRecord, err := cfg.db.CreateUsersPlants(r.Context(), createParams)
+	if err != nil {
+		cfg.sl.Debug("Could not create user's plant record", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	// convert back to struct
+	createResponse := UserCreatePlantResponse{
+		UsersPlantID:     userPlantRecord.UsersPlantID,
+		PlantSpeciesID:   userPlantRecord.SpeciesID,
+		PlantSpeciesName: userPlantRecord.PlantSpeciesName,
+		AdoptionDate:     createRequest.AdoptionDate,
+		Name:             createRequest.Name,
+	}
+
+	// perform response
+	cfg.sl.Debug("User successfully created a new users plant", "user id", requestUserID, "users plant id", createResponse.UsersPlantID, "plant species id", createRequest.PlantSpeciesID, "plant species name", userPlantRecord.PlantSpeciesName)
+	respondWithJSON(http.StatusCreated, createResponse, w, cfg.sl)
 }
 
 // requires access token in auth header
@@ -38,9 +152,34 @@ func (cfg *apiConfig) usersPlantsListHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	if len(usersPlants) <= 0 {
+		cfg.sl.Debug("User successfully requested their empty plants list", "user id", requestUserID)
 		respondWithJSON(http.StatusOK, usersPlants, w, cfg.sl)
 		return
 	}
 
-	respondWithJSON(http.StatusOK, usersPlants, w, cfg.sl)
+	// convert from database type to response type
+	viewResponse := make([]UserViewPlantResponse, 0)
+	for _, oldRecord := range usersPlants {
+		var adoptionDate *time.Time
+		var plantName *string
+
+		if oldRecord.AdoptionDate.Valid {
+			adoptionDate = &oldRecord.AdoptionDate.Time
+		}
+		if oldRecord.PlantName.Valid {
+			plantName = &oldRecord.PlantName.String
+		}
+
+		newResponse := UserViewPlantResponse{
+			UsersPlantID:     oldRecord.UsersPlantID,
+			PlantSpeciesID:   oldRecord.PlantSpeciesID,
+			PlantSpeciesName: oldRecord.SpeciesName,
+			AdoptionDate:     adoptionDate,
+			Name:             plantName,
+		}
+		viewResponse = append(viewResponse, newResponse)
+	}
+
+	cfg.sl.Debug("User successfully listed their user plant", "user id", requestUserID)
+	respondWithJSON(http.StatusOK, viewResponse, w, cfg.sl)
 }

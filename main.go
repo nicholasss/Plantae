@@ -119,7 +119,8 @@ func main() {
 	mux.Handle("POST /api/v1/auth/revoke", cfg.logMW(http.HandlerFunc(cfg.revokeRefreshTokenHandler)))
 
 	// === user data endpoints
-	// mux.Handle("GET /api/v1/my/plants", cfg.logMW(http.HandlerFunc(cfg.usersPlantsListHandler)))
+	mux.Handle("GET /api/v1/my/plants", cfg.logMW(http.HandlerFunc(cfg.usersPlantsListHandler)))
+	mux.Handle("POST /api/v1/my/plants", cfg.logMW(http.HandlerFunc(cfg.usersPlantsCreateHandler)))
 
 	// additional tables/columns to add?
 	// pot type, pot date, aquisition date
