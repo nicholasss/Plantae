@@ -294,13 +294,13 @@ func (cfg *apiConfig) adminSetPlantAsWaterNeedHandler(w http.ResponseWriter, r *
 	}
 	waterRecord, err := cfg.db.SetPlantSpeciesAsWaterNeed(r.Context(), setParams)
 	if err != nil {
-		cfg.sl.Debug("Could not set water for plant species", "error", err, "water id", waterID, "pant species id", plantSpeciesID)
+		cfg.sl.Debug("Could not set water for plant species", "error", err, "water id", waterID, "plant species id", plantSpeciesID)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
 
 	waterResponse := AdminSetWaterResponse{
-		WaterNeedID:      waterRecord.ID,
+		WaterNeedID:      waterID,
 		PlantSpeciesID:   plantSpeciesID,
 		PlantSpeciesName: waterRecord.SpeciesName,
 	}
