@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/nicholasss/plantae/internal/auth"
@@ -40,13 +39,5 @@ func (cfg *apiConfig) usersPlantsListHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	usersPlantsData, err := json.Marshal(usersPlants)
-	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(usersPlantsData)
+	respondWithJSON(http.StatusOK, usersPlants, w, cfg.sl)
 }
