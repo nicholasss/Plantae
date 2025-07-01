@@ -120,3 +120,29 @@ hurl \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/admin.hurl
+
+# run user tests for creating users plants
+hurl \
+  --variable craig_email=craig@gmail.com \
+  --variable craig_password=@ssword472 \
+  --variable lisa_email=lisa@gmail.com \
+  --variable lisa_password=Growl1ng! \
+  --variable 1_species_name="Pilea peperomioides" \
+  --variable 1_human_poison_toxic=false \
+  --variable 1_pet_poison_toxic=false \
+  --variable 1_human_edible=false \
+  --variable 1_pet_edible=false \
+  --variable 2_species_name="Crassula ovata" \
+  --variable 2_human_poison_toxic=true \
+  --variable 2_pet_poison_toxic=true \
+  --variable 2_human_edible=false \
+  --variable 2_pet_edible=false \
+  --variable 1_plant_name="pepperoni" \
+  --variable 1_plant_adoption="2020-01-02T00:00:00-05:00" \
+  --variable 1_plant_adoption_back="2020-01-02T00:00:00" \
+  --variable 2_plant_name="bonsai" \
+  --variable 2_plant_adoption="2020-11-30T00:00:00-05:00" \
+  --variable 2_plant_adoption_back="2020-11-30T00:00:00" \
+  --secret super_admin_token=$SUPER_ADMIN_TOKEN \
+  --test \
+  test/users_plants.hurl
