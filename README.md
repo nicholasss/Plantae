@@ -31,6 +31,7 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [x] Implement plant light need management.
 - [x] Implement plant water need management.
 - [ ] Implement basic end-user's plant tracking.
+- [ ] Implement language preference with user registration.
 - [ ] Implement script to place 5 example plant's data into database.
 - [ ] Create a backup scheme for the universal plant species data.
 
