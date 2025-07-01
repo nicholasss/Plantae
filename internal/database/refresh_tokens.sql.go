@@ -67,6 +67,8 @@ where
   refresh_token = $1 and
   deleted_by is null and
   revoked_at is null
+order by created_at desc
+limit 1
 `
 
 func (q *Queries) GetUserFromRefreshToken(ctx context.Context, refreshToken string) (RefreshToken, error) {
@@ -94,6 +96,8 @@ where
   user_id = $1 and
   deleted_by is null and
   revoked_at is null
+order by created_at desc
+limit 1
 `
 
 func (q *Queries) GetValidRefreshTokenFromUserID(ctx context.Context, userID uuid.UUID) (RefreshToken, error) {
