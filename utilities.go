@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -346,4 +348,26 @@ func respondWithError(err error, code int, w http.ResponseWriter, sl *slog.Logge
 	defaultError := http.StatusText(http.StatusInternalServerError)
 	errorResponse := fmt.Sprintf(`{"error":"%s"}`, defaultError)
 	w.Write([]byte(errorResponse))
+}
+
+func respondWithJSON(code int, jsonStruct any, w http.ResponseWriter, sl *slog.Logger) {
+	sl.Debug("Attempting to write JSON response to client...")
+
+	jsonData, err := json.Marshal(jsonStruct)
+	if errors.Is(err, &json.UnsupportedTypeError{}) {
+		sl.Debug("Could not marshal type due to unsupported type being provided")
+	} else if errors.Is(err, &json.UnsupportedValueError{}) {
+		sl.Debug("Could not marshal type due to unsupported value being provided")
+	}
+
+	if err != nil {
+		sl.Debug("Could not marshal data and send JSON response to client", "error", err)
+		respondWithError(err, http.StatusInternalServerError, w, sl)
+		return
+	}
+
+	sl.Debug("Successfully writing JSON response to client", "status", code)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(code)
+	w.Write(jsonData)
 }
