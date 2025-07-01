@@ -366,6 +366,9 @@ func respondWithJSON(code int, jsonStruct any, w http.ResponseWriter, sl *slog.L
 		return
 	}
 
+	// set headers first
+	// write code second
+	// send body third
 	sl.Debug("Successfully writing JSON response to client", "status", code)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(code)
