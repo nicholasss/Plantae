@@ -115,17 +115,8 @@ func (cfg *apiConfig) adminPlantSpeciesViewHandler(w http.ResponseWriter, r *htt
 		plantSpeciesResponse = append(plantSpeciesResponse, newResponse)
 	}
 
-	plantSpeciesData, err := json.Marshal(plantSpeciesResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
-
 	cfg.sl.Debug("Admin successfully listed plant species list", "admin id", requestUserID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(plantSpeciesData)
+	respondWithJSON(http.StatusOK, plantSpeciesResponse, w, cfg.sl)
 }
 
 // PUT /api/v1/admin/plants/{plantSpeciesID}
@@ -343,7 +334,7 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 		petEP = nil
 	}
 
-	speciesResponse := AdminPlantSpeciesViewResponse{
+	plantSpeciesResponse := AdminPlantSpeciesViewResponse{
 		ID:               speciesRecord.ID,
 		SpeciesName:      speciesRecord.SpeciesName,
 		HumanPoisonToxic: humanPTP,
@@ -352,15 +343,6 @@ func (cfg *apiConfig) adminPlantSpeciesCreateHandler(w http.ResponseWriter, r *h
 		PetEdible:        petEP,
 	}
 
-	speciesData, err := json.Marshal(&speciesResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
-
 	cfg.sl.Debug("Admin successfully created plant species", "admin id", requestUserID, "species id", speciesRecord.ID, "species name", speciesRecord.SpeciesName)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusCreated)
-	w.Write(speciesData)
+	respondWithJSON(http.StatusCreated, plantSpeciesResponse, w, cfg.sl)
 }

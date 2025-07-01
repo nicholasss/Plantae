@@ -202,23 +202,13 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	// send response body
 	adminResponse := AdminStatusResponse{
 		ID:      userRecord.ID,
 		IsAdmin: true,
 	}
-	adminData, err := json.Marshal(adminResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
 
 	cfg.sl.Info("Successfully promoted user to admin", "user id", userRecord.ID)
-
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(adminData)
+	respondWithJSON(http.StatusOK, adminResponse, w, cfg.sl)
 }
 
 // demotes user from admin
@@ -252,21 +242,11 @@ func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	// send response body
 	adminResponse := AdminStatusResponse{
 		ID:      userRecord.ID,
 		IsAdmin: false,
 	}
-	adminData, err := json.Marshal(adminResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
 
 	cfg.sl.Info("Successfully demoted user from admin", "user id", userRecord.ID)
-
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(adminData)
+	respondWithJSON(http.StatusOK, adminResponse, w, cfg.sl)
 }

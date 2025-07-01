@@ -76,17 +76,8 @@ func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	nameData, err := json.Marshal(&plantNameRecord)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
-
 	cfg.sl.Debug("Admin created plant name record", "admin id", requestUserID, "common name", createRequest.CommonName, "plant id", createRequest.PlantID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusCreated)
-	w.Write(nameData)
+	respondWithJSON(http.StatusCreated, plantNameRecord, w, cfg.sl)
 }
 
 func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.Request) {
@@ -114,17 +105,8 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 			return
 		}
 
-		plantNameData, err := json.Marshal(plantNameRecords)
-		if err != nil {
-			cfg.sl.Debug("Could not marshal data", "error", err)
-			respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-			return
-		}
-
 		cfg.sl.Debug("Admin successfully queried all common names", "admin id", requestUserID)
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		w.Write(plantNameData)
+		respondWithJSON(http.StatusOK, plantNameRecords, w, cfg.sl)
 		return
 	}
 
@@ -144,17 +126,8 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	plantNameData, err := json.Marshal(plantNameRecords)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
-
 	cfg.sl.Debug("Admin successfully queried common names for language", "admin id", requestUserID, "lang code", requestedLangCode)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(plantNameData)
+	respondWithJSON(http.StatusOK, plantNameRecords, w, cfg.sl)
 }
 
 func (cfg *apiConfig) adminPlantNamesDeleteHandler(w http.ResponseWriter, r *http.Request) {

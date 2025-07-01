@@ -212,7 +212,7 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 		SoilDrainageMix = &typeRecord.SoilDrainageMix.String
 	}
 
-	typeResponse := AdminPlantTypeViewResponse{
+	plantTypeResponse := AdminPlantTypeViewResponse{
 		ID:                    typeRecord.ID,
 		Name:                  typeRecord.Name,
 		Description:           typeRecord.Description,
@@ -225,18 +225,8 @@ func (cfg *apiConfig) adminPlantTypesCreateHandler(w http.ResponseWriter, r *htt
 		SoilDrainageMix:       SoilDrainageMix,
 	}
 
-	plantTypesData, err := json.Marshal(typeResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
-
-	// created successfully
 	cfg.sl.Debug("Admin successfully create plant type", "admin id", requestUserID, "plant type id", typeRecord.ID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusCreated)
-	w.Write(plantTypesData)
+	respondWithJSON(http.StatusCreated, plantTypeResponse, w, cfg.sl)
 }
 
 // GET /admin/plant-type
@@ -264,7 +254,7 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 	}
 
 	// TODO: not the most efficient way to convert, is there another way?
-	plantTypesResponse := make([]AdminPlantTypeViewResponse, 0)
+	plantTypeResponse := make([]AdminPlantTypeViewResponse, 0)
 	for _, oldRecord := range plantTypeRecords {
 		var MaxTemperatureCelsius *int32
 		var MinTemperatureCelsius *int32
@@ -309,20 +299,11 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 			SoilDrainageMix:       SoilDrainageMix,
 		}
 
-		plantTypesResponse = append(plantTypesResponse, newRecord)
-	}
-
-	plantTypesData, err := json.Marshal(plantTypesResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
+		plantTypeResponse = append(plantTypeResponse, newRecord)
 	}
 
 	cfg.sl.Debug("Admin successfully listed plant type list", "admin id", requestUserID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(plantTypesData)
+	respondWithJSON(http.StatusOK, plantTypeResponse, w, cfg.sl)
 }
 
 // plant type info update
@@ -513,18 +494,9 @@ func (cfg *apiConfig) adminSetPlantAsTypeHandler(w http.ResponseWriter, r *http.
 		PlantSpeciesID:   plantSpeciesID,
 		PlantSpeciesName: speciesRecord.SpeciesName,
 	}
-	setData, err := json.Marshal(setResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
 
-	// created successfully
 	cfg.sl.Debug("Admin successfully set plant species to plant type", "admin id", requestUserID, "plant species id", plantSpeciesID, "plant type id", plantTypeID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(setData)
+	respondWithJSON(http.StatusOK, setResponse, w, cfg.sl)
 }
 
 // DELETE /admin/plant-type/{plant type id} ? plant species id = uuid
@@ -576,16 +548,7 @@ func (cfg *apiConfig) adminUnsetPlantAsTypeHandler(w http.ResponseWriter, r *htt
 		PlantSpeciesID:   plantSpeciesID,
 		PlantSpeciesName: speciesRecord.SpeciesName,
 	}
-	unsetData, err := json.Marshal(unsetResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
 
-	// created successfully
 	cfg.sl.Debug("Admin successfully unset plant species from plant type", "admin id", requestUserID, "plant species id", plantSpeciesID, "plant type id", plantTypeID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(unsetData)
+	respondWithJSON(http.StatusOK, unsetResponse, w, cfg.sl)
 }

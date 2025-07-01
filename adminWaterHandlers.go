@@ -144,17 +144,8 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	waterData, err := json.Marshal(&waterResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
-
 	cfg.sl.Debug("Admin successfully created water need", "admin id", requestUserID, "water need id", waterResponse.ID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusCreated)
-	w.Write(waterData)
+	respondWithJSON(http.StatusCreated, waterResponse, w, cfg.sl)
 }
 
 func (cfg *apiConfig) adminWaterViewHandler(w http.ResponseWriter, r *http.Request) {
@@ -201,17 +192,8 @@ func (cfg *apiConfig) adminWaterViewHandler(w http.ResponseWriter, r *http.Reque
 		}
 	}
 
-	waterData, err := json.Marshal(waterResponses)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
-
 	cfg.sl.Debug("Admin successfully listed water needs list", "admin id", requestUserID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(waterData)
+	respondWithJSON(http.StatusOK, waterResponses, w, cfg.sl)
 }
 
 // DELETE /admin/water/{waterID}
@@ -302,17 +284,9 @@ func (cfg *apiConfig) adminSetPlantAsWaterNeedHandler(w http.ResponseWriter, r *
 		PlantSpeciesID:   plantSpeciesID,
 		PlantSpeciesName: waterRecord.SpeciesName,
 	}
-	waterData, err := json.Marshal(&waterResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
 
 	cfg.sl.Debug("Admin successfully set plant species to water need", "admin id", requestUserID, "plant species id", plantSpeciesID, "water need", waterID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(waterData)
+	respondWithJSON(http.StatusOK, waterResponse, w, cfg.sl)
 }
 
 // DELETE /admin/water/{water id} ? plant species id = uuid
@@ -364,15 +338,7 @@ func (cfg *apiConfig) adminUnsetPlantAsWaterNeedHandler(w http.ResponseWriter, r
 		PlantSpeciesID:   plantSpeciesID,
 		PlantSpeciesName: waterRecord.SpeciesName,
 	}
-	waterData, err := json.Marshal(&waterResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
 
 	cfg.sl.Debug("Admin successfully unset plant species to water need", "admin id", requestUserID, "plant species id", plantSpeciesID, "water need", waterID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(waterData)
+	respondWithJSON(http.StatusOK, waterResponse, w, cfg.sl)
 }

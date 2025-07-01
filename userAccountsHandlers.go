@@ -104,17 +104,8 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// return the userRecord without password
-	userData, err := json.Marshal(userRecord)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
-
 	cfg.sl.Debug("User successfully registered", "user id", userRecord.ID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusCreated)
-	w.Write(userData)
+	respondWithJSON(http.StatusCreated, userRecord, w, cfg.sl)
 }
 
 // logs in user and provides tokens
@@ -209,21 +200,13 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 		RefreshToken:          userRefreshToken,
 		RefreshTokenExpiresAt: refreshTokenExpiresAt,
 	}
-	userLoginResponseData, err := json.Marshal(userLoginResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
 
 	if platformNotProduction(cfg) {
 		cfg.sl.Debug("Listing user info at login", "user id", userLoginResponse.ID, "user access token", userLoginResponse.AccessToken, "user refresh token", userLoginResponse.RefreshToken)
 	}
 
 	cfg.sl.Debug("User successfully logged in", "user id", userRecord.ID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(userLoginResponseData)
+	respondWithJSON(http.StatusOK, userLoginResponse, w, cfg.sl)
 }
 
 // accepts refresh token as authentication
@@ -281,17 +264,9 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 		AccessToken:          newAccessToken,
 		AccessTokenExpiresAt: accessTokenExpiresAt,
 	}
-	refreshResponseData, err := json.Marshal(refreshResponse)
-	if err != nil {
-		cfg.sl.Debug("Could not marshal data", "error", err)
-		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
-		return
-	}
 
 	cfg.sl.Debug("User successfully refreshed their access token", "user id", refreshTokenRecord.UserID)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write(refreshResponseData)
+	respondWithJSON(http.StatusOK, refreshResponse, w, cfg.sl)
 }
 
 // accepts refresh token as authentication
