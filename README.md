@@ -45,3 +45,4 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [x] log -> log/slog package for logging level, and logging to file
 - [x] Ensure all POST responses are 201 (return body of resource created makes sense to have a 201)
 - [ ] test the following in sqlc.yaml config: `emit_pointers_for_null_types`
+- [ ] Ensure all GET requests do not give a 204 and send an empty table instead.
