@@ -112,6 +112,7 @@ func (cfg *apiConfig) registerUserHandler(w http.ResponseWriter, r *http.Request
 // POST /api/v1/auth/login
 // POST /login is an exception
 // -- it typically responds with HTTP 200 and response
+// TODO: check for prexisting token, if exists then revoke it and replace
 func (cfg *apiConfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 	var userLoginRequest UserLoginRequest
 	err := json.NewDecoder(r.Body).Decode(&userLoginRequest)
@@ -174,7 +175,6 @@ func (cfg *apiConfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 		ExpiresAt:    refreshTokenExpiresAt,
 	}
 
-	// TODO: check for prexisting token, if exists then revoke it and replace
 	_, err = cfg.db.CreateRefreshToken(r.Context(), createRefreshToken)
 	if err != nil {
 		cfg.sl.Warn("Unable to put a user's new refresh token into database", "error", err)
