@@ -18,7 +18,6 @@ with inserted_users_plant as (
   )
 select
   iup.id as users_plant_id,
-  iup.user_id,
   iup.adoption_date,
   iup.name,
   ps.id as species_id,

@@ -32,7 +32,6 @@ with inserted_users_plant as (
   )
 select
   iup.id as users_plant_id,
-  iup.user_id,
   iup.adoption_date,
   iup.name,
   ps.id as species_id,
@@ -53,7 +52,6 @@ type CreateUsersPlantsParams struct {
 
 type CreateUsersPlantsRow struct {
 	UsersPlantID uuid.UUID      `json:"usersPlantID"`
-	UserID       uuid.UUID      `json:"userID"`
 	AdoptionDate sql.NullTime   `json:"adoptionDate"`
 	Name         sql.NullString `json:"name"`
 	SpeciesID    uuid.UUID      `json:"speciesID"`
@@ -71,7 +69,6 @@ func (q *Queries) CreateUsersPlants(ctx context.Context, arg CreateUsersPlantsPa
 	var i CreateUsersPlantsRow
 	err := row.Scan(
 		&i.UsersPlantID,
-		&i.UserID,
 		&i.AdoptionDate,
 		&i.Name,
 		&i.SpeciesID,
