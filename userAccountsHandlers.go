@@ -51,7 +51,7 @@ type AuthRevokeRequest struct {
 // === User Handler Functions ===
 
 // POST /api/v1/auth/register
-func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) registerUserHandler(w http.ResponseWriter, r *http.Request) {
 	var createUserRequest CreateUserRequest
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&createUserRequest)
@@ -112,7 +112,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 // POST /api/v1/auth/login
 // POST /login is an exception
 // -- it typically responds with HTTP 200 and response
-func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 	var userLoginRequest UserLoginRequest
 	err := json.NewDecoder(r.Body).Decode(&userLoginRequest)
 	if err != nil {
@@ -213,7 +213,7 @@ func (cfg *apiConfig) loginUserHandler(w http.ResponseWriter, r *http.Request) {
 // responds with a new access token if authorized
 // POST /api/v1/auth/refresh
 // POST /refresh is about changing state, not creating a new record on the server
-func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) refreshTokenHandler(w http.ResponseWriter, r *http.Request) {
 	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
 		cfg.sl.Debug("Could not get refresh token from headers", "error", err)
@@ -274,7 +274,7 @@ func (cfg *apiConfig) refreshUserHandler(w http.ResponseWriter, r *http.Request)
 // POST /api/v1/auth/revoke
 // POST /revoke sending 204 No Content makes sense,
 // -- as it is a clean response to changing an existing record on the server
-func (cfg *apiConfig) revokeUserHandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) revokeRefreshTokenHandler(w http.ResponseWriter, r *http.Request) {
 	providedRefreshToken, err := auth.GetBearerToken(r.Header, cfg.sl)
 	if err != nil {
 		cfg.sl.Debug("Could not get refresh token from headers", "error", err)
