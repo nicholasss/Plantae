@@ -137,7 +137,7 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 		waterResponse.ID = waterRecord.ID
 		waterResponse.PlantType = waterRecord.PlantType
 		waterResponse.Description = waterRecord.Description
-		waterResponse.DrySoilDays = &waterRecord.DrySoilMm.Int32
+		waterResponse.DrySoilMM = &waterRecord.DrySoilMm.Int32
 
 	} else {
 		cfg.sl.Debug("Invalid plant type provided", "plant type", createRequest.PlantType)
@@ -152,7 +152,7 @@ func (cfg *apiConfig) adminWaterCreateHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	cfg.sl.Debug("Admin successfully created water need", "admin id", requestUserID)
+	cfg.sl.Debug("Admin successfully created water need", "admin id", requestUserID, "water need id", waterResponse.ID)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(waterData)
