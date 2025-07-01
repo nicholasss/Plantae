@@ -351,7 +351,7 @@ func respondWithError(err error, code int, w http.ResponseWriter, sl *slog.Logge
 }
 
 func respondWithJSON(code int, jsonStruct any, w http.ResponseWriter, sl *slog.Logger) {
-	sl.Debug("Attempting to write JSON response to client...")
+	// sl.Debug("Attempting to write JSON response to client...")
 
 	jsonData, err := json.Marshal(jsonStruct)
 	if errors.Is(err, &json.UnsupportedTypeError{}) {
