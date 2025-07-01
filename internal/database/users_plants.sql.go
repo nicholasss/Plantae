@@ -33,9 +33,9 @@ with inserted_users_plant as (
 select
   iup.id as users_plant_id,
   iup.adoption_date,
-  iup.name,
+  iup.name as plant_name,
   ps.id as species_id,
-  ps.species_name
+  ps.species_name as plant_species_name
 from
   inserted_users_plant as iup
 join
@@ -51,11 +51,11 @@ type CreateUsersPlantsParams struct {
 }
 
 type CreateUsersPlantsRow struct {
-	UsersPlantID uuid.UUID      `json:"usersPlantID"`
-	AdoptionDate sql.NullTime   `json:"adoptionDate"`
-	Name         sql.NullString `json:"name"`
-	SpeciesID    uuid.UUID      `json:"speciesID"`
-	SpeciesName  string         `json:"speciesName"`
+	UsersPlantID     uuid.UUID      `json:"usersPlantID"`
+	AdoptionDate     sql.NullTime   `json:"adoptionDate"`
+	PlantName        sql.NullString `json:"plantName"`
+	SpeciesID        uuid.UUID      `json:"speciesID"`
+	PlantSpeciesName string         `json:"plantSpeciesName"`
 }
 
 func (q *Queries) CreateUsersPlants(ctx context.Context, arg CreateUsersPlantsParams) (CreateUsersPlantsRow, error) {
@@ -70,28 +70,41 @@ func (q *Queries) CreateUsersPlants(ctx context.Context, arg CreateUsersPlantsPa
 	err := row.Scan(
 		&i.UsersPlantID,
 		&i.AdoptionDate,
-		&i.Name,
+		&i.PlantName,
 		&i.SpeciesID,
-		&i.SpeciesName,
+		&i.PlantSpeciesName,
 	)
 	return i, err
 }
 
 const getAllUsersPlantsOrderedByCreated = `-- name: GetAllUsersPlantsOrderedByCreated :many
-select 
-  id as users_plant_id, plant_id as plant_species_id, adoption_date, name
-from users_plants
-where
-  deleted_at is null and
-  user_id = $1
-order by created_at desc
+with users_plant as (
+  select 
+    id, plant_id, adoption_date, name
+  from users_plants
+  where
+    deleted_at is null and
+    user_id = $1
+  order by created_at desc
+)
+select
+  up.id as users_plant_id,
+  up.adoption_date,
+  up.name as plant_name,
+  ps.id as plant_species_id,
+  ps.species_name
+from
+  users_plant as up
+join
+  plant_species as ps on up.plant_id = ps.id
 `
 
 type GetAllUsersPlantsOrderedByCreatedRow struct {
 	UsersPlantID   uuid.UUID      `json:"usersPlantID"`
-	PlantSpeciesID uuid.UUID      `json:"plantSpeciesID"`
 	AdoptionDate   sql.NullTime   `json:"adoptionDate"`
-	Name           sql.NullString `json:"name"`
+	PlantName      sql.NullString `json:"plantName"`
+	PlantSpeciesID uuid.UUID      `json:"plantSpeciesID"`
+	SpeciesName    string         `json:"speciesName"`
 }
 
 func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context, userID uuid.UUID) ([]GetAllUsersPlantsOrderedByCreatedRow, error) {
@@ -105,9 +118,10 @@ func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context, userID 
 		var i GetAllUsersPlantsOrderedByCreatedRow
 		if err := rows.Scan(
 			&i.UsersPlantID,
-			&i.PlantSpeciesID,
 			&i.AdoptionDate,
-			&i.Name,
+			&i.PlantName,
+			&i.PlantSpeciesID,
+			&i.SpeciesName,
 		); err != nil {
 			return nil, err
 		}
@@ -123,20 +137,33 @@ func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context, userID 
 }
 
 const getAllUsersPlantsOrderedByUpdated = `-- name: GetAllUsersPlantsOrderedByUpdated :many
+with users_plant as (
+  select
+    id, plant_id, adoption_date, name
+  from users_plants
+  where
+    deleted_at is null and
+    user_id = $1
+  order by updated_at desc
+)
 select
-  id as users_plant_id, plant_id as plant_species_id, adoption_date, name
-from users_plants
-where
-  deleted_at is null and
-  user_id = $1
-order by updated_at desc
+  up.id as users_plant_id,
+  up.adoption_date,
+  up.name as plant_name,
+  ps.id as plant_species_id,
+  ps.species_name
+from
+  users_plant as up
+join
+  plant_species as ps on up.plant_id = ps.id
 `
 
 type GetAllUsersPlantsOrderedByUpdatedRow struct {
 	UsersPlantID   uuid.UUID      `json:"usersPlantID"`
-	PlantSpeciesID uuid.UUID      `json:"plantSpeciesID"`
 	AdoptionDate   sql.NullTime   `json:"adoptionDate"`
-	Name           sql.NullString `json:"name"`
+	PlantName      sql.NullString `json:"plantName"`
+	PlantSpeciesID uuid.UUID      `json:"plantSpeciesID"`
+	SpeciesName    string         `json:"speciesName"`
 }
 
 func (q *Queries) GetAllUsersPlantsOrderedByUpdated(ctx context.Context, userID uuid.UUID) ([]GetAllUsersPlantsOrderedByUpdatedRow, error) {
@@ -150,9 +177,10 @@ func (q *Queries) GetAllUsersPlantsOrderedByUpdated(ctx context.Context, userID 
 		var i GetAllUsersPlantsOrderedByUpdatedRow
 		if err := rows.Scan(
 			&i.UsersPlantID,
-			&i.PlantSpeciesID,
 			&i.AdoptionDate,
-			&i.Name,
+			&i.PlantName,
+			&i.PlantSpeciesID,
+			&i.SpeciesName,
 		); err != nil {
 			return nil, err
 		}

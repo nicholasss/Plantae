@@ -19,9 +19,9 @@ with inserted_users_plant as (
 select
   iup.id as users_plant_id,
   iup.adoption_date,
-  iup.name,
+  iup.name as plant_name,
   ps.id as species_id,
-  ps.species_name
+  ps.species_name as plant_species_name
 from
   inserted_users_plant as iup
 join
@@ -37,20 +37,43 @@ where id = $1
   and deleted_at is null;
 
 -- name: GetAllUsersPlantsOrderedByUpdated :many
+with users_plant as (
+  select
+    id, plant_id, adoption_date, name
+  from users_plants
+  where
+    deleted_at is null and
+    user_id = $1
+  order by updated_at desc
+)
 select
-  id as users_plant_id, plant_id as plant_species_id, adoption_date, name
-from users_plants
-where
-  deleted_at is null and
-  user_id = $1
-order by updated_at desc;
+  up.id as users_plant_id,
+  up.adoption_date,
+  up.name as plant_name,
+  ps.id as plant_species_id,
+  ps.species_name
+from
+  users_plant as up
+join
+  plant_species as ps on up.plant_id = ps.id;
 
 -- name: GetAllUsersPlantsOrderedByCreated :many
-select 
-  id as users_plant_id, plant_id as plant_species_id, adoption_date, name
-from users_plants
-where
-  deleted_at is null and
-  user_id = $1
-order by created_at desc;
-
+with users_plant as (
+  select 
+    id, plant_id, adoption_date, name
+  from users_plants
+  where
+    deleted_at is null and
+    user_id = $1
+  order by created_at desc
+)
+select
+  up.id as users_plant_id,
+  up.adoption_date,
+  up.name as plant_name,
+  ps.id as plant_species_id,
+  ps.species_name
+from
+  users_plant as up
+join
+  plant_species as ps on up.plant_id = ps.id;
