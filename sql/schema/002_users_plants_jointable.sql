@@ -14,7 +14,7 @@ create table users_plants (
   user_id uuid not null,
   --
   -- table data
-  adoption_date timestamp with time zone,
+  adoption_date date,
   name text
 );
 
