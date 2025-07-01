@@ -15,21 +15,27 @@ delete from users;
 -- name: UpdateUserPasswordByID :exec
 update users
 set
-  hashed_password = $2
+  hashed_password = $2,
+  updated_at = now(),
+  updated_by = $3
 where
   id = $1;
 
 -- name: PromoteUserToAdminByID :exec
 update users
 set
-  is_admin = true
+  is_admin = true,
+  updated_at = now(),
+  updated_by = $2
 where
   id = $1;
 
 -- name: DemoteUserFromAdminByID :exec
 update users
 set
-  is_admin = false
+  is_admin = false,
+  updated_at = now(),
+  updated_by = $2
 where
   id = $1;
 

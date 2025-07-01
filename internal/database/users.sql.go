@@ -52,13 +52,20 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 const demoteUserFromAdminByID = `-- name: DemoteUserFromAdminByID :exec
 update users
 set
-  is_admin = false
+  is_admin = false,
+  updated_at = now(),
+  updated_by = $2
 where
   id = $1
 `
 
-func (q *Queries) DemoteUserFromAdminByID(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, demoteUserFromAdminByID, id)
+type DemoteUserFromAdminByIDParams struct {
+	ID        uuid.UUID `json:"id"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
+}
+
+func (q *Queries) DemoteUserFromAdminByID(ctx context.Context, arg DemoteUserFromAdminByIDParams) error {
+	_, err := q.db.ExecContext(ctx, demoteUserFromAdminByID, arg.ID, arg.UpdatedBy)
 	return err
 }
 
@@ -291,13 +298,20 @@ func (q *Queries) GetUserByIDWithoutPassword(ctx context.Context, id uuid.UUID) 
 const promoteUserToAdminByID = `-- name: PromoteUserToAdminByID :exec
 update users
 set
-  is_admin = true
+  is_admin = true,
+  updated_at = now(),
+  updated_by = $2
 where
   id = $1
 `
 
-func (q *Queries) PromoteUserToAdminByID(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, promoteUserToAdminByID, id)
+type PromoteUserToAdminByIDParams struct {
+	ID        uuid.UUID `json:"id"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
+}
+
+func (q *Queries) PromoteUserToAdminByID(ctx context.Context, arg PromoteUserToAdminByIDParams) error {
+	_, err := q.db.ExecContext(ctx, promoteUserToAdminByID, arg.ID, arg.UpdatedBy)
 	return err
 }
 
@@ -313,7 +327,9 @@ func (q *Queries) ResetUsersTable(ctx context.Context) error {
 const updateUserPasswordByID = `-- name: UpdateUserPasswordByID :exec
 update users
 set
-  hashed_password = $2
+  hashed_password = $2,
+  updated_at = now(),
+  updated_by = $3
 where
   id = $1
 `
@@ -321,9 +337,10 @@ where
 type UpdateUserPasswordByIDParams struct {
 	ID             uuid.UUID `json:"id"`
 	HashedPassword string    `json:"hashedPassword"`
+	UpdatedBy      uuid.UUID `json:"updatedBy"`
 }
 
 func (q *Queries) UpdateUserPasswordByID(ctx context.Context, arg UpdateUserPasswordByIDParams) error {
-	_, err := q.db.ExecContext(ctx, updateUserPasswordByID, arg.ID, arg.HashedPassword)
+	_, err := q.db.ExecContext(ctx, updateUserPasswordByID, arg.ID, arg.HashedPassword, arg.UpdatedBy)
 	return err
 }

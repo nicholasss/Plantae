@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/nicholasss/plantae/internal/database"
 )
 
 // === request response types ===
@@ -196,7 +197,11 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	err = cfg.db.PromoteUserToAdminByID(r.Context(), adminStatusRequest.ID)
+	promoteParams := database.PromoteUserToAdminByIDParams{
+		ID:        adminStatusRequest.ID,
+		UpdatedBy: uuid.Max,
+	}
+	err = cfg.db.PromoteUserToAdminByID(r.Context(), promoteParams)
 	if err != nil {
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
@@ -236,7 +241,11 @@ func (cfg *apiConfig) demoteUserToAdminHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	err = cfg.db.DemoteUserFromAdminByID(r.Context(), adminStatusRequest.ID)
+	demoteParams := database.DemoteUserFromAdminByIDParams{
+		ID:        adminStatusRequest.ID,
+		UpdatedBy: uuid.Max,
+	}
+	err = cfg.db.DemoteUserFromAdminByID(r.Context(), demoteParams)
 	if err != nil {
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
 		return
