@@ -11,7 +11,7 @@ import (
 // auth super admin middleware
 func (cfg *apiConfig) authSuperAdminMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestToken, err := auth.GetAuthKeysValue(r.Header, "SuperAdminToken", cfg.sl)
+		requestToken, err := auth.GetSuperAdminToken(r.Header, cfg.sl)
 		if err != nil {
 			cfg.sl.Debug("Unable to get superadmin token from headers", "error", err)
 			respondWithError(err, http.StatusBadRequest, w, cfg.sl)

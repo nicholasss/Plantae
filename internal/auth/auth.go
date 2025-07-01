@@ -37,54 +37,60 @@ func ValidateSuperAdmin(superAdminToken string, requestToken string, sl *slog.Lo
 
 // === Token & Key Functions ===
 
-// GetAuthKeysValue returns the value in the 'Authorization' header of a request.
-// Optionally provide a prefix to use before a token.
-// i.e. "Bearer <token>", "ApiKey <token>", or "SuperAdminToken <token>"
-// TODO: merge with function below
-func GetAuthKeysValue(headers http.Header, prefix string, sl *slog.Logger) (string, error) {
-	// value will look like:
-	//   ApiKey <key string>
-	if prefix == "" {
-		prefix = "ApiKey"
-	}
-
+// fetches the authorization header
+// is intended to be used by other functions
+func getAuthHeader(headers http.Header) (string, error) {
 	authHeader := headers.Get("Authorization")
 	if authHeader == "" {
 		return "", errors.New("header field 'Authorization' is absent")
 	}
 
-	keyString, ok := strings.CutPrefix(authHeader, prefix+" ")
+	return authHeader, nil
+}
+
+// cuts the prefix from the token
+// returning just the token itsefl
+func removeTokenPrefix(prefixedToken, prefix string) (string, error) {
+	token, ok := strings.CutPrefix(prefixedToken, prefix+" ")
 	if !ok {
-		sl.Debug("Unable to cut prefix from Authorization header")
 		return "", errors.New("unable to find key in headers")
 	}
 
-	return keyString, nil
+	return token, nil
 }
 
-// GetBearerToken returns the access token from a requests headers.
-// TODO: merge with function above
-func GetBearerToken(headers http.Header, sl *slog.Logger) (string, error) {
-	// value will look like
-	//   Bearer <token_string>
-
-	authHeader := headers.Get("Authorization")
-	if authHeader == "" {
-		return "", errors.New("header field 'Authorization' is absent")
+// GetSuperAdminToken returns the SuperAdminToken from headers
+// -- SuperAdminToken <token_string>
+func GetSuperAdminToken(headers http.Header, sl *slog.Logger) (string, error) {
+	authValue, err := getAuthHeader(headers)
+	if err != nil {
+		return "", err
 	}
 
-	tokenString, ok := strings.CutPrefix(authHeader, "Bearer ")
-	if !ok {
-		if strings.Contains(authHeader, "SuperAdminToken") {
-			return "", errors.New("super-admin token provided, please provide admin's access token instead")
-		}
-
+	token, err := removeTokenPrefix(authValue, "SuperAdminToken")
+	if err != nil {
 		sl.Debug("Unable to cut prefix from Authorization header")
-		return "", errors.New("unable to find token in headers")
+		return "", err
 	}
 
-	// sl.Debug("Returned the JWT successfuly from headers.")
-	return tokenString, nil
+	return token, nil
+}
+
+// GetBearerToken returns the Bearer token from headers
+// -- Bearer <token_string>
+func GetBearerToken(headers http.Header, sl *slog.Logger) (string, error) {
+	authValue, err := getAuthHeader(headers)
+	if err != nil {
+		return "", err
+	}
+
+	token, err := removeTokenPrefix(authValue, "Bearer")
+	if err != nil {
+		sl.Debug("Unable to cut prefix from Authorization header")
+		return "", err
+	}
+
+	return token, nil
 }
 
 // MakeJWT provides a fresh access token to a particular user for a given duration.
