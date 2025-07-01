@@ -20,7 +20,7 @@ select
   iup.id as users_plant_id,
   iup.adoption_date,
   iup.name,
-  ps.id as species_id,
+  ps.plant_id as species_id,
   ps.species_name
 from
   inserted_users_plant as iup
