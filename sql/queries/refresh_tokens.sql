@@ -20,7 +20,18 @@ select * from refresh_tokens
 where
   refresh_token = $1 and
   deleted_by is null and
-  revoked_at is null;
+  revoked_at is null
+order by created_at desc
+limit 1;
+
+-- name: GetValidRefreshTokenFromUserID :one
+select * from refresh_tokens
+where
+  user_id = $1 and
+  deleted_by is null and
+  revoked_at is null
+order by created_at desc
+limit 1;
 
 -- name: RevokeRefreshTokenWithToken :one
 update refresh_tokens
