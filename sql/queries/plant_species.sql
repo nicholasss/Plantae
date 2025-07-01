@@ -78,7 +78,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name, plant_type_id;
+returning id as user_id, species_name, plant_type_id;
 
 -- name: UnsetPlantSpeciesAsType :one
 update plant_species
@@ -88,7 +88,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name;
+returning id as user_id, species_name;
 
 -- name: SetPlantSpeciesAsLightNeed :one
 update plant_species
@@ -98,7 +98,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name, light_needs_id;
+returning id as user_id, species_name, light_needs_id;
 
 -- name: UnsetPlantSpeciesAsLightNeed :one
 update plant_species
@@ -108,7 +108,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name;
+returning id as user_id, species_name;
 
 -- name: SetPlantSpeciesAsWaterNeed :one
 update plant_species
@@ -118,7 +118,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name, water_needs_id;
+returning id as user_id, species_name, water_needs_id;
 
 -- name: UnsetPlantSpeciesAsWaterNeed :one
 update plant_species
@@ -128,4 +128,4 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name;
+returning id as user_id, species_name;

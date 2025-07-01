@@ -301,7 +301,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name, light_needs_id
+returning id as user_id, species_name, light_needs_id
 `
 
 type SetPlantSpeciesAsLightNeedParams struct {
@@ -311,7 +311,7 @@ type SetPlantSpeciesAsLightNeedParams struct {
 }
 
 type SetPlantSpeciesAsLightNeedRow struct {
-	ID           uuid.UUID     `json:"id"`
+	UserID       uuid.UUID     `json:"userID"`
 	SpeciesName  string        `json:"speciesName"`
 	LightNeedsID uuid.NullUUID `json:"lightNeedsID"`
 }
@@ -319,7 +319,7 @@ type SetPlantSpeciesAsLightNeedRow struct {
 func (q *Queries) SetPlantSpeciesAsLightNeed(ctx context.Context, arg SetPlantSpeciesAsLightNeedParams) (SetPlantSpeciesAsLightNeedRow, error) {
 	row := q.db.QueryRowContext(ctx, setPlantSpeciesAsLightNeed, arg.ID, arg.LightNeedsID, arg.UpdatedBy)
 	var i SetPlantSpeciesAsLightNeedRow
-	err := row.Scan(&i.ID, &i.SpeciesName, &i.LightNeedsID)
+	err := row.Scan(&i.UserID, &i.SpeciesName, &i.LightNeedsID)
 	return i, err
 }
 
@@ -331,7 +331,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name, plant_type_id
+returning id as user_id, species_name, plant_type_id
 `
 
 type SetPlantSpeciesAsTypeParams struct {
@@ -341,7 +341,7 @@ type SetPlantSpeciesAsTypeParams struct {
 }
 
 type SetPlantSpeciesAsTypeRow struct {
-	ID          uuid.UUID     `json:"id"`
+	UserID      uuid.UUID     `json:"userID"`
 	SpeciesName string        `json:"speciesName"`
 	PlantTypeID uuid.NullUUID `json:"plantTypeID"`
 }
@@ -349,7 +349,7 @@ type SetPlantSpeciesAsTypeRow struct {
 func (q *Queries) SetPlantSpeciesAsType(ctx context.Context, arg SetPlantSpeciesAsTypeParams) (SetPlantSpeciesAsTypeRow, error) {
 	row := q.db.QueryRowContext(ctx, setPlantSpeciesAsType, arg.ID, arg.PlantTypeID, arg.UpdatedBy)
 	var i SetPlantSpeciesAsTypeRow
-	err := row.Scan(&i.ID, &i.SpeciesName, &i.PlantTypeID)
+	err := row.Scan(&i.UserID, &i.SpeciesName, &i.PlantTypeID)
 	return i, err
 }
 
@@ -361,7 +361,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name, water_needs_id
+returning id as user_id, species_name, water_needs_id
 `
 
 type SetPlantSpeciesAsWaterNeedParams struct {
@@ -371,7 +371,7 @@ type SetPlantSpeciesAsWaterNeedParams struct {
 }
 
 type SetPlantSpeciesAsWaterNeedRow struct {
-	ID           uuid.UUID     `json:"id"`
+	UserID       uuid.UUID     `json:"userID"`
 	SpeciesName  string        `json:"speciesName"`
 	WaterNeedsID uuid.NullUUID `json:"waterNeedsID"`
 }
@@ -379,7 +379,7 @@ type SetPlantSpeciesAsWaterNeedRow struct {
 func (q *Queries) SetPlantSpeciesAsWaterNeed(ctx context.Context, arg SetPlantSpeciesAsWaterNeedParams) (SetPlantSpeciesAsWaterNeedRow, error) {
 	row := q.db.QueryRowContext(ctx, setPlantSpeciesAsWaterNeed, arg.ID, arg.WaterNeedsID, arg.UpdatedBy)
 	var i SetPlantSpeciesAsWaterNeedRow
-	err := row.Scan(&i.ID, &i.SpeciesName, &i.WaterNeedsID)
+	err := row.Scan(&i.UserID, &i.SpeciesName, &i.WaterNeedsID)
 	return i, err
 }
 
@@ -391,7 +391,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name
+returning id as user_id, species_name
 `
 
 type UnsetPlantSpeciesAsLightNeedParams struct {
@@ -400,14 +400,14 @@ type UnsetPlantSpeciesAsLightNeedParams struct {
 }
 
 type UnsetPlantSpeciesAsLightNeedRow struct {
-	ID          uuid.UUID `json:"id"`
+	UserID      uuid.UUID `json:"userID"`
 	SpeciesName string    `json:"speciesName"`
 }
 
 func (q *Queries) UnsetPlantSpeciesAsLightNeed(ctx context.Context, arg UnsetPlantSpeciesAsLightNeedParams) (UnsetPlantSpeciesAsLightNeedRow, error) {
 	row := q.db.QueryRowContext(ctx, unsetPlantSpeciesAsLightNeed, arg.ID, arg.UpdatedBy)
 	var i UnsetPlantSpeciesAsLightNeedRow
-	err := row.Scan(&i.ID, &i.SpeciesName)
+	err := row.Scan(&i.UserID, &i.SpeciesName)
 	return i, err
 }
 
@@ -419,7 +419,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name
+returning id as user_id, species_name
 `
 
 type UnsetPlantSpeciesAsTypeParams struct {
@@ -428,14 +428,14 @@ type UnsetPlantSpeciesAsTypeParams struct {
 }
 
 type UnsetPlantSpeciesAsTypeRow struct {
-	ID          uuid.UUID `json:"id"`
+	UserID      uuid.UUID `json:"userID"`
 	SpeciesName string    `json:"speciesName"`
 }
 
 func (q *Queries) UnsetPlantSpeciesAsType(ctx context.Context, arg UnsetPlantSpeciesAsTypeParams) (UnsetPlantSpeciesAsTypeRow, error) {
 	row := q.db.QueryRowContext(ctx, unsetPlantSpeciesAsType, arg.ID, arg.UpdatedBy)
 	var i UnsetPlantSpeciesAsTypeRow
-	err := row.Scan(&i.ID, &i.SpeciesName)
+	err := row.Scan(&i.UserID, &i.SpeciesName)
 	return i, err
 }
 
@@ -447,7 +447,7 @@ update plant_species
 where
   id = $1 and
   deleted_by is null
-returning id, species_name
+returning id as user_id, species_name
 `
 
 type UnsetPlantSpeciesAsWaterNeedParams struct {
@@ -456,14 +456,14 @@ type UnsetPlantSpeciesAsWaterNeedParams struct {
 }
 
 type UnsetPlantSpeciesAsWaterNeedRow struct {
-	ID          uuid.UUID `json:"id"`
+	UserID      uuid.UUID `json:"userID"`
 	SpeciesName string    `json:"speciesName"`
 }
 
 func (q *Queries) UnsetPlantSpeciesAsWaterNeed(ctx context.Context, arg UnsetPlantSpeciesAsWaterNeedParams) (UnsetPlantSpeciesAsWaterNeedRow, error) {
 	row := q.db.QueryRowContext(ctx, unsetPlantSpeciesAsWaterNeed, arg.ID, arg.UpdatedBy)
 	var i UnsetPlantSpeciesAsWaterNeedRow
-	err := row.Scan(&i.ID, &i.SpeciesName)
+	err := row.Scan(&i.UserID, &i.SpeciesName)
 	return i, err
 }
 
