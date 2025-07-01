@@ -38,7 +38,7 @@ where id = $1
 
 -- name: GetAllUsersPlantsOrderedByUpdated :many
 select
-  id as users_plant_id, plant_id, adoption_date, name
+  id as users_plant_id, plant_id as plant_species_id, adoption_date, name
 from users_plants
 where
   deleted_at is null and
@@ -47,7 +47,7 @@ order by updated_at desc;
 
 -- name: GetAllUsersPlantsOrderedByCreated :many
 select 
-  id as users_plant_id, plant_id, adoption_date, name
+  id as users_plant_id, plant_id as plant_species_id, adoption_date, name
 from users_plants
 where
   deleted_at is null and
