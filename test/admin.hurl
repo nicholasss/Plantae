@@ -1237,6 +1237,11 @@ HTTP 201
 Content-Type: application/json; charset=utf-8
 [Captures]
 1_water_id: jsonpath "$.id"
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.plantType" == "{{1_plant_water_type}}"
+jsonpath "$.description" == "{{1_plant_water_description}}"
+jsonpath "$.drySoilMM" == {{1_plant_water_mm}}
 
 #
 # adding water record for plant 2
@@ -1254,6 +1259,11 @@ HTTP 201
 Content-Type: application/json; charset=utf-8
 [Captures]
 2_water_id: jsonpath "$.id"
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.plantType" == "{{2_plant_water_type}}"
+jsonpath "$.description" == "{{2_plant_water_description}}"
+jsonpath "$.drySoilDays" == {{2_plant_water_days}}
 
 #
 # set water 1 to plant 1
