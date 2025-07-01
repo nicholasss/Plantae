@@ -17,7 +17,10 @@ insert into refresh_tokens (
 
 -- name: GetUserFromRefreshToken :one
 select * from refresh_tokens
-where refresh_token = $1;
+where
+  refresh_token = $1 and
+  deleted_by is null and
+  revoked_at is null;
 
 -- name: RevokeRefreshTokenWithToken :one
 update refresh_tokens
