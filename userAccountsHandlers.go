@@ -50,7 +50,6 @@ type AuthRevokeRequest struct {
 
 // === User Handler Functions ===
 
-// TODO: ensure resource is sent back
 // POST /api/v1/auth/register
 func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) {
 	var createUserRequest CreateUserRequest

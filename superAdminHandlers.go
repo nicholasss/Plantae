@@ -171,7 +171,6 @@ func (cfg *apiConfig) resetUsersHandler(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// TODO: ensure resource is sent back
 // promotes user to admin
 // POST /api/v1/super-admin/promote-user
 // 200 OK makes sense in context
@@ -222,7 +221,6 @@ func (cfg *apiConfig) promoteUserToAdminHandler(w http.ResponseWriter, r *http.R
 	w.Write(adminData)
 }
 
-// TODO: ensure resource is sent back
 // demotes user from admin
 // POST /api/v1/super-admin/demote-user
 // 200 OK makes sense in context

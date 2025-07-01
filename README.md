@@ -42,5 +42,5 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [x] Add 'application/json; charset=utf-8' Content-Type assert in all of the tests and fix where needed
 - [x] Rename 'authorizeNormalAdmin' utility function or rewrite to actually authorize normal admins.
 - [x] log -> log/slog package for logging level, and logging to file
-- [ ] Ensure all POST responses are 201 (return body of resource created)
+- [x] Ensure all POST responses are 201 (return body of resource created makes sense to have a 201)
 - [ ] add the following in sqlc.yaml config: `emit_pointers_for_null_types`
