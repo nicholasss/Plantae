@@ -973,6 +973,15 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+1_plant_species_id: jsonpath "$.id" 
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.speciesName" == "{{1_species_name}}"
+jsonpath "$.humanPoisonToxic" == {{1_human_poison_toxic}}
+jsonpath "$.petPoisonToxic" == {{1_pet_poison_toxic}}
+jsonpath "$.humanEdible" == {{1_human_edible}}
+jsonpath "$.petEdible" == {{1_pet_edible}}
 
 #
 # Add plant 2 to the plant_species table
@@ -991,6 +1000,15 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+2_plant_species_id: jsonpath "$.id" 
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.speciesName" == "{{2_species_name}}"
+jsonpath "$.humanPoisonToxic" == {{2_human_poison_toxic}}
+jsonpath "$.petPoisonToxic" == {{2_pet_poison_toxic}}
+jsonpath "$.humanEdible" == {{2_human_edible}}
+jsonpath "$.petEdible" == {{2_pet_edible}}
 
 #
 # add light 1 to light_needs table
@@ -1005,6 +1023,12 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+1_light_id: jsonpath "$.id"
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.name" == "{{1_light_name}}"
+jsonpath "$.description" == {{1_light_description}}
 
 #
 # add light 2 to light_needs table
@@ -1019,9 +1043,15 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+2_light_id: jsonpath "$.id"
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.name" == "{{2_light_name}}"
+jsonpath "$.description" == {{2_light_description}}
 
 #
-# add light 2 to light_needs table
+# add light 3 to light_needs table
 POST http://localhost:8080/api/v1/admin/light
 Authorization: Bearer {{lisa_token}}
 Content-Type: application/json; charset=utf-8
@@ -1033,6 +1063,12 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+3_light_id: jsonpath "$.id"
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.name" == "{{3_light_name}}"
+jsonpath "$.description" == {{3_light_description}}
 
 #
 # add light 4 to light_needs table
@@ -1047,6 +1083,12 @@ Content-Type: application/json; charset=utf-8
 ```
 HTTP 201
 Content-Type: application/json; charset=utf-8
+[Captures]
+4_light_id: jsonpath "$.id"
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.name" == "{{4_light_name}}"
+jsonpath "$.description" == {{4_light_description}}
 
 #
 # get list of light needs
@@ -1056,19 +1098,18 @@ HTTP 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$" count == 4
+jsonpath "$[0].id" == "{{4_light_id}}"
 jsonpath "$[0].name" == "{{4_light_name}}"
 jsonpath "$[0].description" == "{{4_light_description}}"
+jsonpath "$[1].id" == "{{3_light_id}}"
 jsonpath "$[1].name" == "{{3_light_name}}"
 jsonpath "$[1].description" == "{{3_light_description}}"
+jsonpath "$[2].id" == "{{2_light_id}}"
 jsonpath "$[2].name" == "{{2_light_name}}"
 jsonpath "$[2].description" == "{{2_light_description}}"
+jsonpath "$[3].id" == "{{1_light_id}}"
 jsonpath "$[3].name" == "{{1_light_name}}"
 jsonpath "$[3].description" == "{{1_light_description}}"
-[Captures]
-1_light_id: jsonpath "$[3].id"
-2_light_id: jsonpath "$[2].id"
-3_light_id: jsonpath "$[1].id"
-4_light_id: jsonpath "$[0].id"
 
 # 
 # update light 1
