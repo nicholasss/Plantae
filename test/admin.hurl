@@ -1032,6 +1032,15 @@ jsonpath "$.humanEdible" == {{2_human_edible}}
 jsonpath "$.petEdible" == {{2_pet_edible}}
 
 #
+# List empty table
+GET http://localhost:8080/api/v1/admin/light
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$" == null
+
+#
 # add light 1 to light_needs table
 POST http://localhost:8080/api/v1/admin/light
 Authorization: Bearer {{lisa_token}}
@@ -1241,6 +1250,15 @@ jsonpath "$" == null
 # testing setting plant to light need
 # ========================================================================
 # testing water need
+
+#
+# List empty table
+GET http://localhost:8080/api/v1/admin/water
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$" == null
 
 #
 # adding water record for plant 1

@@ -168,6 +168,15 @@ jsonpath "$.tokenExpiresAt" exists
 jsonpath "$.refreshTokenExpiresAt" exists
 
 #
+# List empty table
+GET http://localhost:8080/api/v1/my/plants
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$" == null
+
+#
 # Create first users plant
 POST http://localhost:8080/api/v1/my/plants
 Authorization: Bearer {{craig_token}}
