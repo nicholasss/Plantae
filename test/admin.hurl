@@ -102,7 +102,10 @@ Content-Type: application/json; charset=utf-8
 # Test empty plant species table
 GET http://localhost:8080/api/v1/admin/plant-species
 Authorization: Bearer {{lisa_token}}
-HTTP 204
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$" == null
 
 #
 # Add a plant to the plant_species table
@@ -230,6 +233,15 @@ jsonpath "$[0].petEdible" == {{2_pet_edible}}
 # ========================================================================
 # testing plant names
 # -- using previous tests species
+
+#
+# List empty table
+GET http://localhost:8080/api/v1/admin/plant-names
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$" == null
 
 #
 # Adding common names in english & spanish for 2_plant_species
