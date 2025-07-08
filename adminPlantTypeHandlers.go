@@ -249,7 +249,7 @@ func (cfg *apiConfig) adminPlantTypesViewHandler(w http.ResponseWriter, r *http.
 
 	if len(plantTypeRecords) <= 0 {
 		cfg.sl.Debug("Admin successfully listed empty plant species list", "admin id", requestUserID)
-		w.WriteHeader(http.StatusNoContent)
+		respondWithJSON(http.StatusOK, plantTypeRecords, w, cfg.sl)
 		return
 	}
 
