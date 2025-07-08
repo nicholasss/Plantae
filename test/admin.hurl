@@ -49,7 +49,8 @@ Content-Type: application/json; charset=utf-8
 ```json
 {
   "email": "{{lisa_email}}",
-  "password": "{{lisa_password}}"
+  "password": "{{lisa_password}}",
+  "langCodePref": "{{lisa_lang_code}}"
 }
 ```
 HTTP 201
@@ -58,6 +59,8 @@ Content-Type: application/json; charset=utf-8
 lisa_id: jsonpath "$.id"
 [Asserts]
 jsonpath "$.id" exists
+jsonpath "$.langCodePref" == "{{lisa_lang_code}}"
+jsonpath "$.joinDate" isIsoDate
 jsonpath "$.isAdmin" == false
 jsonpath "$.email" == "{{lisa_email}}"
 
@@ -77,6 +80,8 @@ Content-Type: application/json; charset=utf-8
 lisa_token: jsonpath "$.token"
 lisa_refresh_token: jsonpath "$.refreshToken"
 [Asserts]
+jsonpath "$.langCodePref" == "{{lisa_lang_code}}"
+jsonpath "$.joinDate" isIsoDate
 jsonpath "$.isAdmin" == false
 jsonpath "$.tokenExpiresAt" exists
 jsonpath "$.refreshTokenExpiresAt" exists

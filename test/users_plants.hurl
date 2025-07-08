@@ -25,7 +25,8 @@ Content-Type: application/json; charset=utf-8
 ```json
 {
   "email": "{{lisa_email}}",
-  "password": "{{lisa_password}}"
+  "password": "{{lisa_password}}",
+  "langCodePref": "{{lisa_lang_code}}"
 }
 ```
 HTTP 201
@@ -34,6 +35,8 @@ Content-Type: application/json; charset=utf-8
 lisa_id: jsonpath "$.id"
 [Asserts]
 jsonpath "$.id" exists
+jsonpath "$.langCodePref" == "{{lisa_lang_code}}"
+jsonpath "$.joinDate" isIsoDate
 jsonpath "$.isAdmin" == false
 jsonpath "$.email" == "{{lisa_email}}"
 
@@ -53,6 +56,8 @@ Content-Type: application/json; charset=utf-8
 lisa_token: jsonpath "$.token"
 lisa_refresh_token: jsonpath "$.refreshToken"
 [Asserts]
+jsonpath "$.langCodePref" == "{{lisa_lang_code}}"
+jsonpath "$.joinDate" isIsoDate
 jsonpath "$.isAdmin" == false
 jsonpath "$.tokenExpiresAt" exists
 jsonpath "$.refreshTokenExpiresAt" exists
@@ -135,7 +140,8 @@ Content-Type: application/json; charset=utf-8
 ```json
 {
   "email": "{{craig_email}}",
-  "password": "{{craig_password}}"
+  "password": "{{craig_password}}",
+  "langCodePref": "{{craig_lang_code}}"
 }
 ```
 HTTP 201
@@ -144,6 +150,8 @@ Content-Type: application/json; charset=utf-8
 craig_id: jsonpath "$.id"
 [Asserts]
 jsonpath "$.id" exists
+jsonpath "$.langCodePref" == "{{craig_lang_code}}"
+jsonpath "$.joinDate" isIsoDate
 jsonpath "$.isAdmin" == false
 jsonpath "$.email" == "{{craig_email}}"
 
@@ -163,6 +171,8 @@ Content-Type: application/json; charset=utf-8
 craig_token: jsonpath "$.token"
 craig_refresh_token: jsonpath "$.refreshToken"
 [Asserts]
+jsonpath "$.langCodePref" == "{{craig_lang_code}}"
+jsonpath "$.joinDate" isIsoDate
 jsonpath "$.isAdmin" == false
 jsonpath "$.tokenExpiresAt" exists
 jsonpath "$.refreshTokenExpiresAt" exists

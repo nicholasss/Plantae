@@ -21,6 +21,7 @@ source .env
 hurl \
   --variable craig_email=craig@gmail.com \
   --variable craig_password=@ssword472 \
+  --variable craig_lang_code=en \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/users.hurl
@@ -29,6 +30,7 @@ hurl \
 hurl \
   --variable lisa_email=lisa@gmail.com \
   --variable lisa_password=Growl1ng! \
+  --variable lisa_lang_code=en \
   --variable 1_species_name="Pilea peperomioides" \
   --variable 1_human_poison_toxic=false \
   --variable 1_pet_poison_toxic=false \
@@ -125,8 +127,10 @@ hurl \
 hurl \
   --variable craig_email=craig@gmail.com \
   --variable craig_password=@ssword472 \
+  --variable craig_lang_code=en \
   --variable lisa_email=lisa@gmail.com \
   --variable lisa_password=Growl1ng! \
+  --variable lisa_lang_code=en \
   --variable 1_species_name="Pilea peperomioides" \
   --variable 1_human_poison_toxic=false \
   --variable 1_pet_poison_toxic=false \
