@@ -470,6 +470,15 @@ jsonpath "$" == null
 # testing plant types
 
 #
+# List empty table
+GET http://localhost:8080/api/v1/admin/plant-types
+Authorization: Bearer {{lisa_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$" == null
+
+#
 # adding plant type 1 with minimal information
 POST http://localhost:8080/api/v1/admin/plant-types
 Authorization: Bearer {{lisa_token}}
