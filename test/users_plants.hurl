@@ -187,7 +187,7 @@ Content-Type: application/json; charset=utf-8
 jsonpath "$.id" exists
 jsonpath "$.plantSpeciesID" == "{{1_plant_species_id}}"
 jsonpath "$.plantSpeciesName" == "{{1_species_name}}"
-jsonpath "$.adoptionDate" == "{{1_plant_adoption_back}}"
+jsonpath "$.adoptionDate" == "{{1_plant_adoption}}"
 jsonpath "$.plantName" == "{{1_plant_name}}"
 
 #
@@ -200,5 +200,5 @@ Content-Type: application/json; charset=utf-8
 jsonpath "$[0].id" exists
 jsonpath "$[0].plantSpeciesID" == "{{1_plant_species_id}}"
 jsonpath "$[0].plantSpeciesName" == "{{1_species_name}}"
-jsonpath "$[0].adoptionDate" == "{{1_plant_adoption_back}}"
+jsonpath "$[0].adoptionDate" == "{{1_plant_adoption}}"
 jsonpath "$[0].plantName" == "{{1_plant_name}}"
