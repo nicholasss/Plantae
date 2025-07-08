@@ -291,8 +291,16 @@ func loadAPIConfig() (*apiConfig, func() error, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	dbQueries := database.New(db)
-	sl.Info("Connected to database succesfully")
+
+	var dbQueries *database.Queries
+	dbErr := db.Ping()
+	if dbErr != nil {
+		sl.Error("Database may be offline. Please check and restart server")
+		os.Exit(1)
+	} else {
+		dbQueries = database.New(db)
+		sl.Info("Connected to database succesfully")
+	}
 
 	// additional vars, configuration, and return
 	cfg := &apiConfig{
