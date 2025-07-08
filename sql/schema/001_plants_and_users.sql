@@ -28,6 +28,7 @@ create table users (
   deleted_by uuid,
   --
   -- table data
+  lang_code_pref text not null,
   join_date timestamp with time zone not null,
   is_admin boolean not null,
   email text not null,

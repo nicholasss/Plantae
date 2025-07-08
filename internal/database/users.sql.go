@@ -16,16 +16,17 @@ const createUser = `-- name: CreateUser :one
 insert into users (
   id, created_at, updated_at,
   created_by, updated_by, join_date,
-  is_admin, email, hashed_password
+  lang_code_pref, is_admin, email, hashed_password
 ) values (
   $1, now(), now(),
   $1, $1, now(),
-  false, $2, $3
+  $2, false, $3, $4
 ) returning id, join_date, is_admin, email
 `
 
 type CreateUserParams struct {
 	ID             uuid.UUID `json:"id"`
+	LangCodePref   string    `json:"langCodePref"`
 	Email          string    `json:"email"`
 	HashedPassword string    `json:"hashedPassword"`
 }
@@ -38,7 +39,12 @@ type CreateUserRow struct {
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.ID, arg.Email, arg.HashedPassword)
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.ID,
+		arg.LangCodePref,
+		arg.Email,
+		arg.HashedPassword,
+	)
 	var i CreateUserRow
 	err := row.Scan(
 		&i.ID,
@@ -73,20 +79,22 @@ const getAllUsersWithoutPasswordByJoinDate = `-- name: GetAllUsersWithoutPasswor
 select
   id, created_at, updated_at,
   created_by, updated_by,
-  is_admin, email
+  lang_code_pref, join_date, is_admin, email
 from users
   where deleted_at is null
   order by join_date asc
 `
 
 type GetAllUsersWithoutPasswordByJoinDateRow struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy uuid.UUID `json:"createdBy"`
-	UpdatedBy uuid.UUID `json:"updatedBy"`
-	IsAdmin   bool      `json:"isAdmin"`
-	Email     string    `json:"email"`
+	ID           uuid.UUID `json:"id"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+	CreatedBy    uuid.UUID `json:"createdBy"`
+	UpdatedBy    uuid.UUID `json:"updatedBy"`
+	LangCodePref string    `json:"langCodePref"`
+	JoinDate     time.Time `json:"joinDate"`
+	IsAdmin      bool      `json:"isAdmin"`
+	Email        string    `json:"email"`
 }
 
 func (q *Queries) GetAllUsersWithoutPasswordByJoinDate(ctx context.Context) ([]GetAllUsersWithoutPasswordByJoinDateRow, error) {
@@ -104,6 +112,8 @@ func (q *Queries) GetAllUsersWithoutPasswordByJoinDate(ctx context.Context) ([]G
 			&i.UpdatedAt,
 			&i.CreatedBy,
 			&i.UpdatedBy,
+			&i.LangCodePref,
+			&i.JoinDate,
 			&i.IsAdmin,
 			&i.Email,
 		); err != nil {
@@ -124,20 +134,22 @@ const getAllUsersWithoutPasswordByUpdated = `-- name: GetAllUsersWithoutPassword
 select
   id, created_at, updated_at,
   created_by, updated_by,
-  is_admin, email
+  lang_code_pref, join_date, is_admin, email
 from users
   where deleted_at is null
   order by updated_at desc
 `
 
 type GetAllUsersWithoutPasswordByUpdatedRow struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy uuid.UUID `json:"createdBy"`
-	UpdatedBy uuid.UUID `json:"updatedBy"`
-	IsAdmin   bool      `json:"isAdmin"`
-	Email     string    `json:"email"`
+	ID           uuid.UUID `json:"id"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+	CreatedBy    uuid.UUID `json:"createdBy"`
+	UpdatedBy    uuid.UUID `json:"updatedBy"`
+	LangCodePref string    `json:"langCodePref"`
+	JoinDate     time.Time `json:"joinDate"`
+	IsAdmin      bool      `json:"isAdmin"`
+	Email        string    `json:"email"`
 }
 
 func (q *Queries) GetAllUsersWithoutPasswordByUpdated(ctx context.Context) ([]GetAllUsersWithoutPasswordByUpdatedRow, error) {
@@ -155,6 +167,8 @@ func (q *Queries) GetAllUsersWithoutPasswordByUpdated(ctx context.Context) ([]Ge
 			&i.UpdatedAt,
 			&i.CreatedBy,
 			&i.UpdatedBy,
+			&i.LangCodePref,
+			&i.JoinDate,
 			&i.IsAdmin,
 			&i.Email,
 		); err != nil {
@@ -172,7 +186,7 @@ func (q *Queries) GetAllUsersWithoutPasswordByUpdated(ctx context.Context) ([]Ge
 }
 
 const getUserByEmailWithPassword = `-- name: GetUserByEmailWithPassword :one
-select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, join_date, is_admin, email, hashed_password from users
+select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, lang_code_pref, join_date, is_admin, email, hashed_password from users
   where email like $1
   and deleted_at is null
   limit 1
@@ -189,6 +203,7 @@ func (q *Queries) GetUserByEmailWithPassword(ctx context.Context, email string) 
 		&i.CreatedBy,
 		&i.UpdatedBy,
 		&i.DeletedBy,
+		&i.LangCodePref,
 		&i.JoinDate,
 		&i.IsAdmin,
 		&i.Email,
@@ -201,7 +216,7 @@ const getUserByEmailWithoutPassword = `-- name: GetUserByEmailWithoutPassword :o
 select 
   id, created_at, updated_at,
   created_by, updated_by,
-  is_admin, email
+  lang_code_pref, join_date, is_admin, email
 from users
   where email like $1
   and deleted_at is null
@@ -209,13 +224,15 @@ from users
 `
 
 type GetUserByEmailWithoutPasswordRow struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy uuid.UUID `json:"createdBy"`
-	UpdatedBy uuid.UUID `json:"updatedBy"`
-	IsAdmin   bool      `json:"isAdmin"`
-	Email     string    `json:"email"`
+	ID           uuid.UUID `json:"id"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+	CreatedBy    uuid.UUID `json:"createdBy"`
+	UpdatedBy    uuid.UUID `json:"updatedBy"`
+	LangCodePref string    `json:"langCodePref"`
+	JoinDate     time.Time `json:"joinDate"`
+	IsAdmin      bool      `json:"isAdmin"`
+	Email        string    `json:"email"`
 }
 
 func (q *Queries) GetUserByEmailWithoutPassword(ctx context.Context, email string) (GetUserByEmailWithoutPasswordRow, error) {
@@ -227,6 +244,8 @@ func (q *Queries) GetUserByEmailWithoutPassword(ctx context.Context, email strin
 		&i.UpdatedAt,
 		&i.CreatedBy,
 		&i.UpdatedBy,
+		&i.LangCodePref,
+		&i.JoinDate,
 		&i.IsAdmin,
 		&i.Email,
 	)
@@ -234,7 +253,7 @@ func (q *Queries) GetUserByEmailWithoutPassword(ctx context.Context, email strin
 }
 
 const getUserByIDWithPassword = `-- name: GetUserByIDWithPassword :one
-select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, join_date, is_admin, email, hashed_password from users
+select id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, lang_code_pref, join_date, is_admin, email, hashed_password from users
   where id = $1
   and deleted_at is null
   limit 1
@@ -251,6 +270,7 @@ func (q *Queries) GetUserByIDWithPassword(ctx context.Context, id uuid.UUID) (Us
 		&i.CreatedBy,
 		&i.UpdatedBy,
 		&i.DeletedBy,
+		&i.LangCodePref,
 		&i.JoinDate,
 		&i.IsAdmin,
 		&i.Email,
@@ -263,7 +283,7 @@ const getUserByIDWithoutPassword = `-- name: GetUserByIDWithoutPassword :one
 select 
   id, created_at, updated_at,
   created_by, updated_by,
-  is_admin, email
+  lang_code_pref, join_date, is_admin, email
 from users
   where id = $1
   and deleted_at is null
@@ -271,13 +291,15 @@ from users
 `
 
 type GetUserByIDWithoutPasswordRow struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy uuid.UUID `json:"createdBy"`
-	UpdatedBy uuid.UUID `json:"updatedBy"`
-	IsAdmin   bool      `json:"isAdmin"`
-	Email     string    `json:"email"`
+	ID           uuid.UUID `json:"id"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+	CreatedBy    uuid.UUID `json:"createdBy"`
+	UpdatedBy    uuid.UUID `json:"updatedBy"`
+	LangCodePref string    `json:"langCodePref"`
+	JoinDate     time.Time `json:"joinDate"`
+	IsAdmin      bool      `json:"isAdmin"`
+	Email        string    `json:"email"`
 }
 
 func (q *Queries) GetUserByIDWithoutPassword(ctx context.Context, id uuid.UUID) (GetUserByIDWithoutPasswordRow, error) {
@@ -289,6 +311,8 @@ func (q *Queries) GetUserByIDWithoutPassword(ctx context.Context, id uuid.UUID) 
 		&i.UpdatedAt,
 		&i.CreatedBy,
 		&i.UpdatedBy,
+		&i.LangCodePref,
+		&i.JoinDate,
 		&i.IsAdmin,
 		&i.Email,
 	)

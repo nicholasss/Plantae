@@ -95,6 +95,7 @@ type User struct {
 	CreatedBy      uuid.UUID     `json:"createdBy"`
 	UpdatedBy      uuid.UUID     `json:"updatedBy"`
 	DeletedBy      uuid.NullUUID `json:"deletedBy"`
+	LangCodePref   string        `json:"langCodePref"`
 	JoinDate       time.Time     `json:"joinDate"`
 	IsAdmin        bool          `json:"isAdmin"`
 	Email          string        `json:"email"`

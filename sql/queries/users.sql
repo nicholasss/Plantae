@@ -2,11 +2,11 @@
 insert into users (
   id, created_at, updated_at,
   created_by, updated_by, join_date,
-  is_admin, email, hashed_password
+  lang_code_pref, is_admin, email, hashed_password
 ) values (
   $1, now(), now(),
   $1, $1, now(),
-  false, $2, $3
+  $2, false, $3, $4
 ) returning id, join_date, is_admin, email;
 
 -- name: ResetUsersTable :exec
@@ -43,7 +43,7 @@ where
 select 
   id, created_at, updated_at,
   created_by, updated_by,
-  is_admin, email
+  lang_code_pref, join_date, is_admin, email
 from users
   where email like $1
   and deleted_at is null
@@ -53,7 +53,7 @@ from users
 select 
   id, created_at, updated_at,
   created_by, updated_by,
-  is_admin, email
+  lang_code_pref, join_date, is_admin, email
 from users
   where id = $1
   and deleted_at is null
@@ -75,7 +75,7 @@ select * from users
 select
   id, created_at, updated_at,
   created_by, updated_by,
-  is_admin, email
+  lang_code_pref, join_date, is_admin, email
 from users
   where deleted_at is null
   order by updated_at desc;
@@ -84,7 +84,7 @@ from users
 select
   id, created_at, updated_at,
   created_by, updated_by,
-  is_admin, email
+  lang_code_pref, join_date, is_admin, email
 from users
   where deleted_at is null
   order by join_date asc;
