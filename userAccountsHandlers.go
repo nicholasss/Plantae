@@ -16,8 +16,18 @@ import (
 
 // CreateUserRequest is for decoding create user requests.
 type CreateUserRequest struct {
-	Email       string `json:"email"`
-	RawPassword string `json:"password"`
+	Email        string `json:"email"`
+	RawPassword  string `json:"password"`
+	LangCodePref string `json:"langCodePref"`
+}
+
+// CreateUserResponse is for decoding create user requests.
+type CreateUserResponse struct {
+	ID           uuid.UUID `json:"id"`
+	Email        string    `json:"email"`
+	LangCodePref string    `json:"langCodePref"`
+	JoinDate     time.Time `json:"joinDate"`
+	IsAdmin      bool      `json:"isAdmin"`
 }
 
 // UserLoginRequest is for decoding user login requests.
@@ -29,6 +39,8 @@ type UserLoginRequest struct {
 // UserLoginResponse is for encoding user loging responses.
 type UserLoginResponse struct {
 	ID                    uuid.UUID `json:"id"`
+	LangCodePref          string    `json:"langCodePref"`
+	JoinDate              time.Time `json:"joinDate"`
 	IsAdmin               bool      `json:"isAdmin"`
 	AccessToken           string    `json:"token"`
 	AccessTokenExpiresAt  time.Time `json:"tokenExpiresAt"`
@@ -72,6 +84,20 @@ func (cfg *apiConfig) registerUserHandler(w http.ResponseWriter, r *http.Request
 		respondWithError(nil, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
+	if createUserRequest.LangCodePref == "" {
+		cfg.sl.Debug("Request body missing password")
+		respondWithError(nil, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	// language preference check
+	userRequestedLangName, ok := LangCodes[createUserRequest.LangCodePref]
+	if !ok {
+		cfg.sl.Debug("Requested language code was not found", "lang code", createUserRequest.LangCodePref)
+		respondWithError(errors.New("language code requested does not exist"), http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+	cfg.sl.Debug("User is registering with language", "lang code", createUserRequest.LangCodePref, "lang name", userRequestedLangName)
 
 	// hash password
 	hashedPassword, err := auth.HashPassword(createUserRequest.RawPassword, cfg.sl)
@@ -93,6 +119,7 @@ func (cfg *apiConfig) registerUserHandler(w http.ResponseWriter, r *http.Request
 	// add user to database
 	createUserParams := database.CreateUserParams{
 		ID:             newUserUUID,
+		LangCodePref:   createUserRequest.LangCodePref,
 		Email:          createUserRequest.Email,
 		HashedPassword: hashedPassword,
 	}
@@ -103,9 +130,17 @@ func (cfg *apiConfig) registerUserHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	createUserResponse := CreateUserResponse{
+		ID:           userRecord.ID,
+		Email:        userRecord.Email,
+		LangCodePref: userRecord.LangCodePref,
+		JoinDate:     userRecord.JoinDate,
+		IsAdmin:      userRecord.IsAdmin,
+	}
+
 	// return the userRecord without password
 	cfg.sl.Debug("User successfully registered", "user id", userRecord.ID)
-	respondWithJSON(http.StatusCreated, userRecord, w, cfg.sl)
+	respondWithJSON(http.StatusCreated, createUserResponse, w, cfg.sl)
 }
 
 // logs in user and provides tokens
@@ -194,6 +229,8 @@ func (cfg *apiConfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 	// json response
 	userLoginResponse := UserLoginResponse{
 		ID:                    userRecord.ID,
+		LangCodePref:          userRecord.LangCodePref,
+		JoinDate:              userRecord.JoinDate,
 		IsAdmin:               userRecord.IsAdmin,
 		AccessToken:           userAccessToken,
 		AccessTokenExpiresAt:  accessTokenExpiresAt,
