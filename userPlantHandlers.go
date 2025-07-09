@@ -180,6 +180,6 @@ func (cfg *apiConfig) usersPlantsListHandler(w http.ResponseWriter, r *http.Requ
 		viewResponse = append(viewResponse, newResponse)
 	}
 
-	cfg.sl.Debug("User successfully listed their user plant", "user id", requestUserID)
+	cfg.sl.Debug("User successfully listed their users plants", "user id", requestUserID)
 	respondWithJSON(http.StatusOK, viewResponse, w, cfg.sl)
 }
