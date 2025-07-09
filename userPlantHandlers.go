@@ -259,3 +259,58 @@ func (cfg *apiConfig) userPlantsUpdateHandler(w http.ResponseWriter, r *http.Req
 	cfg.sl.Debug("User successfully updated users plant", "user id", requestUserID, "users plant id", plantID)
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (cfg *apiConfig) userPlantsDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	accessTokenProvided, err := auth.GetBearerToken(r.Header, cfg.sl)
+	if err != nil {
+		cfg.sl.Debug("Could not get token from headers", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	requestUserID, err := auth.ValidateJWT(accessTokenProvided, cfg.JWTSecret, cfg.sl)
+	if err != nil {
+		cfg.sl.Debug("Could not get user id from token", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	plantIDStr := r.PathValue("plantID")
+	plantID, err := uuid.Parse(plantIDStr)
+	if err != nil {
+		cfg.sl.Debug("Could not parse plant type id from url path", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	// check for plant existing
+
+	getParams := database.GetUsersPlantByIDParams{
+		Column1: uuid.NullUUID{UUID: requestUserID, Valid: true},
+		Column2: uuid.NullUUID{UUID: plantID, Valid: true},
+	}
+	_, err = cfg.db.GetUsersPlantByID(r.Context(), getParams)
+	if errors.Is(err, sql.ErrNoRows) {
+		cfg.sl.Debug("Cannot delete non existent record", "users plant id", plantID)
+		respondWithError(errors.New("users plant does not exist"), http.StatusBadRequest, w, cfg.sl)
+		return
+	} else if err != nil {
+		cfg.sl.Debug("Unable to check for record in database", "error", err, "users plant id", plantID)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	deleteParams := database.DeleteUsersPlantByIDParams{
+		ID:        plantID,
+		UpdatedBy: requestUserID,
+	}
+	err = cfg.db.DeleteUsersPlantByID(r.Context(), deleteParams)
+	if err != nil {
+		cfg.sl.Debug("Could not delete users plant record", "error", err, "users plant id", plantID)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	cfg.sl.Debug("User successfully deleted users plant", "user id", requestUserID, "users plant id", plantID)
+	w.WriteHeader(http.StatusNoContent)
+}

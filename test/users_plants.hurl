@@ -319,3 +319,43 @@ jsonpath "$[1].plantSpeciesID" == "{{1_plant_species_id}}"
 jsonpath "$[1].plantSpeciesName" == "{{1_species_name}}"
 jsonpath "$[1].adoptionDate" == "{{1_plant_new_adoption}}"
 jsonpath "$[1].plantName" == "{{1_plant_new_name}}"
+
+#
+# Delete plant 2
+DELETE http://localhost:8080/api/v1/my/plants/{{2_my_plant_id}}
+Authorization: Bearer {{craig_token}}
+HTTP 204
+
+#
+# Get list with one plant, with second plant deleted
+GET http://localhost:8080/api/v1/my/plants
+Authorization: Bearer {{craig_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$[0].id" == "{{1_my_plant_id}}"
+jsonpath "$[0].plantSpeciesID" == "{{1_plant_species_id}}"
+jsonpath "$[0].plantSpeciesName" == "{{1_species_name}}"
+jsonpath "$[0].adoptionDate" == "{{1_plant_new_adoption}}"
+jsonpath "$[0].plantName" == "{{1_plant_new_name}}"
+
+#
+# Delete plant 2 again and fail
+DELETE http://localhost:8080/api/v1/my/plants/{{2_my_plant_id}}
+Authorization: Bearer {{craig_token}}
+HTTP 400
+
+#
+# Delete plant 1
+DELETE http://localhost:8080/api/v1/my/plants/{{1_my_plant_id}}
+Authorization: Bearer {{craig_token}}
+HTTP 204
+
+#
+# Get list with no plants
+GET http://localhost:8080/api/v1/my/plants
+Authorization: Bearer {{craig_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$" == null
