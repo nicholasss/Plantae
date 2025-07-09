@@ -39,41 +39,43 @@ where id = $1
 -- name: GetAllUsersPlantsOrderedByUpdated :many
 with users_plant as (
   select
-    id, plant_id, adoption_date, name
+    id, plant_id, adoption_date, name, updated_at
   from users_plants
   where
     deleted_at is null and
     user_id = $1
-  order by updated_at desc
 )
 select
   up.id as users_plant_id,
   up.adoption_date,
   up.name as plant_name,
+  up.updated_at,
   ps.id as plant_species_id,
   ps.species_name
 from
   users_plant as up
 join
-  plant_species as ps on up.plant_id = ps.id;
+  plant_species as ps on up.plant_id = ps.id
+order by up.updated_at desc;
 
 -- name: GetAllUsersPlantsOrderedByCreated :many
 with users_plant as (
   select 
-    id, plant_id, adoption_date, name
+    id, plant_id, adoption_date, name, created_at
   from users_plants
   where
     deleted_at is null and
     user_id = $1
-  order by created_at desc
 )
 select
   up.id as users_plant_id,
   up.adoption_date,
   up.name as plant_name,
+  up.created_at,
   ps.id as plant_species_id,
   ps.species_name
 from
   users_plant as up
 join
-  plant_species as ps on up.plant_id = ps.id;
+  plant_species as ps on up.plant_id = ps.id
+order by up.created_at desc;

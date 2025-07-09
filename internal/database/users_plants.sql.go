@@ -8,6 +8,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -80,29 +81,31 @@ func (q *Queries) CreateUsersPlants(ctx context.Context, arg CreateUsersPlantsPa
 const getAllUsersPlantsOrderedByCreated = `-- name: GetAllUsersPlantsOrderedByCreated :many
 with users_plant as (
   select 
-    id, plant_id, adoption_date, name
+    id, plant_id, adoption_date, name, created_at
   from users_plants
   where
     deleted_at is null and
     user_id = $1
-  order by created_at desc
 )
 select
   up.id as users_plant_id,
   up.adoption_date,
   up.name as plant_name,
+  up.created_at,
   ps.id as plant_species_id,
   ps.species_name
 from
   users_plant as up
 join
   plant_species as ps on up.plant_id = ps.id
+order by up.created_at desc
 `
 
 type GetAllUsersPlantsOrderedByCreatedRow struct {
 	UsersPlantID   uuid.UUID      `json:"usersPlantID"`
 	AdoptionDate   sql.NullTime   `json:"adoptionDate"`
 	PlantName      sql.NullString `json:"plantName"`
+	CreatedAt      time.Time      `json:"createdAt"`
 	PlantSpeciesID uuid.UUID      `json:"plantSpeciesID"`
 	SpeciesName    string         `json:"speciesName"`
 }
@@ -120,6 +123,7 @@ func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context, userID 
 			&i.UsersPlantID,
 			&i.AdoptionDate,
 			&i.PlantName,
+			&i.CreatedAt,
 			&i.PlantSpeciesID,
 			&i.SpeciesName,
 		); err != nil {
@@ -139,29 +143,31 @@ func (q *Queries) GetAllUsersPlantsOrderedByCreated(ctx context.Context, userID 
 const getAllUsersPlantsOrderedByUpdated = `-- name: GetAllUsersPlantsOrderedByUpdated :many
 with users_plant as (
   select
-    id, plant_id, adoption_date, name
+    id, plant_id, adoption_date, name, updated_at
   from users_plants
   where
     deleted_at is null and
     user_id = $1
-  order by updated_at desc
 )
 select
   up.id as users_plant_id,
   up.adoption_date,
   up.name as plant_name,
+  up.updated_at,
   ps.id as plant_species_id,
   ps.species_name
 from
   users_plant as up
 join
   plant_species as ps on up.plant_id = ps.id
+order by up.updated_at desc
 `
 
 type GetAllUsersPlantsOrderedByUpdatedRow struct {
 	UsersPlantID   uuid.UUID      `json:"usersPlantID"`
 	AdoptionDate   sql.NullTime   `json:"adoptionDate"`
 	PlantName      sql.NullString `json:"plantName"`
+	UpdatedAt      time.Time      `json:"updatedAt"`
 	PlantSpeciesID uuid.UUID      `json:"plantSpeciesID"`
 	SpeciesName    string         `json:"speciesName"`
 }
@@ -179,6 +185,7 @@ func (q *Queries) GetAllUsersPlantsOrderedByUpdated(ctx context.Context, userID 
 			&i.UsersPlantID,
 			&i.AdoptionDate,
 			&i.PlantName,
+			&i.UpdatedAt,
 			&i.PlantSpeciesID,
 			&i.SpeciesName,
 		); err != nil {
