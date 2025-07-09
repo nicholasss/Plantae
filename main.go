@@ -127,19 +127,10 @@ func main() {
 	// additional tables/columns to add?
 	// pot type, pot date, aquisition date
 
-	// POST /my/plants
-	// GET /my/plants
-	// PUT /my/plants/{plant id}
-	// DELETE /my/plants/{plant id}
-	//
-	// /my/rooms
-	// /my/rooms/{room id}
-	//
 	// === data endpoints
 	//
-	// /biomes
-	// /biomes/{biome id}
 	//
+
 	// /plants
 	// /plants/{plant id}
 
