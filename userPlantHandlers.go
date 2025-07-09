@@ -37,7 +37,7 @@ type UserViewPlantResponse struct {
 }
 
 // performs authentication flow for normal users
-func (cfg *apiConfig) userTokenAuthFlow(header http.Header, w http.ResponseWriter) (uuid.UUID, error) {
+func (cfg *apiConfig) userTokenAuthFlow(header http.Header, _ http.ResponseWriter) (uuid.UUID, error) {
 	accessTokenProvided, err := auth.GetBearerToken(header, cfg.sl)
 	if err != nil {
 		cfg.sl.Debug("Could not get token from headers", "error", err)
