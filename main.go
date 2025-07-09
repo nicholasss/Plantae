@@ -121,6 +121,7 @@ func main() {
 	// === user data endpoints
 	mux.Handle("GET /api/v1/my/plants", cfg.logMW(http.HandlerFunc(cfg.usersPlantsListHandler)))
 	mux.Handle("POST /api/v1/my/plants", cfg.logMW(http.HandlerFunc(cfg.usersPlantsCreateHandler)))
+	mux.Handle("PUT /api/v1/my/plants/{plantID}", cfg.logMW(http.HandlerFunc(cfg.userPlantsUpdateHandler)))
 
 	// additional tables/columns to add?
 	// pot type, pot date, aquisition date

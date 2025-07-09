@@ -36,6 +36,11 @@ type UserViewPlantResponse struct {
 	Name             *string    `json:"plantName,omitempty"`
 }
 
+type UserUpdatePlantRequest struct {
+	AdoptionDate *time.Time `json:"adoptionDate"`
+	Name         *string    `json:"plantName"`
+}
+
 // performs authentication flow for normal users
 func (cfg *apiConfig) userTokenAuthFlow(header http.Header, _ http.ResponseWriter) (uuid.UUID, error) {
 	accessTokenProvided, err := auth.GetBearerToken(header, cfg.sl)
@@ -182,4 +187,75 @@ func (cfg *apiConfig) usersPlantsListHandler(w http.ResponseWriter, r *http.Requ
 
 	cfg.sl.Debug("User successfully listed their users plants", "user id", requestUserID)
 	respondWithJSON(http.StatusOK, viewResponse, w, cfg.sl)
+}
+
+func (cfg *apiConfig) userPlantsUpdateHandler(w http.ResponseWriter, r *http.Request) {
+	accessTokenProvided, err := auth.GetBearerToken(r.Header, cfg.sl)
+	if err != nil {
+		cfg.sl.Debug("Could not get token from headers", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	requestUserID, err := auth.ValidateJWT(accessTokenProvided, cfg.JWTSecret, cfg.sl)
+	if err != nil {
+		cfg.sl.Debug("Could not get user id from token", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	plantIDStr := r.PathValue("plantID")
+	plantID, err := uuid.Parse(plantIDStr)
+	if err != nil {
+		cfg.sl.Debug("Could not parse plant type id from url path", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	var updateRequest UserUpdatePlantRequest
+	err = json.NewDecoder(r.Body).Decode(&updateRequest)
+	if err != nil {
+		cfg.sl.Debug("Could not decode body of request", "error", err)
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+	defer r.Body.Close()
+
+	if updateRequest.AdoptionDate == nil && updateRequest.Name == nil {
+		cfg.sl.Debug("No updates provided in request")
+		respondWithError(err, http.StatusBadRequest, w, cfg.sl)
+		return
+	}
+
+	newAdoptionDate := sql.NullTime{}
+	newName := sql.NullString{}
+
+	if updateRequest.AdoptionDate == nil {
+		newAdoptionDate.Valid = false
+	} else {
+		newAdoptionDate.Valid = true
+		newAdoptionDate.Time = *updateRequest.AdoptionDate
+	}
+	if updateRequest.Name == nil {
+		newName.Valid = false
+	} else {
+		newName.Valid = true
+		newName.String = *updateRequest.Name
+	}
+
+	updateParams := database.UpdateUsersPlantByIDParams{
+		ID:           plantID,
+		UpdatedBy:    requestUserID,
+		AdoptionDate: newAdoptionDate,
+		Name:         newName,
+	}
+	err = cfg.db.UpdateUsersPlantByID(r.Context(), updateParams)
+	if err != nil {
+		cfg.sl.Debug("Could not update users plant record", "error", err, "users plant id", plantID)
+		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+		return
+	}
+
+	cfg.sl.Debug("User successfully updated users plant", "user id", requestUserID, "users plant id", plantID)
+	w.WriteHeader(http.StatusNoContent)
 }
