@@ -32,7 +32,7 @@ select
   wn.dry_soil_days as water_need_dry_soil_days
 from
   plant_species as ps
-join
+left join
   plant_names as pn on ps.id = pn.plant_id
 left join
   plant_types as pt on ps.plant_type_id = pt.id
@@ -41,7 +41,7 @@ left join
 left join
   water_needs as wn on ps.water_needs_id = wn.id
 where
-  pn.lang_code = $1 and
+  (pn.lang_code = $1 or pn.lang_code is null) and
   ps.deleted_at is null and
   pn.deleted_at is null and
   ln.deleted_at is null and
@@ -49,9 +49,10 @@ where
 group by
   ps.id,
   ps.species_name,
-  ps.updated_at,
-  ps.deleted_at,
-  pn.deleted_at,
+  ps.human_poison_toxic,
+  ps.pet_poison_toxic,
+  ps.human_edible,
+  ps.pet_edible,
   pt.name,
   pt.description,
   ln.name,
