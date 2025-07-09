@@ -46,3 +46,4 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [x] Ensure all POST responses are 201 (return body of resource created makes sense to have a 201)
 - [ ] test the following in sqlc.yaml config: `emit_pointers_for_null_types`
 - [x] Ensure all GET requests do not give a 204 and send an empty table instead.
+- [ ] Fix delete queries to update 'updated_at' and 'updated_by'
