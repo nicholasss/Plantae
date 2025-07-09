@@ -222,6 +222,59 @@ func (q *Queries) GetAllUsersPlantsOrderedByUpdated(ctx context.Context, userID 
 	return items, nil
 }
 
+const getUsersPlantByID = `-- name: GetUsersPlantByID :one
+with users_plant as (
+  select 
+    id, plant_id, adoption_date, name, created_at
+  from users_plants
+  where
+    deleted_at is null and
+    user_id = $1 and
+    id = $2
+)
+select
+  up.id as users_plant_id,
+  up.adoption_date,
+  up.name as plant_name,
+  up.created_at,
+  ps.id as plant_species_id,
+  ps.species_name
+from
+  users_plant as up
+join
+  plant_species as ps on up.plant_id = ps.id
+order by up.created_at desc
+limit 1
+`
+
+type GetUsersPlantByIDParams struct {
+	Column1 uuid.NullUUID `json:"column1"`
+	Column2 uuid.NullUUID `json:"column2"`
+}
+
+type GetUsersPlantByIDRow struct {
+	UsersPlantID   uuid.UUID      `json:"usersPlantID"`
+	AdoptionDate   sql.NullTime   `json:"adoptionDate"`
+	PlantName      sql.NullString `json:"plantName"`
+	CreatedAt      time.Time      `json:"createdAt"`
+	PlantSpeciesID uuid.UUID      `json:"plantSpeciesID"`
+	SpeciesName    string         `json:"speciesName"`
+}
+
+func (q *Queries) GetUsersPlantByID(ctx context.Context, arg GetUsersPlantByIDParams) (GetUsersPlantByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getUsersPlantByID, arg.Column1, arg.Column2)
+	var i GetUsersPlantByIDRow
+	err := row.Scan(
+		&i.UsersPlantID,
+		&i.AdoptionDate,
+		&i.PlantName,
+		&i.CreatedAt,
+		&i.PlantSpeciesID,
+		&i.SpeciesName,
+	)
+	return i, err
+}
+
 const updateUsersPlantByID = `-- name: UpdateUsersPlantByID :exec
 update users_plants
 set updated_at = now(),

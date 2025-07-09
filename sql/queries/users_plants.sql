@@ -88,3 +88,27 @@ set deleted_at = now(),
   deleted_by = $2
 where id = $1
   and deleted_at is null;
+
+-- name: GetUsersPlantByID :one
+with users_plant as (
+  select 
+    id, plant_id, adoption_date, name, created_at
+  from users_plants
+  where
+    deleted_at is null and
+    user_id = $1 and
+    id = $2
+)
+select
+  up.id as users_plant_id,
+  up.adoption_date,
+  up.name as plant_name,
+  up.created_at,
+  ps.id as plant_species_id,
+  ps.species_name
+from
+  users_plant as up
+join
+  plant_species as ps on up.plant_id = ps.id
+order by up.created_at desc
+limit 1;
