@@ -78,6 +78,26 @@ func (q *Queries) CreateUsersPlants(ctx context.Context, arg CreateUsersPlantsPa
 	return i, err
 }
 
+const deleteUsersPlantByID = `-- name: DeleteUsersPlantByID :exec
+update users_plants
+set deleted_at = now(),
+  updated_at = now(),
+  updated_by = $2,
+  deleted_by = $2
+where id = $1
+  and deleted_at is null
+`
+
+type DeleteUsersPlantByIDParams struct {
+	ID        uuid.UUID `json:"id"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
+}
+
+func (q *Queries) DeleteUsersPlantByID(ctx context.Context, arg DeleteUsersPlantByIDParams) error {
+	_, err := q.db.ExecContext(ctx, deleteUsersPlantByID, arg.ID, arg.UpdatedBy)
+	return err
+}
+
 const getAllUsersPlantsOrderedByCreated = `-- name: GetAllUsersPlantsOrderedByCreated :many
 with users_plant as (
   select 
