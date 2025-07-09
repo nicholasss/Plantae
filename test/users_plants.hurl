@@ -216,8 +216,106 @@ Authorization: Bearer {{craig_token}}
 HTTP 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
-jsonpath "$[0].id" exists
+jsonpath "$[0].id" == "{{1_my_plant_id}}"
 jsonpath "$[0].plantSpeciesID" == "{{1_plant_species_id}}"
 jsonpath "$[0].plantSpeciesName" == "{{1_species_name}}"
 jsonpath "$[0].adoptionDate" == "{{1_plant_adoption}}"
 jsonpath "$[0].plantName" == "{{1_plant_name}}"
+
+#
+# Update first users plant
+PUT http://localhost:8080/api/v1/my/plants/{{1_my_plant_id}}
+Authorization: Bearer {{craig_token}}
+Content-Type: application/json; charset=utf-8
+```json
+{
+  "adoptionDate": "{{1_plant_new_adoption}}",
+  "plantName": "{{1_plant_new_name}}"
+}
+```
+HTTP 204
+
+#
+# Get list with one plant, but updated info
+GET http://localhost:8080/api/v1/my/plants
+Authorization: Bearer {{craig_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$[0].id" == "{{1_my_plant_id}}"
+jsonpath "$[0].plantSpeciesID" == "{{1_plant_species_id}}"
+jsonpath "$[0].plantSpeciesName" == "{{1_species_name}}"
+jsonpath "$[0].adoptionDate" == "{{1_plant_new_adoption}}"
+jsonpath "$[0].plantName" == "{{1_plant_new_name}}"
+
+#
+# Create second users plant
+POST http://localhost:8080/api/v1/my/plants
+Authorization: Bearer {{craig_token}}
+Content-Type: application/json; charset=utf-8
+```json
+{
+  "plantSpeciesID": "{{2_plant_species_id}}",
+  "adoptionDate": "{{2_plant_adoption}}",
+  "plantName": "{{2_plant_name}}"
+}
+```
+HTTP 201
+Content-Type: application/json; charset=utf-8
+[Captures]
+2_my_plant_id: jsonpath "$.id"
+[Asserts]
+jsonpath "$.id" exists
+jsonpath "$.plantSpeciesID" == "{{2_plant_species_id}}"
+jsonpath "$.plantSpeciesName" == "{{2_species_name}}"
+jsonpath "$.adoptionDate" == "{{2_plant_adoption}}"
+jsonpath "$.plantName" == "{{2_plant_name}}"
+
+#
+# Get list with two plants
+GET http://localhost:8080/api/v1/my/plants
+Authorization: Bearer {{craig_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$[0].id" == "{{2_my_plant_id}}"
+jsonpath "$[0].plantSpeciesID" == "{{2_plant_species_id}}"
+jsonpath "$[0].plantSpeciesName" == "{{2_species_name}}"
+jsonpath "$[0].adoptionDate" == "{{2_plant_adoption}}"
+jsonpath "$[0].plantName" == "{{2_plant_name}}"
+jsonpath "$[1].id" == "{{1_my_plant_id}}"
+jsonpath "$[1].plantSpeciesID" == "{{1_plant_species_id}}"
+jsonpath "$[1].plantSpeciesName" == "{{1_species_name}}"
+jsonpath "$[1].adoptionDate" == "{{1_plant_new_adoption}}"
+jsonpath "$[1].plantName" == "{{1_plant_new_name}}"
+
+#
+# Update second users plant
+PUT http://localhost:8080/api/v1/my/plants/{{2_my_plant_id}}
+Authorization: Bearer {{craig_token}}
+Content-Type: application/json; charset=utf-8
+```json
+{
+  "adoptionDate": "{{2_plant_new_adoption}}",
+  "plantName": "{{2_plant_new_name}}"
+}
+```
+HTTP 204
+
+#
+# Get list with two plants, with second plant updated
+GET http://localhost:8080/api/v1/my/plants
+Authorization: Bearer {{craig_token}}
+HTTP 200
+Content-Type: application/json; charset=utf-8
+[Asserts]
+jsonpath "$[0].id" == "{{2_my_plant_id}}"
+jsonpath "$[0].plantSpeciesID" == "{{2_plant_species_id}}"
+jsonpath "$[0].plantSpeciesName" == "{{2_species_name}}"
+jsonpath "$[0].adoptionDate" == "{{2_plant_new_adoption}}"
+jsonpath "$[0].plantName" == "{{2_plant_new_name}}"
+jsonpath "$[1].id" == "{{1_my_plant_id}}"
+jsonpath "$[1].plantSpeciesID" == "{{1_plant_species_id}}"
+jsonpath "$[1].plantSpeciesName" == "{{1_species_name}}"
+jsonpath "$[1].adoptionDate" == "{{1_plant_new_adoption}}"
+jsonpath "$[1].plantName" == "{{1_plant_new_name}}"

@@ -142,9 +142,13 @@ hurl \
   --variable 2_human_edible=false \
   --variable 2_pet_edible=false \
   --variable 1_plant_name="pepperoni" \
+  --variable 1_plant_new_name="round guy" \
   --variable 1_plant_adoption="2020-01-02T00:00:00-05:00" \
+  --variable 1_plant_new_adoption="2021-01-02T00:00:00-05:00" \
   --variable 2_plant_name="bonsai" \
+  --variable 2_plant_new_name="mini tree" \
   --variable 2_plant_adoption="2020-11-30T00:00:00-05:00" \
+  --variable 2_plant_new_adoption="2021-11-30T00:00:00-05:00" \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
   --test \
   test/users_plants.hurl
