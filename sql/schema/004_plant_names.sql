@@ -13,8 +13,8 @@ create table plant_names (
   plant_id uuid not null,
   --
   -- table data
-  lang_code text not null,
-  common_name text not null
+  lang_code text,
+  common_name text
 );
 
 alter table plant_names

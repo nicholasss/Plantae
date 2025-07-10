@@ -20,8 +20,8 @@ select
   ps.pet_poison_toxic,
   ps.human_edible,
   ps.pet_edible,
-  max(pn.lang_code) as lang_code,
-  string_agg(pn.common_name, ', ') as common_names,
+  nullif(max(pn.lang_code), '') as lang_code,
+  nullif(string_agg(pn.common_name, ', '), '') as common_names,
   pt.name as plant_type_name,
   pt.description as plant_type_description,
   ln.name as light_need_name,
@@ -72,8 +72,8 @@ type GetAllViewPlantsOrderedByUpdatedRow struct {
 	PetPoisonToxic       sql.NullBool   `json:"petPoisonToxic"`
 	HumanEdible          sql.NullBool   `json:"humanEdible"`
 	PetEdible            sql.NullBool   `json:"petEdible"`
-	LangCode             string         `json:"langCode"`
-	CommonNames          string         `json:"commonNames"`
+	LangCode             sql.NullString `json:"langCode"`
+	CommonNames          sql.NullString `json:"commonNames"`
 	PlantTypeName        sql.NullString `json:"plantTypeName"`
 	PlantTypeDescription sql.NullString `json:"plantTypeDescription"`
 	LightNeedName        sql.NullString `json:"lightNeedName"`
