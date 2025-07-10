@@ -24,16 +24,16 @@ type LightNeed struct {
 }
 
 type PlantName struct {
-	ID         uuid.UUID     `json:"id"`
-	CreatedAt  time.Time     `json:"createdAt"`
-	UpdatedAt  time.Time     `json:"updatedAt"`
-	DeletedAt  sql.NullTime  `json:"deletedAt"`
-	CreatedBy  uuid.UUID     `json:"createdBy"`
-	UpdatedBy  uuid.UUID     `json:"updatedBy"`
-	DeletedBy  uuid.NullUUID `json:"deletedBy"`
-	PlantID    uuid.UUID     `json:"plantID"`
-	LangCode   string        `json:"langCode"`
-	CommonName string        `json:"commonName"`
+	ID         uuid.UUID      `json:"id"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
+	DeletedAt  sql.NullTime   `json:"deletedAt"`
+	CreatedBy  uuid.UUID      `json:"createdBy"`
+	UpdatedBy  uuid.UUID      `json:"updatedBy"`
+	DeletedBy  uuid.NullUUID  `json:"deletedBy"`
+	PlantID    uuid.UUID      `json:"plantID"`
+	LangCode   sql.NullString `json:"langCode"`
+	CommonName sql.NullString `json:"commonName"`
 }
 
 type PlantSpecy struct {

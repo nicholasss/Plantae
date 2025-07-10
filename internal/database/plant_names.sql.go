@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -30,17 +31,17 @@ insert into plant_names (
 `
 
 type CreatePlantNameParams struct {
-	CreatedBy  uuid.UUID `json:"createdBy"`
-	PlantID    uuid.UUID `json:"plantID"`
-	LangCode   string    `json:"langCode"`
-	CommonName string    `json:"commonName"`
+	CreatedBy  uuid.UUID      `json:"createdBy"`
+	PlantID    uuid.UUID      `json:"plantID"`
+	LangCode   sql.NullString `json:"langCode"`
+	CommonName sql.NullString `json:"commonName"`
 }
 
 type CreatePlantNameRow struct {
-	ID         uuid.UUID `json:"id"`
-	PlantID    uuid.UUID `json:"plantID"`
-	LangCode   string    `json:"langCode"`
-	CommonName string    `json:"commonName"`
+	ID         uuid.UUID      `json:"id"`
+	PlantID    uuid.UUID      `json:"plantID"`
+	LangCode   sql.NullString `json:"langCode"`
+	CommonName sql.NullString `json:"commonName"`
 }
 
 func (q *Queries) CreatePlantName(ctx context.Context, arg CreatePlantNameParams) (CreatePlantNameRow, error) {
@@ -73,13 +74,13 @@ from plant_names
 `
 
 type GetAllPlantNamesForLanguageOrderedByCreatedRow struct {
-	ID         uuid.UUID `json:"id"`
-	PlantID    uuid.UUID `json:"plantID"`
-	LangCode   string    `json:"langCode"`
-	CommonName string    `json:"commonName"`
+	ID         uuid.UUID      `json:"id"`
+	PlantID    uuid.UUID      `json:"plantID"`
+	LangCode   sql.NullString `json:"langCode"`
+	CommonName sql.NullString `json:"commonName"`
 }
 
-func (q *Queries) GetAllPlantNamesForLanguageOrderedByCreated(ctx context.Context, langCode string) ([]GetAllPlantNamesForLanguageOrderedByCreatedRow, error) {
+func (q *Queries) GetAllPlantNamesForLanguageOrderedByCreated(ctx context.Context, langCode sql.NullString) ([]GetAllPlantNamesForLanguageOrderedByCreatedRow, error) {
 	rows, err := q.db.QueryContext(ctx, getAllPlantNamesForLanguageOrderedByCreated, langCode)
 	if err != nil {
 		return nil, err
@@ -119,10 +120,10 @@ from plant_names
 `
 
 type GetAllPlantNamesOrderedByCreatedRow struct {
-	ID         uuid.UUID `json:"id"`
-	PlantID    uuid.UUID `json:"plantID"`
-	LangCode   string    `json:"langCode"`
-	CommonName string    `json:"commonName"`
+	ID         uuid.UUID      `json:"id"`
+	PlantID    uuid.UUID      `json:"plantID"`
+	LangCode   sql.NullString `json:"langCode"`
+	CommonName sql.NullString `json:"commonName"`
 }
 
 func (q *Queries) GetAllPlantNamesOrderedByCreated(ctx context.Context) ([]GetAllPlantNamesOrderedByCreatedRow, error) {

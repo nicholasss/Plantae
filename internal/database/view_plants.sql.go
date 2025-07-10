@@ -84,7 +84,7 @@ type GetAllViewPlantsOrderedByUpdatedRow struct {
 	WaterNeedDrySoilDays sql.NullInt32  `json:"waterNeedDrySoilDays"`
 }
 
-func (q *Queries) GetAllViewPlantsOrderedByUpdated(ctx context.Context, langCode string) ([]GetAllViewPlantsOrderedByUpdatedRow, error) {
+func (q *Queries) GetAllViewPlantsOrderedByUpdated(ctx context.Context, langCode sql.NullString) ([]GetAllViewPlantsOrderedByUpdatedRow, error) {
 	rows, err := q.db.QueryContext(ctx, getAllViewPlantsOrderedByUpdated, langCode)
 	if err != nil {
 		return nil, err
