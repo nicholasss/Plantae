@@ -131,6 +131,7 @@ func main() {
 	//
 	//
 
+	mux.Handle("GET /api/v1/plants", cfg.logMW(http.HandlerFunc(cfg.usersViewPlantsListHandler)))
 	// /plants
 	// /plants/{plant id}
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -62,11 +63,14 @@ func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
+	nullLangCode := sql.NullString{String: createRequest.LangCode, Valid: true}
+	nullCommonName := sql.NullString{String: createRequest.CommonName, Valid: true}
+
 	createRequestParams := database.CreatePlantNameParams{
 		CreatedBy:  requestUserID,
 		PlantID:    createRequest.PlantID,
-		LangCode:   createRequest.LangCode,
-		CommonName: createRequest.CommonName,
+		LangCode:   nullLangCode,
+		CommonName: nullCommonName,
 	}
 
 	plantNameRecord, err := cfg.db.CreatePlantName(r.Context(), createRequestParams)
@@ -119,7 +123,9 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 	}
 
 	cfg.sl.Debug("Filtering common names to show requested lang code", "lang code", requestedLangCode, "lang name", requestedLangName)
-	plantNameRecords, err := cfg.db.GetAllPlantNamesForLanguageOrderedByCreated(r.Context(), requestedLangCode)
+
+	nullLangCode := sql.NullString{String: requestedLangCode, Valid: true}
+	plantNameRecords, err := cfg.db.GetAllPlantNamesForLanguageOrderedByCreated(r.Context(), nullLangCode)
 	if err != nil {
 		cfg.sl.Debug("Could not get common names for language code", "error", err, "lang code", requestedLangCode)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)

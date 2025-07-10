@@ -1,9 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"net/http"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/nicholasss/plantae/internal/auth"
@@ -12,6 +12,8 @@ import (
 type UserViewAllPlantInfoResponse struct {
 	PlantSpeciesID       uuid.UUID `json:"plantSpeciesID"`
 	PlantSpeciesName     string    `json:"plantSpeciesName"`
+	CommonNamesLangCode  *string   `json:"commonNameLangCode"`
+	CommonNames          *string   `json:"commonNames"`
 	HumanPoisonToxic     *bool     `json:"humanPoisonToxic,omitempty"`
 	PetPoisonToxic       *bool     `json:"petPoisonToxic,omitempty"`
 	HumanEdible          *bool     `json:"humanEdible,omitempty"`
@@ -21,7 +23,7 @@ type UserViewAllPlantInfoResponse struct {
 	LightNeedName        *string   `json:"lightNeedName,omitempty"`
 	LightNeedDescription *string   `json:"lightNeedDescription,omitempty"`
 	WaterNeedName        *string   `json:"waterNeedName,omitempty"`
-	WaterNeedDescription *string   `json:"waterNeedDescription,omitmepty"`
+	WaterNeedDescription *string   `json:"waterNeedDescription,omitempty"`
 	WaterNeedDrySoilMM   *int32    `json:"waterNeedDrySoilMM,omitempty"`
 	WaterNeedDrySoilDays *int32    `json:"waterNeedDrySoilDays,omitempty"`
 }
@@ -54,7 +56,9 @@ func (cfg *apiConfig) usersViewPlantsListHandler(w http.ResponseWriter, r *http.
 	}
 	cfg.sl.Debug("Searching for all plants with common names in language", "lang code", requestedLangCode, "lang name", langName)
 
-	plantRecords, err := cfg.db.GetAllViewPlantsOrderedByUpdated(r.Context(), requestedLangCode)
+	// NOTE: if this section is providing errors, set the internal/database package to use sql.NullString
+	nullLangCode := sql.NullString{String: requestedLangCode, Valid: true}
+	plantRecords, err := cfg.db.GetAllViewPlantsOrderedByUpdated(r.Context(), nullLangCode)
 	if err != nil {
 		cfg.sl.Debug("Could not view all plants in database with lang code", "error", err, "lang code", requestedLangCode)
 		respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
@@ -70,9 +74,89 @@ func (cfg *apiConfig) usersViewPlantsListHandler(w http.ResponseWriter, r *http.
 	// conversion to response records
 	var plantResponses []UserViewAllPlantInfoResponse
 	for _, record := range plantRecords {
-		mmRecord := strings.ToLower(record.WaterNeedType) == "tropical" || strings.ToLower(record.WaterNeedType) == "temperate"
-		dayRecord := strings.ToLower(record.WaterNeedType) == "semi-arid" || strings.ToLower(record.WaterNeedType) == "arid"
+
+		var commonNamesLangCode *string
+		var commonNames *string
+		var humanPT *bool
+		var petPT *bool
+		var humanE *bool
+		var petE *bool
+		var plantTypeName *string
+		var plantTypeDesc *string
+		var lightNeedName *string
+		var lightNeedDesc *string
+		var waterNeedName *string
+		var waterNeedDesc *string
+		var waterNeedDryMM *int32
+		var waterNeedDryDays *int32
+
+		// NOTE: if this section is providing errors, set the internal/database package to use sql.NullString
+		if record.LangCode.Valid {
+			commonNamesLangCode = &record.LangCode.String
+		}
+		if record.CommonNames.Valid {
+			commonNames = &record.CommonNames.String
+		}
+
+		if record.HumanPoisonToxic.Valid {
+			humanPT = &record.HumanPoisonToxic.Bool
+		}
+		if record.PetPoisonToxic.Valid {
+			petPT = &record.PetPoisonToxic.Bool
+		}
+		if record.HumanEdible.Valid {
+			humanE = &record.HumanEdible.Bool
+		}
+		if record.PetEdible.Valid {
+			petE = &record.PetEdible.Bool
+		}
+		if record.PlantTypeName.Valid {
+			plantTypeName = &record.PlantTypeName.String
+		}
+		if record.PlantTypeDescription.Valid {
+			plantTypeDesc = &record.PlantTypeDescription.String
+		}
+		if record.LightNeedName.Valid {
+			lightNeedName = &record.LightNeedName.String
+		}
+		if record.LightNeedDescription.Valid {
+			lightNeedDesc = &record.LightNeedDescription.String
+		}
+		if record.WaterNeedType.Valid {
+			waterNeedName = &record.WaterNeedType.String
+		}
+		if record.WaterNeedDescription.Valid {
+			waterNeedDesc = &record.WaterNeedDescription.String
+		}
+		if record.WaterNeedDrySoilMm.Valid {
+			waterNeedDryMM = &record.WaterNeedDrySoilMm.Int32
+		}
+		if record.WaterNeedDrySoilDays.Valid {
+			waterNeedDryDays = &record.WaterNeedDrySoilDays.Int32
+		}
+
+		response := UserViewAllPlantInfoResponse{
+			PlantSpeciesID:       record.PlantSpeciesID,
+			PlantSpeciesName:     record.PlantSpeciesName,
+			CommonNamesLangCode:  commonNamesLangCode,
+			CommonNames:          commonNames,
+			HumanPoisonToxic:     humanPT,
+			PetPoisonToxic:       petPT,
+			HumanEdible:          humanE,
+			PetEdible:            petE,
+			PlantTypeName:        plantTypeName,
+			PlantTypeDescription: plantTypeDesc,
+			LightNeedName:        lightNeedName,
+			LightNeedDescription: lightNeedDesc,
+			WaterNeedName:        waterNeedName,
+			WaterNeedDescription: waterNeedDesc,
+			WaterNeedDrySoilMM:   waterNeedDryMM,
+			WaterNeedDrySoilDays: waterNeedDryDays,
+		}
+
+		plantResponses = append(plantResponses, response)
 	}
 
+	respondWithJSON(http.StatusOK, plantResponses, w, cfg.sl)
 	cfg.sl.Debug("User successfully listed all available plants", "user id", requestUserID)
 }
