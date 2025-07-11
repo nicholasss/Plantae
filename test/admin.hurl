@@ -926,42 +926,42 @@ jsonpath "$.soilDrainageMix" == "{{4_plant_type_soildm}}"
 
 #
 # set 1_plant_species as type
-POST http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{2_plant_species_id}}
+POST http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{1_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 Content-Type: application/json; charset=utf-8
 
 # 
 # set 2_plant_species as type
-POST http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{1_plant_species_id}}
+POST http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 Content-Type: application/json; charset=utf-8
 
 #
 # unset 1_plant_species as type
-DELETE http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{2_plant_species_id}}
+DELETE http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{1_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 Content-Type: application/json; charset=utf-8
 
 # 
 # unset 2_plant_species as type
-DELETE http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{1_plant_species_id}}
+DELETE http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 Content-Type: application/json; charset=utf-8
 
 #
 # again, set 1_plant_species as type
-POST http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{2_plant_species_id}}
+POST http://localhost:8080/api/v1/admin/plant-types/link/{{3_plant_type_id}}?plant-species-id={{1_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 Content-Type: application/json; charset=utf-8
 
 # 
 # again, set 2_plant_species as type
-POST http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{1_plant_species_id}}
+POST http://localhost:8080/api/v1/admin/plant-types/link/{{4_plant_type_id}}?plant-species-id={{2_plant_species_id}}
 Authorization: Bearer {{lisa_token}}
 HTTP 200
 Content-Type: application/json; charset=utf-8
