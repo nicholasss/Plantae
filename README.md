@@ -39,12 +39,10 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 
 - [x] Fix respondWithError utility function to not reveal the error value to client
 - [x] Replace all fmt.Errorf with errors.New where formatting or wrapping is not needed
-- [ ] Transition JSON, SQL, and scripting variables to a single style. Either camelCase or snake_case.
 - [x] Add 'application/json; charset=utf-8' Content-Type assert in all of the tests and fix where needed
 - [x] Rename 'authorizeNormalAdmin' utility function or rewrite to actually authorize normal admins.
 - [x] log -> log/slog package for logging level, and logging to file
 - [x] Ensure all POST responses are 201 (return body of resource created makes sense to have a 201)
-- [ ] test the following in sqlc.yaml config: `emit_pointers_for_null_types`
 - [x] Ensure all GET requests do not give a 204 and send an empty table instead.
 - [ ] Fix delete queries to update 'updated_at' and 'updated_by'
-- [ ] Return either [] or {} when struct is null
+- [ ] Return either [] or {} when database return is null/empty
