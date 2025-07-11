@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/nicholasss/plantae/internal/auth"
@@ -42,13 +43,13 @@ func (cfg *apiConfig) authNormalAdminMW(next http.Handler) http.Handler {
 		userRecord, err := cfg.db.GetUserByIDWithoutPassword(r.Context(), requestUserID)
 		if err != nil {
 			cfg.sl.Debug("Could not find user record", "user id", requestUserID, "error", err)
-			respondWithError(err, http.StatusInternalServerError, w, cfg.sl)
+			respondWithError(errors.New("either cannot find user record or user does not exist"), http.StatusInternalServerError, w, cfg.sl)
 			return
 		}
 
 		if !userRecord.IsAdmin {
 			cfg.sl.Debug("Non-Admin is performing requests to admin endpoints", "email", userRecord.Email, "id", requestUserID)
-			respondWithError(err, http.StatusUnauthorized, w, cfg.sl)
+			respondWithError(errors.New("unauthorized user performing request"), http.StatusUnauthorized, w, cfg.sl)
 			return
 		}
 
