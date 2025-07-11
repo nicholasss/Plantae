@@ -14,7 +14,7 @@ tags:
       Endpoints that are root administrative for the server. They are critical endpoints.
   - name: Users
     description: >
-      Endpoints that have to do with user management. Some may require admin authority and authentication..
+      Endpoints that have to do with user and plant management. Some may require admin authority and authentication.
 
 paths:
   /api/v1/health:
@@ -57,6 +57,11 @@ paths:
           application/json:
             schema:
               $ref: "./components/schemas/AdminStatusRequest.yaml"
+            examples:
+              promotion:
+                summary: Promoting a user via their UUID.
+                value:
+                  id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
       response:
         "204":
           description: >
@@ -93,6 +98,11 @@ paths:
           application/json:
             schema:
               $ref: "./components/schemas/AdminStatusRequest.yaml"
+            examples:
+              demotion:
+                summary: Promoting a user via their UUID.
+                value:
+                  id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
       response:
         "204":
           description: >
@@ -131,7 +141,7 @@ paths:
       operationId: createUser
       requestBody:
         description: >
-          Intended to be used by a frontend that provides a name and version.
+          Registers a new user.
           Provides a raw password.
         required: true
         content:
@@ -142,22 +152,19 @@ paths:
               craig:
                 summary: Example of creating a user named Craig.
                 value:
-                  createdBy: plantae-frontend v0.1.0
-                  updatedBy: plantae-frontend v0.1.0
                   email: craig482@gmail.com
                   password: "@ssword123"
+                  langCodePref: en
               linda:
-                summary: Exmaple of creating a user named Linda.
+                summary: Example of creating a user named Linda.
                 value:
-                  createdBy: plantae-frontend v0.1.0
-                  updatedBy: plantae-frontend v0.1.0
-                  email: lindafisher@gmail.com
-                  password: "catsarefriends123"
+                  email: lisa74@gmail.com
+                  password: catsarefriends123
+                  langCodePref: es
       responses:
         "201":
           description: >
             When user is created successfully.
-            Defaults to false for isAdmin.
           content:
             application/json:
               schema:
@@ -167,24 +174,18 @@ paths:
                   summary: Example of creating a user named Craig.
                   value:
                     id: 26a4983b-82cf-41ea-b447-8a4f34b271e2
-                    createdAt: 2006-01-02T15:04:05Z+07:00
-                    updatedAt: 2006-01-02T15:04:05Z+07:00
-                    createdBy: plantae-frontend v0.1.0
-                    updatedBy: plantae-frontend v0.1.0
-                    joinDate: 2006-01-02T00:00:00Z+00:00
-                    isAdmin: false
                     email: craig482@gmail.com
+                    langCodePref: en
+                    joinDate: 2020-01-02T00:00:00-05:00
+                    isAdmin: false
                 linda:
                   summary: Example of creating a user named Linda.
                   value:
                     id: 8def74e4-ae86-4139-a34a-dc58681bd0a0
-                    createdAt: 2006-01-02T15:04:05Z+07:00
-                    updatedAt: 2006-01-02T15:04:05Z+07:00
-                    createdBy: plantae-frontend v0.1.0
-                    updatedBy: plantae-frontend v0.1.0
-                    joinDate: 2006-01-02T00:00:00Z+00:00
+                    email: lisa74@gmail.com
+                    langCodePref: es
+                    joinDate: 2020-01-02T00:00:00-05:00
                     isAdmin: false
-                    email: lindafisher@gmail.com
         "400":
           description: >
             Bad request returned.
@@ -221,6 +222,12 @@ paths:
           application/json:
             schema:
               $ref: "./components/schemas/LoginUserRequest.yaml"
+            examples:
+              craig:
+                summary: Example of logging in.
+                value:
+                  email: craig482@gmail.com
+                  password: "@ssword123"
       responses:
         "200":
           description: >

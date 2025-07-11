@@ -3,30 +3,19 @@ properties:
   id:
     type: string
     format: uuid
-  createdAt:
+  email:
     type: string
-    format: date-time
-  updatedAt:
-    type: string
-    format: date-time
-  createdBy:
-    type: string
-  updatedBy:
+    format: email
+  langCodePref:
     type: string
   joinDate:
     type: string
     format: date
   isAdmin:
     type: boolean
-  email:
-    type: string
-    format: email
 required:
   - id
-  - createdAt
-  - updatedAt
-  - createdBy
-  - updatedBy
   - joinDate
+  - langCodePref
   - isAdmin
   - email

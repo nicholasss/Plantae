@@ -1,17 +1,14 @@
 type: object
 properties:
-  createdBy:
-    type: string
-  updatedBy:
-    type: string
   email:
     type: string
     format: email
   password:
     type: string
     format: password
+  langCodePref:
+    type: string
 required:
-  - createdBy
-  - updatedBy
   - email
   - password
+  - langCodePref
