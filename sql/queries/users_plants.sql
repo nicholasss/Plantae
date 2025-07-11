@@ -82,10 +82,11 @@ order by up.created_at desc;
 
 -- name: DeleteUsersPlantByID :exec
 update users_plants
-set deleted_at = now(),
+set
+  deleted_at = now(),
+  deleted_by = $2,
   updated_at = now(),
-  updated_by = $2,
-  deleted_by = $2
+  updated_by = $2
 where id = $1
   and deleted_at is null;
 

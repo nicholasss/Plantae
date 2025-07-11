@@ -35,7 +35,9 @@ delete from water_needs;
 update water_needs
   set
   deleted_at = now(),
-  deleted_by = $2
+  deleted_by = $2,
+  updated_at = now(),
+  updated_by = $2
 where id = $1;
 
 -- name: GetAllWaterNeedsOrderedByCreated :many

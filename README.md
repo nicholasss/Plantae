@@ -44,5 +44,5 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [x] log -> log/slog package for logging level, and logging to file
 - [x] Ensure all POST responses are 201 (return body of resource created makes sense to have a 201)
 - [x] Ensure all GET requests do not give a 204 and send an empty table instead.
-- [ ] Fix delete queries to update 'updated_at' and 'updated_by'
+- [x] Fix delete queries to update 'updated_at' and 'updated_by'
 - [ ] Return either [] or {} when database return is null/empty

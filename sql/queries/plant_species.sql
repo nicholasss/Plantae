@@ -66,8 +66,11 @@ where id = $1
 
 -- name: MarkPlantSpeciesAsDeletedByID :exec
 update plant_species
-  set deleted_at = now(),
-  deleted_by = $2
+  set
+  deleted_at = now(),
+  deleted_by = $2,
+  updated_at = now(),
+  updated_by = $2
 where id = $1;
 
 -- name: SetPlantSpeciesAsType :one

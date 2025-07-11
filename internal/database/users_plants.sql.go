@@ -80,21 +80,22 @@ func (q *Queries) CreateUsersPlants(ctx context.Context, arg CreateUsersPlantsPa
 
 const deleteUsersPlantByID = `-- name: DeleteUsersPlantByID :exec
 update users_plants
-set deleted_at = now(),
+set
+  deleted_at = now(),
+  deleted_by = $2,
   updated_at = now(),
-  updated_by = $2,
-  deleted_by = $2
+  updated_by = $2
 where id = $1
   and deleted_at is null
 `
 
 type DeleteUsersPlantByIDParams struct {
-	ID        uuid.UUID `json:"id"`
-	UpdatedBy uuid.UUID `json:"updatedBy"`
+	ID        uuid.UUID     `json:"id"`
+	DeletedBy uuid.NullUUID `json:"deletedBy"`
 }
 
 func (q *Queries) DeleteUsersPlantByID(ctx context.Context, arg DeleteUsersPlantByIDParams) error {
-	_, err := q.db.ExecContext(ctx, deleteUsersPlantByID, arg.ID, arg.UpdatedBy)
+	_, err := q.db.ExecContext(ctx, deleteUsersPlantByID, arg.ID, arg.DeletedBy)
 	return err
 }
 

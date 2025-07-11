@@ -302,7 +302,7 @@ func (cfg *apiConfig) userPlantsDeleteHandler(w http.ResponseWriter, r *http.Req
 
 	deleteParams := database.DeleteUsersPlantByIDParams{
 		ID:        plantID,
-		UpdatedBy: requestUserID,
+		DeletedBy: uuid.NullUUID{UUID: requestUserID, Valid: true},
 	}
 	err = cfg.db.DeleteUsersPlantByID(r.Context(), deleteParams)
 	if err != nil {
