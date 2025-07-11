@@ -19,9 +19,9 @@ type AdminPlantNamesCreateRequest struct {
 	CommonName string    `json:"commonName"`
 }
 
-// AdminPlantNamesCreateResponse is for encoding plant name responses.
-type AdminPlantNamesCreateResponse struct {
-	ID         uuid.UUID `json:"ID"`
+// AdminPlantNamesResponse is for encoding plant name responses.
+type AdminPlantNamesResponse struct {
+	ID         uuid.UUID `json:"id"`
 	PlantID    uuid.UUID `json:"plantID"`
 	LangCode   string    `json:"langCode"`
 	CommonName string    `json:"commonName"`
@@ -80,8 +80,15 @@ func (cfg *apiConfig) adminPlantNamesCreateHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
+	createResponse := AdminPlantNamesResponse{
+		ID:         plantNameRecord.ID,
+		PlantID:    plantNameRecord.PlantID,
+		LangCode:   createRequest.LangCode,
+		CommonName: createRequest.CommonName,
+	}
+
 	cfg.sl.Debug("Admin created plant name record", "admin id", requestUserID, "common name", createRequest.CommonName, "plant id", createRequest.PlantID)
-	respondWithJSON(http.StatusCreated, plantNameRecord, w, cfg.sl)
+	respondWithJSON(http.StatusCreated, createResponse, w, cfg.sl)
 }
 
 func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.Request) {
@@ -109,8 +116,26 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 			return
 		}
 
+		if len(plantNameRecords) <= 0 {
+			cfg.sl.Debug("Admin successfully listed empty plant name list", "admin id", requestUserID)
+			respondWithJSON(http.StatusOK, plantNameRecords, w, cfg.sl)
+			return
+		}
+
+		nameResponses := make([]AdminPlantNamesResponse, 0)
+		for _, record := range plantNameRecords {
+			response := AdminPlantNamesResponse{
+				ID:         record.ID,
+				PlantID:    record.PlantID,
+				LangCode:   record.LangCode.String,
+				CommonName: record.CommonName.String,
+			}
+
+			nameResponses = append(nameResponses, response)
+		}
+
 		cfg.sl.Debug("Admin successfully queried all common names", "admin id", requestUserID)
-		respondWithJSON(http.StatusOK, plantNameRecords, w, cfg.sl)
+		respondWithJSON(http.StatusOK, nameResponses, w, cfg.sl)
 		return
 	}
 
@@ -132,8 +157,26 @@ func (cfg *apiConfig) adminPlantNamesViewHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
+	if len(plantNameRecords) <= 0 {
+		cfg.sl.Debug("Admin successfully listed empty plant name list", "admin id", requestUserID)
+		respondWithJSON(http.StatusOK, plantNameRecords, w, cfg.sl)
+		return
+	}
+
+	nameResponses := make([]AdminPlantNamesResponse, 0)
+	for _, record := range plantNameRecords {
+		response := AdminPlantNamesResponse{
+			ID:         record.ID,
+			PlantID:    record.PlantID,
+			LangCode:   record.LangCode.String,
+			CommonName: record.CommonName.String,
+		}
+
+		nameResponses = append(nameResponses, response)
+	}
+
 	cfg.sl.Debug("Admin successfully queried common names for language", "admin id", requestUserID, "lang code", requestedLangCode)
-	respondWithJSON(http.StatusOK, plantNameRecords, w, cfg.sl)
+	respondWithJSON(http.StatusOK, nameResponses, w, cfg.sl)
 }
 
 func (cfg *apiConfig) adminPlantNamesDeleteHandler(w http.ResponseWriter, r *http.Request) {
