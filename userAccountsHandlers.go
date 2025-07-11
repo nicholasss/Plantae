@@ -85,7 +85,7 @@ func (cfg *apiConfig) registerUserHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 	if createUserRequest.LangCodePref == "" {
-		cfg.sl.Debug("Request body missing password")
+		cfg.sl.Debug("Request body missing language preference")
 		respondWithError(nil, http.StatusBadRequest, w, cfg.sl)
 		return
 	}
