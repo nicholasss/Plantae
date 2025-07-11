@@ -43,7 +43,7 @@ func (cfg *apiConfig) usersViewPlantsListHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	requestedLangCode := r.URL.Query().Get("lang-code")
+	requestedLangCode := r.URL.Query().Get("lang")
 	if requestedLangCode == "" {
 		cfg.sl.Debug("No lang code was provided in query params")
 		respondWithError(errors.New("no lang code was requested in query params"), http.StatusBadRequest, w, cfg.sl)
