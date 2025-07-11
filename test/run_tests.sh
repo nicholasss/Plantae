@@ -23,6 +23,7 @@ hurl \
   --variable craig_password=@ssword472 \
   --variable craig_lang_code=en \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
+  --jobs 1 \
   --test \
   test/users.hurl
 
@@ -120,6 +121,7 @@ hurl \
   --variable 2_plant_water_description="As an arid succulent, the Jade plant stores water in its leaves and requires very infrequent watering. It is crucial to allow the soil to fully dry between waterings." \
   --variable 2_plant_water_days=15 \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
+  --jobs 1 \
   --test \
   test/admin.hurl
 
@@ -150,5 +152,6 @@ hurl \
   --variable 2_plant_adoption="2020-11-30T00:00:00-05:00" \
   --variable 2_plant_new_adoption="2021-11-30T00:00:00-05:00" \
   --secret super_admin_token=$SUPER_ADMIN_TOKEN \
+  --jobs 1 \
   --test \
   test/users_plants.hurl
