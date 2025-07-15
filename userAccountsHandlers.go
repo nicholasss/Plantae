@@ -277,7 +277,7 @@ func (cfg *apiConfig) refreshTokenHandler(w http.ResponseWriter, r *http.Request
 		// these tokens should not be accepted
 		// this may present a bug
 		// one place to check is the POST /refresh handler
-		cfg.sl.Warn("Refresh token is maked as revoked but is still valid.")
+		cfg.sl.Warn("Refresh token is marked as revoked but is still valid.")
 		respondWithError(errors.New("valid token will be revoked in the future"), http.StatusInternalServerError, w, cfg.sl)
 		return
 	}
