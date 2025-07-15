@@ -16,6 +16,20 @@ tags:
     description: >
       Endpoints that have to do with user and plant management. Some may require admin authority and authentication.
 
+components:
+  securitySchemes:
+    superAdminAuth:
+      type: http
+      scheme: bearer
+      description: >
+        Special key only known and used by the site administrator.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >
+        Typical JWT access token that is recieved upon login or token refresh.
+
 paths:
   /api/v1/health:
     get:
@@ -34,12 +48,9 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/ErrorResponse.yaml"
-              examples:
-                genericError:
-                  summary: Generic error
-                  value:
-                    error: Service Unavailable
-                    message: Server is temporarily offline.
+              example:
+                error: Service Unavailable
+                message: Server is temporarily offline.
 
   /api/v1/super-admin/promote-user:
     post:
@@ -49,9 +60,11 @@ paths:
       description: >
         Promotes a user to admin, using super-admin authority.
       operationId: promoteUserToAdmin
+      security:
+        - superAdminAuth: []
       requestBody:
         description: >
-          Provide the id of a valid user account to manage.
+          Provide the id of a valid user account to promote.
         required: true
         content:
           application/json:
@@ -62,10 +75,17 @@ paths:
                 summary: Promoting a user via their UUID.
                 value:
                   id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
-      response:
-        "204":
+      responses:
+        "200":
           description: >
-            Created successfully, no JSON response.
+            Promoted user successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminStatusResponse.yaml"
+              example:
+                id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                isAdmin: false
         "400":
           description: >
             Bad request.
@@ -90,23 +110,29 @@ paths:
       description: >
         Demotes a user from admin, using super-admin authority.
       operationId: demoteUserFromAdmin
+      security:
+        - superAdminAuth: []
       requestBody:
         description: >
-          Provide the id of a valid user account to manage.
+          Provide the id of a valid user account to demote.
         required: true
         content:
           application/json:
             schema:
               $ref: "./components/schemas/AdminStatusRequest.yaml"
-            examples:
-              demotion:
-                summary: Promoting a user via their UUID.
-                value:
-                  id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
-      response:
-        "204":
+            example:
+              id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+      responses:
+        "200":
           description: >
-            Created successfully, no JSON response.
+            Demoted user successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminStatusResponse.yaml"
+              example:
+                id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                isAdmin: false
         "400":
           description: >
             Bad request.
@@ -129,16 +155,84 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/ErrorResponse.yaml"
+  /api/v1/super-admin/reset-users:
+    post:
+      tags:
+        - Super-Admin
+      summary: Resets the users table for testing and development.
+      description: >
+        Used during testing to reset the users table and test registration.
+      operationId: resetUsers
+      security:
+        - superAdminAuth: []
+      responses:
+        "204":
+          description: >
+            No body returned on successful reset of users table.
+        "403":
+          description: >
+            No superAdminToken provided for resetting users table.
+  /api/v1/super-admin/reset-plant-types:
+    post:
+      tags:
+        - Super-Admin
+      summary: Resets the plant_type table for testing and development.
+      description: >
+        Used during testing to reset the plant-type table.
+      operationId: resetPlantType
+      security:
+        - superAdminAuth: []
+      responses:
+        "204":
+          description: >
+            No body returned on successful reset of plant_type table.
+        "403":
+          description: >
+            No superAdminToken provided for resetting plant_type table.
+  /api/v1/super-admin/reset-light:
+    post:
+      tags:
+        - Super-Admin
+      summary: Resets the light_needs table for testing and development.
+      description: >
+        Used during testing to reset the light_needs table.
+      operationId: resetLight
+      security:
+        - superAdminAuth: []
+      responses:
+        "204":
+          description: >
+            No body returned on successful reset of light_needs table.
+        "403":
+          description: >
+            No superAdminToken provided for resetting light_needs table.
+  /api/v1/super-admin/reset-water:
+    post:
+      tags:
+        - Super-Admin
+      summary: Resets the water_needs table for testing and development.
+      description: >
+        Used during testing to reset the water_needs table.
+      operationId: resetWater
+      security:
+        - superAdminAuth: []
+      responses:
+        "204":
+          description: >
+            No body returned on successful reset of water_needs table.
+        "403":
+          description: >
+            No superAdminToken provided for resetting water_needs table.
 
-  /api/v1/create-user:
+  /api/v1/auth/register:
     post:
       tags:
         - Users
-      summary: Creates a new user.
+      summary: Registers a new user.
       description: >
         Used to register a new user on the server.
         Note: This does not issue an access token or refresh token.
-      operationId: createUser
+      operationId: registerUser
       requestBody:
         description: >
           Registers a new user.
@@ -155,8 +249,8 @@ paths:
                   email: craig482@gmail.com
                   password: "@ssword123"
                   langCodePref: en
-              linda:
-                summary: Example of creating a user named Linda.
+              lisa:
+                summary: Example of creating a user named Lisa.
                 value:
                   email: lisa74@gmail.com
                   password: catsarefriends123
@@ -176,15 +270,15 @@ paths:
                     id: 26a4983b-82cf-41ea-b447-8a4f34b271e2
                     email: craig482@gmail.com
                     langCodePref: en
-                    joinDate: 2020-01-02T00:00:00-05:00
+                    joinDate: 2017-07-21T17:32:28Z-00:00
                     isAdmin: false
-                linda:
-                  summary: Example of creating a user named Linda.
+                lisa:
+                  summary: Example of creating a user named Lisa.
                   value:
                     id: 8def74e4-ae86-4139-a34a-dc58681bd0a0
                     email: lisa74@gmail.com
                     langCodePref: es
-                    joinDate: 2020-01-02T00:00:00-05:00
+                    joinDate: 2017-07-21T17:32:28Z-00:00
                     isAdmin: false
         "400":
           description: >
@@ -205,7 +299,7 @@ paths:
                   value:
                     error: Bad Request
                     message: Email is already registered with a user.
-  /api/v1/login-user:
+  /api/v1/auth/login-user:
     post:
       tags:
         - Users
@@ -222,12 +316,9 @@ paths:
           application/json:
             schema:
               $ref: "./components/schemas/LoginUserRequest.yaml"
-            examples:
-              craig:
-                summary: Example of logging in.
-                value:
-                  email: craig482@gmail.com
-                  password: "@ssword123"
+            example:
+              email: craig482@gmail.com
+              password: "@ssword123"
       responses:
         "200":
           description: >
@@ -236,6 +327,15 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/LoginUserResponse.yaml"
+              example:
+                id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                langCodePref: en
+                joinDate: 2017-07-21T17:32:28Z-00:00
+                isAdmin: false
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+                tokenExpiresAt: 2017-07-21T17:32:28Z-00:00
+                refreshToken: "Fl7y/RZ6DqgL1j5xCqOEissMRLKnDOf3zrE5Q7dedBZ4H5G7yis8Px1foHpYYC1TK4BGp1YZeCq6DnJlOn5C5A=="
+                refreshTokenExpiresAt: 2017-07-21T17:32:28Z-00:00
         "400":
           description: >
             Bad request.
@@ -243,17 +343,23 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/ErrorResponse.yaml"
-        "401":
+
+  /api/v1/auth/refresh:
+    post:
+      tags:
+        - Users
+      summary: Refreshes a users jwt access token.
+      description: >
+        When you have been using the service for a while,
+        you can use this endpoint to refresh the short lived jwt.
+      operationId: refreshUser
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
           description: >
-            Wrong email or password
+            Successfully refreshed the jwt access token for the user/client.
           content:
             application/json:
               schema:
-                $ref: "./components/schemas/ErrorResponse.yaml"
-        "500":
-          description: >
-            Internal Server issue with demoting user.
-          content:
-            application/json:
-              schema:
-                $ref: "./components/schemas/ErrorResponse.yaml"
+                $ref: "./components/schemas/RefreshUserResponse.yaml"

@@ -1,0 +1,24 @@
+type: object
+required:
+  - id
+  - token
+  - tokenExpiresAt
+properties:
+  id:
+    type: string
+    format: uuid
+    description: >
+      The uuid of the logged in user
+    example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+  token:
+    type: string
+    format: byte
+    description: >
+      JWT Token, short term authentication
+    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+  tokenExpiresAt:
+    type: string
+    format: date-time
+    description: >
+      When the JWT token will expire. Ensure it is refreshed before this time.
+    example: 2017-07-21T17:32:28Z-00:00

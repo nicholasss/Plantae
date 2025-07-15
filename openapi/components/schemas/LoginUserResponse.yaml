@@ -1,22 +1,60 @@
 type: object
+required:
+  - id
+  - langCodePref
+  - joinDate
+  - isAdmin
+  - token
+  - tokenExpiresAt
+  - refreshToken
+  - refreshTokenExpiresAt
 properties:
   id:
     type: string
     format: uuid
-    description: User ID
-  email:
+    description: >
+      The uuid of the logged in user
+    example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+  langCodePref:
     type: string
-    format: email
+    description: >
+      The language preference that was registered with.
+    examples:
+      - en
+      - es
+      - de
+  joinDate:
+    type: string
+    format: date-time
+    description: >
+      The date of registration.
+    example: 2017-07-21T17:32:28Z-00:00
+  isAdmin:
+    type: boolean
+    description: >
+      Shows whether the user is an admin or not.
+    example: false
   token:
     type: string
     format: byte
-    description: Access Token, short term authentication
+    description: >
+      JWT Token, short term authentication
+    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+  tokenExpiresAt:
+    type: string
+    format: date-time
+    description: >
+      When the JWT token will expire. Ensure it is refreshed before this time.
+    example: 2017-07-21T17:32:28Z-00:00
   refreshToken:
     type: string
     format: byte
-    description: Refresh Token, used to get new access tokens
-required:
-  - id
-  - email
-  - accessToken
-  - refreshToken
+    description: >
+      Refresh Token, used to get new access tokens
+    example: "Fl7y/RZ6DqgL1j5xCqOEissMRLKnDOf3zrE5Q7dedBZ4H5G7yis8Px1foHpYYC1TK4BGp1YZeCq6DnJlOn5C5A=="
+  refreshTokenExpiresAt:
+    type: string
+    format: date-time
+    description: >
+      When the refresh token will expire. Log in again to obtain a new refresh token.
+    example: 2017-07-21T17:32:28Z-00:00

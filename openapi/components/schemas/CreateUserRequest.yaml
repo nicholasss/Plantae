@@ -1,14 +1,27 @@
 type: object
-properties:
-  email:
-    type: string
-    format: email
-  password:
-    type: string
-    format: password
-  langCodePref:
-    type: string
 required:
   - email
   - password
   - langCodePref
+properties:
+  email:
+    type: string
+    format: email
+    description: >
+      Users email to sign up for services and recieve information.
+    example: craig@gmail.com
+  password:
+    type: string
+    format: password
+    description: >
+      Users private password, used to log in.
+    example: "@ssword741"
+  langCodePref:
+    type: string
+    description: >
+      Language preference utilized when searching for plants and showing information.
+      It should be the two letter abbreviation for the language.
+    examples:
+      - en
+      - es
+      - de

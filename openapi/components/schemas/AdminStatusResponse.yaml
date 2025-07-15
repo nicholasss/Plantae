@@ -1,0 +1,16 @@
+type: object
+required:
+  - id
+  - isAdmin
+properties:
+  id:
+    type: string
+    format: uuid
+    description: >
+      The UUID of the user that was promoted/demoted.
+    example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+  isAdmin:
+    type: boolean
+    description: >
+      Current admin status of the user after being promoted/demoted.
+    example: false

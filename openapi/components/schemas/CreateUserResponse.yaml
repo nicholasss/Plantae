@@ -1,21 +1,40 @@
 type: object
-properties:
-  id:
-    type: string
-    format: uuid
-  email:
-    type: string
-    format: email
-  langCodePref:
-    type: string
-  joinDate:
-    type: string
-    format: date
-  isAdmin:
-    type: boolean
 required:
   - id
   - joinDate
   - langCodePref
   - isAdmin
   - email
+properties:
+  id:
+    type: string
+    format: uuid
+    description: >
+      The uuid of the created user.
+    example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+  email:
+    type: string
+    format: email
+    description: >
+      The email registered that was with.
+    example: craig@gmail.com
+  langCodePref:
+    type: string
+    description: >
+      The language preference that was registered with.
+    examples:
+      - en
+      - es
+      - de
+  joinDate:
+    type: string
+    format: date-time
+    description: >
+      The date of registration.
+    example: 2017-07-21T17:32:28Z-00:00
+  isAdmin:
+    type: boolean
+    description: >
+      Whether the user account is an admin or not.
+      Defaults to false.
+    example: false
