@@ -12,9 +12,17 @@ tags:
   - name: Super-Admin
     description: >
       Endpoints that are root administrative for the server. They are critical endpoints.
+      The few endpoints that are utilized for admin management and direct access to database resets during testing.
+  - name: Admin
+    description: >
+      Endpoints that are used for data management. e.g. data insertion, updates, and deletion.
+      These endpoints are for adding new plant species, names, types, etc.
   - name: Users
     description: >
       Endpoints that have to do with user and plant management. Some may require admin authority and authentication.
+  - name: Auth
+    description: >
+      Endpoints that have to do with authentication to the server.
 
 components:
   securitySchemes:
@@ -26,11 +34,18 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT
+      bearerFormat: utf-8
       description: >
         Typical JWT access token that is recieved upon login or token refresh.
+    refreshAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: utf-8
+      description: >
+        Valid refresh token is required. If one is not available then log back in.
 
 paths:
+  # health endpoint
   /api/v1/health:
     get:
       tags:
@@ -52,6 +67,7 @@ paths:
                 error: Service Unavailable
                 message: Server is temporarily offline.
 
+  # super-admin endpoints
   /api/v1/super-admin/promote-user:
     post:
       tags:
@@ -101,7 +117,6 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/ErrorResponse.yaml"
-
   /api/v1/super-admin/demote-user:
     post:
       tags:
@@ -172,6 +187,40 @@ paths:
         "403":
           description: >
             No superAdminToken provided for resetting users table.
+  /api/v1/super-admin/reset-plant-species:
+    post:
+      tags:
+        - Super-Admin
+      summary: Resets the plant_species table for testing and development.
+      description: >
+        Used during testing to reset the plant_species table and test insertion/updates.
+      operationId: resetPlantSpecies
+      security:
+        - superAdminAuth: []
+      responses:
+        "204":
+          description: >
+            No body returned on successful reset of plant_species table.
+        "403":
+          description: >
+            No superAdminToken provided for resetting plant_species table.
+  /api/v1/super-admin/reset-plant-names:
+    post:
+      tags:
+        - Super-Admin
+      summary: Resets the plant_names table for testing and development.
+      description: >
+        Used during testing to reset the plant_names table and test insertion/updates.
+      operationId: resetPlantNames
+      security:
+        - superAdminAuth: []
+      responses:
+        "204":
+          description: >
+            No body returned on successful reset of plant_names table.
+        "403":
+          description: >
+            No superAdminToken provided for resetting plant_names table.
   /api/v1/super-admin/reset-plant-types:
     post:
       tags:
@@ -224,6 +273,7 @@ paths:
           description: >
             No superAdminToken provided for resetting water_needs table.
 
+  # register / login endpoints
   /api/v1/auth/register:
     post:
       tags:
@@ -303,6 +353,7 @@ paths:
     post:
       tags:
         - Users
+        - Auth
       summary: Login with a user account.
       description: >
         Logs in with a pre-registered user account.
@@ -344,17 +395,19 @@ paths:
               schema:
                 $ref: "./components/schemas/ErrorResponse.yaml"
 
+  # refresh / revoke
   /api/v1/auth/refresh:
     post:
       tags:
         - Users
+        - Auth
       summary: Refreshes a users jwt access token.
       description: >
         When you have been using the service for a while,
         you can use this endpoint to refresh the short lived jwt.
       operationId: refreshUser
       security:
-        - bearerAuth: []
+        - refreshAuth: []
       responses:
         "200":
           description: >
@@ -363,3 +416,118 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/RefreshUserResponse.yaml"
+  /api/v1/auth/revoke:
+    post:
+      tags:
+        - Users
+        - Auth
+      summary: Revokes a users refresh token, used when logging out.
+      description: >
+        Revokes a saved refresh token. This ensures that it will no longer be usable when refreshing jwt access tokens.
+      operationId: revokeUser
+      security:
+        - refreshAuth: []
+      requestBody:
+        description: >
+          Supply a valid uuid in the request body, along with a valid refresh token in the auth header.
+          If valid, the refresh token supplied will be revoked.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/RevokeUserRequest.yaml"
+      responses:
+        "204":
+          description: >
+            Successfully revoked users refresh token. Required to use login endpoint to obtain a new refresh token.
+
+  # plant species endpoints
+  /api/v1/admin/plant-species:
+    post:
+      tags:
+        - Admin
+      summary: Creates a new plant species on the server.
+      description: >
+        Using information provided, a new plant species is created in the database.
+      operationId: adminPostPlantSpecies
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          By providing valid information, a plant species will be created.
+          Only 'speciesName' is a required field.
+          Other fields can be created/updated later.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminPostPlantSpeciesRequest.yaml"
+      responses:
+        "201":
+          description: >
+            Successfully created new plant species on the server.
+            Body of response will reflect the request data.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminPostPlantSpeciesResponse.yaml"
+    get:
+      tags:
+        - Admin
+      summary: List all plant species saved on the server.
+      description: >
+        Lists all available plant species on the server.
+      operationId: adminGetPlantSpecies
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully view list of all plant species saved on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminGetPlantSpeciesResponse.yaml"
+
+  /api/v1/admin/plant-species/{plantSpeciesID}:
+    parameters:
+      - name: plantSpeciesID
+        in: path
+        required: true
+        description: >
+          The uuid of the plant species being updated/deleted.
+        schema:
+          type: string
+          format: uuid
+          example: "00000000-0000-0000-0000-000000000000"
+    put:
+      tags:
+        - Admin
+      summary: Updates a specific plant species
+      description: >
+        Using a given plant species id (uuid), you can update edible and poison toxic values of a species.
+      operationId: adminPutPlantSpecies
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          Provide updated information for whether the species is poisonous or toxic and edible to humans and pets.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminPutPlantSpeciesRequest.yaml"
+      responses:
+        "204":
+          description: >
+            Successfully updated information for the specified plant species.
+            No body in response.
+    delete:
+      tags:
+        - Admin
+      summary: Deletes a specific plant species
+      description: >
+        Using a given plant species id (uuid), you can delete the species from the database.
+      operationId: adminDeletePlantSpecies
+      security:
+        - bearerAuth: []

@@ -1,0 +1,88 @@
+type: array
+items:
+  type: object
+  required:
+    - id
+    - speciesName
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: >
+        The uuid of the created plant species.
+      example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    speciesName:
+      type: string
+      description: >
+        The formal species name or a distinct Genus.
+        the Genus can be used instead of a species name in cases where the many members of the Genus are either indisinct or are not distinguished.
+      examples:
+        - Epipremnum aureum
+        - Crassula ovata
+        - Monstera deliciosa
+    humanPoisonToxic:
+      type: boolean
+      description: >
+        Whether or not any part of the plant is toxic, poisonous, or harmful if touched/ingested to humans.
+        This value can be true even if a different and distinct part of the plant is safely edible to humans.
+        Always obtain and confirm plant identification and interaction guidance with an in-person and local expert.
+        Never ingest or cook with unknown plants.
+      examples:
+        - true
+        - false
+    petPoisonToxic:
+      type: boolean
+      description: >
+        Whether or not any part of the plant is toxic, poisonous, or harmful if touched/ingested to commonly domesticated animals.
+        This value can be true even if a different and distinct part of the plant is safely edible to humans.
+        Always obtain and confirm plant identification and interaction guidance with an in-person and local expert.
+        Do not feed unknown plants to animals.
+      examples:
+        - true
+        - false
+    humanEdible:
+      type: boolean
+      description: >
+        Whether or not any part of the plant can be safely ingested by humans.
+        Not mutually exclusive with being poisonous or toxic to humans.
+        Examples of not mutually exclusive poisonous or toxic and edible are beans and potatoes.
+        Always obtain and confirm plant identification and interaction guidance with an in-person and local expert.
+        Never ingest or cook with unknown plants.
+      examples:
+        - true
+        - false
+    petEdible:
+      type: boolean
+      description: >
+        Whether or not any part of the plant can be safely ingested by commonly domesticated animals.
+        Not mutually exclusive with being poisonous or toxic to commonly domesticated animals.
+        Examples of not mutually exclusive poisonous or toxic and edible are beans and potatoes.
+        Always obtain and confirm plant identification and interaction guidance with an in-person and local expert.
+        Do not feed unknown plants to animals.
+      examples:
+        - true
+        - false
+  examples:
+    emptyList:
+      summary: An empty list of items
+      value: []
+    singleItemNoDetails:
+      summary: One species listed
+      value:
+        - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+          speciesName: "Epipremnum aureum"
+    twoItems:
+      summary: Two species listed with full information
+      value:
+        - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+          speciesName: "Epipremnum aureum"
+          humanPoisonToxic: true
+          petPoisonToxic: true
+          humanEdible: false
+          petEdible: false
+        - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+          speciesName: "Monstera deliciosa"
+          humanPoisonToxic: true
+          petPoisonToxic: true
+          humanEdible: false
+          petEdible: false
