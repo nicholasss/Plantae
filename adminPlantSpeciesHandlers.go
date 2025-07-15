@@ -23,7 +23,7 @@ type AdminPlantSpeciesCreateRequest struct {
 
 // AdminPlantSpeciesCreateResponse is for encoding plant species create responses.
 type AdminPlantSpeciesCreateResponse struct {
-	ID               uuid.UUID `json:"ID"`
+	ID               uuid.UUID `json:"id"`
 	SpeciesName      string    `json:"speciesName"`
 	HumanPoisonToxic *bool     `json:"humanPoisonToxic,omitempty"`
 	PetPoisonToxic   *bool     `json:"petPoisonToxic,omitempty"`
