@@ -531,3 +531,8 @@ paths:
       operationId: adminDeletePlantSpecies
       security:
         - bearerAuth: []
+      responses:
+        "204":
+          description: >
+            Successfully deleted the specified plant species.
+            No body in response.
