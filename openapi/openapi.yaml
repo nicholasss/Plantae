@@ -725,3 +725,59 @@ paths:
           description: >
             Successfully deletes a specified plant type record.
             No body in response.
+
+  # linking plant species to plant type
+  /api/v1/admin/plant-types/link/{plantTypeID}:
+    parameters:
+      - name: plantTypeID
+        in: path
+        required: true
+        description: >
+          Specifies the plant type that a plant species is being set to.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+      - name: plant-species-id
+        in: query
+        required: true
+        description: >
+          Specifies the plant species with which to set/unset it's plant type.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    put:
+      operationId: adminLinkPlantType
+      tags:
+        - Admin
+      summary: Sets/links a plant species as a type of plant.
+      description: >
+        Sets/links a plant species from being a type of plant.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully set/link a plant species to be the specified plant type.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminLinkPlantSpeciesResponse.yaml"
+    delete:
+      operationId: adminUnlinkPlantType
+      tags:
+        - Admin
+      summary: Unsets/unlinks a plant species as a type of plant.
+      description: >
+        Unsets/unlinks a plant species from being a type of plant.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully unset/unlink a plant species to be the specified plant type.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminUnlinkPlantSpeciesResponse.yaml"
