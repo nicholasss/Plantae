@@ -499,7 +499,7 @@ paths:
         schema:
           type: string
           format: uuid
-          example: "00000000-0000-0000-0000-000000000000"
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
     put:
       tags:
         - Admin
