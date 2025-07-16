@@ -536,3 +536,76 @@ paths:
           description: >
             Successfully deleted the specified plant species.
             No body in response.
+
+  /api/v1/admin/plant-names:
+    post:
+      operationId: adminPostPlantName
+      tags:
+        - Admin
+      summary: Creates a plant name record
+      description: >
+        For a specified plant species, create a plant name record.
+        You would need to supply both a common name and a language, via a two character language code.
+        i.e. en, es, de, etc.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          Provide information to create a plant name. Both the name and the language are required.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminPostPlantSpeciesRequest.yaml"
+      responses:
+        "201":
+          description: >
+            Successfully created a plant name record. The response body will reflect the provided information from the request body.
+    get:
+      operationId: adminGetPlantName
+      tags:
+        - Admin
+      summary: Lists available plant name records
+      description: >
+        List all available plant names, only will list the plant species id.
+      parameters:
+        - name: lang
+          in: query
+          required: false
+          description: >
+            Lists the common plant names for a specific language.
+            Languages are specified via language codes.
+          schema:
+            type: string
+            default: none
+          examples:
+            - en
+            - es
+            - de
+      responses:
+        "200":
+          description: >
+            Successfully listed plant names.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminGetPlantNameResponse.yaml"
+
+  /api/v1/admin/plant-names/{plantNameID}:
+    parameters:
+      - name: plantNameID
+        in: path
+        required: true
+        description: >
+          The uuid of the plant name being deleted.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    delete:
+      operationId: adminDeletePlantName
+      tags:
+        - Admin
+      summary: Deletes a specific plant name
+      description: >
+        Using a given plant name id (uuid), you can delete the plant name from the database.
