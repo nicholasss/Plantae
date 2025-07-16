@@ -471,6 +471,22 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/AdminPostPlantSpeciesResponse.yaml"
+              examples:
+                simpleInfo:
+                  summary: Not a lot of information, just the basics.
+                  value:
+                    id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                    speciesName: Epipremnum aureum
+                fullInfo:
+                  summary: All information provided.
+                  value:
+                    id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                    speciesName: Crassula ovata
+                    humanPoisonToxic: true
+                    petPoisonToxic: true
+                    humanEdible: false
+                    petEdible: false
+
     get:
       tags:
         - Admin
@@ -488,6 +504,30 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/AdminGetPlantSpeciesResponse.yaml"
+              examples:
+                emptyList:
+                  summary: An empty list of items
+                  value: []
+                singleItemNoDetails:
+                  summary: One species listed
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      speciesName: "Epipremnum aureum"
+                twoItems:
+                  summary: Two species listed with full information
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      speciesName: "Epipremnum aureum"
+                      humanPoisonToxic: true
+                      petPoisonToxic: true
+                      humanEdible: false
+                      petEdible: false
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      speciesName: "Monstera deliciosa"
+                      humanPoisonToxic: true
+                      petPoisonToxic: true
+                      humanEdible: false
+                      petEdible: false
 
   /api/v1/admin/plant-species/{plantSpeciesID}:
     parameters:
@@ -562,6 +602,10 @@ paths:
         "201":
           description: >
             Successfully created a plant name record. The response body will reflect the provided information from the request body.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminPostPlantNameResponse.yaml"
     get:
       operationId: adminGetPlantName
       tags:
@@ -596,6 +640,28 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/AdminGetPlantNameResponse.yaml"
+              examples:
+                emptyList:
+                  summary: An empty list of items
+                  value: []
+                singleItemEn:
+                  summary: A single plant name record in english
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      langCode: en
+                      commonName: money plant
+                twoItemsEnAndEs:
+                  summary: One plant being described by two different common names.
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      langCode: en
+                      commonName: UFO plant
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      langCode: es
+                      commonName: planta ONVI
   /api/v1/admin/plant-names/{plantNameID}:
     parameters:
       - name: plantNameID
@@ -667,6 +733,42 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/AdminGetPlantTypeResponse.yaml"
+              examples:
+                emptyList:
+                  summary: Empty list example
+                  value: []
+                twoItemsSimple:
+                  summary: Two simple plant types
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      name: Tropical
+                      description: Tropical plants thrive in warm, humid environments.
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      name: Temperate
+                      description: Temperate plants are adapted to regions with distinct seasons and moderate temperatures.
+                twoItemsFull:
+                  summary: Two full plant types
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      name: Tropical
+                      description: Tropical plants thrive in warm, humid environments.
+                      maxTemperatureCelsius: 30
+                      minTemperatureCelsius: 18
+                      maxHumidityPercent: 90
+                      minHumidityPercent: 60
+                      soilOrganicMix: "2 parts compost, 1 part coir"
+                      soilGritMix: "1 part orchid bark"
+                      soilDrainageMix: "1 part perlite for good drainage"
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      name: Temperate
+                      description: Temperate plants are adapted to regions with distinct seasons and moderate temperatures.
+                      maxTemperatureCelsius: 25
+                      minTemperatureCelsius: 10
+                      maxHumidityPercent: 70
+                      minHumidityPercent: 40
+                      soilOrganicMix: "2 parts loam"
+                      soilGritMix: "1 part fine gravel"
+                      soilDrainageMix: "1 part sand for moderate drainage"
 
   /api/v1/admin/plant-types/{plantTypeID}:
     parameters:
@@ -763,7 +865,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./components/schemas/AdminLinkPlantSpeciesResponse.yaml"
+                $ref: "./components/schemas/AdminLinkPlantTypeResponse.yaml"
     delete:
       operationId: adminUnlinkPlantType
       tags:
@@ -780,4 +882,4 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./components/schemas/AdminUnlinkPlantSpeciesResponse.yaml"
+                $ref: "./components/schemas/AdminUnlinkPlantTypeResponse.yaml"

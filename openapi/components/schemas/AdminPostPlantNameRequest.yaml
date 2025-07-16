@@ -1,0 +1,34 @@
+type: object
+required:
+  - plantID
+  - langCode
+  - commonName
+properties:
+  plantID:
+    type: string
+    format: uuid
+    description: >
+      The uuid of the plant species that the name is for.
+    example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+  langCode:
+    type: string
+    description: >
+      The language that the name is used in/from.
+    examples:
+      - en
+      - es
+      - de
+  commonName:
+    type: string
+    description: >
+      A commonly used name used to identify a plant or plant species.
+    examples:
+      - money plant
+      - UFO plant
+examples:
+  moneyPlant:
+    summary: Money plant describes many different plants
+    value:
+      - plantID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+        langCode: en
+        commonName: money plant

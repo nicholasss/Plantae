@@ -1,0 +1,41 @@
+type: object
+properties:
+  maxTemperatureCelsius:
+    type: integer
+    format: int32
+    description: >
+      The maximum typical temperature for a plant type.
+    example: 24
+  minTemperatureCelsius:
+    type: integer
+    format: int32
+    description: >
+      The minimum typical temperature for a plant type.
+    example: 16
+  maxHumidityPercent:
+    type: integer
+    format: int32
+    description: >
+      The maximum typical humidity for a plant type.
+    example: 70
+  minHumidityPercent:
+    type: integer
+    format: int32
+    description: >
+      The minimum typical humidity for a plant type.
+    example: 20
+  soilOrganicMix:
+    type: string
+    description: >
+      Qualitative description of kind and amount of organic matter in the soil mix
+    example: 2 parts Peat moss
+  soilGritMix:
+    type: string
+    description: >
+      Qualitative description of kind and amount of grit in the soil mix
+    example: 1 part Sand
+  soilDrainageMix:
+    type: string
+    description: >
+      Qualitative description of kind and type of drainage the soil mix provides
+    example: 1 part Perlite

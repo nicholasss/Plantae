@@ -12,40 +12,27 @@ items:
       format: uuid
       description: >
         The uuid of the created plant name.
+      example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
     plantID:
       type: string
       format: uuid
       description: >
         The uuid of the plant species being referenced by the common name.
+      example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
     langCode:
       type: string
       description: >
         The language that the common name is used in/from.
         The language must be represented by the two letter language code.
+      examples:
+        - en
+        - es
+        - de
     commonName:
-      type:
+      type: string
       description: >
         A common name for the plant.
         In order to create more than one common name, create a seperate record.
-  examples:
-    emptyList:
-      summary: An empty list of items
-      value: []
-    singleItemEn:
-      summary: A single plant name record in english
-      value:
-        - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
-          plantID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
-          langCode: en
-          commonName: money plant
-    twoItemsEnAndEs:
-      summary: One plant being described by two different common names.
-      value:
-        - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
-          plantID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
-          langCode: en
-          commonName: UFO plant
-        - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
-          plantID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
-          langCode: es
-          commonName: planta ONVI
+      examples:
+        - money plant
+        - UFO plant

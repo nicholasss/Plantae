@@ -1,0 +1,65 @@
+type: array
+items:
+  type: object
+  required:
+    - id
+    - name
+    - description
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: >
+        The uuid of the created plant type.
+      example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    name:
+      type: string
+      description: >
+        The name of the plant type.
+      examples:
+        - Tropical
+        - Temperate
+    description:
+      type: string
+      description: >
+        The explanation of the plant type, and how it is different from the other plant types.
+      example: Tropical plants thrive in warm, humid environments.
+    maxTemperatureCelsius:
+      type: integer
+      format: int32
+      description: >
+        The maximum typical temperature for a plant type.
+      example: 24
+    minTemperatureCelsius:
+      type: integer
+      format: int32
+      description: >
+        The minimum typical temperature for a plant type.
+      example: 16
+    maxHumidityPercent:
+      type: integer
+      format: int32
+      description: >
+        The maximum typical humidity for a plant type.
+      example: 70
+    minHumidityPercent:
+      type: integer
+      format: int32
+      description: >
+        The minimum typical humidity for a plant type.
+      example: 20
+    soilOrganicMix:
+      type: string
+      description: >
+        Qualitative description of kind and amount of organic matter in the soil mix
+      example: 2 parts Peat moss
+    soilGritMix:
+      type: string
+      description: >
+        Qualitative description of kind and amount of grit in the soil mix
+      example: 1 part Sand
+    soilDrainageMix:
+      type: string
+      description: >
+        Qualitative description of kind and type of drainage the soil mix provides
+      example: 1 part Perlite
