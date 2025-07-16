@@ -537,6 +537,7 @@ paths:
             Successfully deleted the specified plant species.
             No body in response.
 
+  # plant name endpoints
   /api/v1/admin/plant-names:
     post:
       operationId: adminPostPlantName
@@ -556,7 +557,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./components/schemas/AdminPostPlantSpeciesRequest.yaml"
+              $ref: "./components/schemas/AdminPostPlantNameRequest.yaml"
       responses:
         "201":
           description: >
@@ -568,6 +569,8 @@ paths:
       summary: Lists available plant name records
       description: >
         List all available plant names, only will list the plant species id.
+      security:
+        - bearerAuth: []
       parameters:
         - name: lang
           in: query
@@ -611,3 +614,114 @@ paths:
       summary: Deletes a specific plant name
       description: >
         Using a given plant name id (uuid), you can delete the plant name from the database.
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: >
+            Successfully delete plant name.
+            No body will be returned.
+
+  # plant type endpoints
+  /api/v1/admin/plant-types:
+    post:
+      operationId: adminPostPlantType
+      tags:
+        - Admin
+      summary: Creates a specific plant type
+      description: >
+        For a specified plant type, creates the plant type.
+        There are four 'default' types of plants that can be loaded into the database.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          Provide the required information in order to create a new plant type.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminPostPlantTypeRequest.yaml"
+      responses:
+        "201":
+          description: >
+            Successfully created plant type record. The response body will contain the same information as was in the request body.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminPostPlantTypeResponse.yaml"
+    get:
+      operationId: adminGetPlantType
+      tags:
+        - Admin
+      summary: Gets the full list of plant types from the server.
+      description: >
+        List all available plant types from the server.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully list all available plant types.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminGetPlantTypeResponse.yaml"
+
+  /api/v1/admin/plant-types/{plantTypeID}:
+    parameters:
+      - name: plantTypeID
+        in: path
+        required: true
+        description: >
+          The uuid of the plant type being deleted.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    put:
+      operationId: adminPutPlantType
+      tags:
+        - Admin
+      summary: Update a prexisiting plant type.
+      description: >
+        Update a prexisting plant type in order to change the following info:
+        Min or max temperature, min or max humidity, and soil makeup.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          Provide updates to the plant type.
+          Updatable fields include:
+          Max Temperature Celsius: Maximum typical temperature
+          Min Temperature Celsius: Minimum typical temperature
+          Max Humidity Percent: Maximum typical humidity
+          Min Humidity Percent: Minimum typical humidity
+          Soil Organix Mix: Qualitative description of kind and amount of organic matter in the soil mix
+          Soil Grit Mix: Qualitative description of kind and amount of grit in the soil mix
+          Soil Drainage Mix: Qualitative description of kind and type of drainage the soil mix provides
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminPutPlantTypeRequest.yaml"
+      responses:
+        "204":
+          description: >
+            Successfully updated plant type information.
+            No body in response.
+    delete:
+      operationId: adminDeletePlantType
+      tags:
+        - Admin
+      summary: Deletes a prexisting plant type.
+      description: >
+        Deletes a specified plant type.
+        Note that the only fields that cannot be modified after creation is the name and description.
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: >
+            Successfully deletes a specified plant type record.
+            No body in response.
