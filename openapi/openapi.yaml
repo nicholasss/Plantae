@@ -575,13 +575,16 @@ paths:
           description: >
             Lists the common plant names for a specific language.
             Languages are specified via language codes.
+            Without a queried language, the response body will contain all plant names.
           schema:
             type: string
-            default: none
           examples:
-            - en
-            - es
-            - de
+            english:
+              value: en
+            spanish:
+              value: es
+            german:
+              value: de
       responses:
         "200":
           description: >
@@ -590,7 +593,6 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/AdminGetPlantNameResponse.yaml"
-
   /api/v1/admin/plant-names/{plantNameID}:
     parameters:
       - name: plantNameID
