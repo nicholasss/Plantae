@@ -1,0 +1,16 @@
+type: object
+properites:
+  adoptionDate:
+    type: string
+    format: date-time
+    description: >
+      The timestamp reflecting the day that the plant was adopted.
+    example: 2017-07-21T17:32:28Z-00:00
+  plantName:
+    type: string
+    description: >
+      The personal name of the plant.
+    examples:
+      - twiggy
+      - sprout
+      - fernanda

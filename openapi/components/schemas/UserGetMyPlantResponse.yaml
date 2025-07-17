@@ -1,0 +1,42 @@
+type: array
+items:
+  type: object
+  required:
+    - id
+    - plantSpeciesID
+    - plantSpeciesName
+  properites:
+    id:
+      type: string
+      format: uuid
+      description: >
+        The uuid of the personal plant that the user created.
+      example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    plantSpeciesID:
+      type: string
+      format: uuid
+      description: >
+        The uuid of the plant species that the plant is a member of.
+      example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    plantSpeciesName:
+      type: string
+      description: >
+        The name of the plant species that was linked.
+      examples:
+        - Epipremnum aureum
+        - Crassula ovata
+        - Monstera deliciosa
+    adoptionDate:
+      type: string
+      format: date-time
+      description: >
+        The timestamp reflecting the day that the plant was adopted.
+      example: 2017-07-21T17:32:28Z-00:00
+    plantName:
+      type: string
+      description: >
+        The personal name of the plant.
+      examples:
+        - twiggy
+        - sprout
+        - fernanda

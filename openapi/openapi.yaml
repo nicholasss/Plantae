@@ -1231,25 +1231,112 @@ paths:
           application/json:
             schema:
               $ref: "./components/schemas/UserPostMyPlantRequest.yaml"
+            example:
+              plantSpeciesID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+              plantSpeciesName: Epipremnum aureum
+              adoptionDate: 2017-07-21T17:32:28Z-00:00
+              plantName: Leggy
       responses:
         "201":
           description: >
-            Successfully created water need record. The response body will contain the same information as was in the request body.
+            Successfully created users plant record.
           content:
             application/json:
               schema:
-                $ref: "./components/schemas/AdminPostWaterResponse.yaml"
+                $ref: "./components/schemas/UserPostMyPlantResponse.yaml"
+              example:
+                id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                plantSpeciesID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                plantSpeciesName: Epipremnum aureum
+                adoptionDate: 2017-07-21T17:32:28Z-00:00
+                plantName: Leggy
     get:
+      operationId: userGetMyPlant
+      tags:
+        - Users
+      summary: Create a new user plant
+      description: >
+        Get a list of all of the users plants
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully get a list of all of the users plants.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/UserGetMyPlantResponse.yaml"
+              examples:
+                emptyList:
+                  summary: Empty list example
+                  value: []
+                oneItem:
+                  summary: One listed user plant
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantSpeciesID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantSpeciesName: Epipremnum aureum
+                      adoptionDate: 2017-07-21T17:32:28Z-00:00
+                      plantName: Leggy
+                twoItems:
+                  summary: Two listed user plants
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantSpeciesID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantSpeciesName: Epipremnum aureum
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantSpeciesID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantSpeciesName: Crassula ovata
+                      adoptionDate: 2017-07-21T17:32:28Z-00:00
+                      plantName: Sprout
   /api/v1/my/plants/{plantID}:
     parameters:
       - name: plantID
         in: path
         required: true
         description: >
-          Specifies the plant id (uuid) that is either being updated or deleted.
+          Specifies the users plant id (uuid) that is either being updated or deleted.
+          Note: this is not the plant species id, but the users plant id.
         schema:
           type: string
           format: uuid
           example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
     put:
+      operationId: userPutMyPlant
+      tags:
+        - Users
+      summary: Update the specified users plant
+      description: >
+        Update a specific users plant.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          Provide either a new adoption date, a new plant name, or both to perform an update.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/UserPutMyPlantRequest.yaml"
+            example:
+              adoptionDate: 2017-07-21T17:32:28Z-00:00
+              plantName: Twiggy
+      responses:
+        "204":
+          description: >
+            Successfully update a users plant.
+            There is no body in the response.
     delete:
+      operationId: userDeleteMyPlant
+      tags:
+        - Users
+      summary: Delete the specified users plant
+      description: >
+        Delete a specific users plant.
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: >
+            Successfully deleted a users plant.
