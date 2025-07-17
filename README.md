@@ -41,6 +41,7 @@ Due to the large numbers of different categories of information, it quickly beca
 3. Integration testing with `Hurl` proved very useful to both learn more about HTTP servers and to correctly implement features on specific endpoints.
 4. Type out (or write) terminology to be used across the API that should stay consistent.
 5. Consider how the data will be used by the client during design phase.
+6. Implementing CI and CD to a docker container would have made deployment to a local server easier to interact with and prevent easy mistakes.
 
 ## Style guide
 
