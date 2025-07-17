@@ -1208,3 +1208,48 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/AdminUnlinkWaterResponse.yaml"
+
+  # user plant data endpoints
+  /api/v1/my/plants:
+    post:
+      operationId: userPostMyPlant
+      tags:
+        - Users
+      summary: Create a new plant
+      description: >
+        Create a new individual plant.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          Required and optional information:
+          - the uuid of a plant species record
+          - optionally: a valid RFC3999 timestamp as an adoption date
+          - optionally: a personal name for the plant (i.e. twiggy, sprout, fernanda, etc.)
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/UserPostMyPlantRequest.yaml"
+      responses:
+        "201":
+          description: >
+            Successfully created water need record. The response body will contain the same information as was in the request body.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminPostWaterResponse.yaml"
+    get:
+  /api/v1/my/plants/{plantID}:
+    parameters:
+      - name: plantID
+        in: path
+        required: true
+        description: >
+          Specifies the plant id (uuid) that is either being updated or deleted.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    put:
+    delete:
