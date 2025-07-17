@@ -1,0 +1,139 @@
+type: array
+items:
+  type: object
+  required:
+    - plantSpeciesID
+    - plantSpeciesName
+  properties:
+    plantSpeciesID:
+      type: string
+      format: uuid
+      description: >
+        The uuid of the plant species record.
+      example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    plantSpeciesName:
+      type: string
+      description: >
+        The formal name of the plant species.
+      examples:
+        - Epipremnum aureum
+        - Crassula ovata
+        - Monstera deliciosa
+    commonNameLangCode:
+      type: string
+      description: >
+        The language preference that was registered with.
+      examples:
+        - en
+        - es
+        - de
+    commonNames:
+      type: string
+      description: >
+        A common name for the plant.
+        In order to create more than one common name, create a seperate record.
+      examples:
+        - money plant
+        - UFO plant
+    humanPoisonToxic:
+      type: boolean
+      description: >
+        Whether or not any part of the plant is toxic, poisonous, or harmful if touched/ingested to humans.
+        This value can be true even if a different and distinct part of the plant is safely edible to humans.
+        Always obtain and confirm plant identification and interaction guidance with an in-person and local expert.
+        Never ingest or cook with unknown plants.
+      examples:
+        - true
+        - false
+    petPoisonToxic:
+      type: boolean
+      description: >
+        Whether or not any part of the plant is toxic, poisonous, or harmful if touched/ingested to commonly domesticated animals.
+        This value can be true even if a different and distinct part of the plant is safely edible to humans.
+        Always obtain and confirm plant identification and interaction guidance with an in-person and local expert.
+        Do not feed unknown plants to animals.
+      examples:
+        - true
+        - false
+    humanEdible:
+      type: boolean
+      description: >
+        Whether or not any part of the plant can be safely ingested by humans.
+        Not mutually exclusive with being poisonous or toxic to humans.
+        Examples of not mutually exclusive poisonous or toxic and edible are beans and potatoes.
+        Always obtain and confirm plant identification and interaction guidance with an in-person and local expert.
+        Never ingest or cook with unknown plants.
+      examples:
+        - true
+        - false
+    petEdible:
+      type: boolean
+      description: >
+        Whether or not any part of the plant can be safely ingested by commonly domesticated animals.
+        Not mutually exclusive with being poisonous or toxic to commonly domesticated animals.
+        Examples of not mutually exclusive poisonous or toxic and edible are beans and potatoes.
+        Always obtain and confirm plant identification and interaction guidance with an in-person and local expert.
+        Do not feed unknown plants to animals.
+      examples:
+        - true
+        - false
+    plantTypeName:
+      type: string
+      description: >
+        The name of the water need.
+        There are four types of watering need:
+          - Tropical & Temperate --> mm of soil to be dry between watering
+          - Semi-Arid & Arid --> days between watering
+      examples:
+        - Temperate
+        - Semi-Arid
+    plantTypeDescription:
+      type: string
+      description: >
+        The qualitative description of the specific plant species' need for water.
+      examples:
+        - Prefers its soil to dry out between watering sessions to avoid root rot.
+        - It is crucial to allow the soil to fully dry between infrequent waterings.
+    lightNeedName:
+      type: string
+      description: >
+        The name of the type of light that this type of plant needs.
+      examples:
+        - Bright direct
+        - Bright indirect
+    lightNeedDescription:
+      type: string
+      description: >
+        The qualitative description of the type of light that this type of plant needs.
+      examples:
+        - Unfiltered sun exposure
+        - Bright, diffused light
+    waterNeedName:
+      type: string
+      description: >
+        The name of the water need.
+        There are four types of watering need:
+          - Tropical & Temperate --> mm of soil to be dry between watering
+          - Semi-Arid & Arid --> days between watering
+      examples:
+        - Temperate
+        - Semi-Arid
+    waterNeedDescription:
+      type: string
+      description: >
+        The qualitative description of the specific plant species' need for water.
+      examples:
+        - Prefers its soil to dry out between watering sessions to avoid root rot.
+        - It is crucial to allow the soil to fully dry between infrequent waterings.
+    waterNeedDrySoilMM:
+      type: integer
+      format: int32
+      examples:
+        - 50
+        - 80
+    waterNeedDrySoilDays:
+      type: integer
+      format: int32
+      examples:
+        - 15
+        - 10

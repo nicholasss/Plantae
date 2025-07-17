@@ -1340,3 +1340,46 @@ paths:
         "204":
           description: >
             Successfully deleted a users plant.
+
+  # users view all plants endpoint
+  /api/v1/plants:
+    get:
+      operationId: userGetAllPlant
+      tags:
+        - Users
+      summary: View all plants listed on server
+      description: >
+        Get a list of all plants on the server, along with all possible information
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully get a list of all plants available on the server.
+            Note: There is one record per plant species.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/UserGetAllPlantResponse.yaml"
+              examples:
+                emptyList:
+                  summary: Empty list example
+                  value: []
+                oneItem:
+                  summary: One listed plant
+                  value:
+                    - plantSpeciesID: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantSpeciesName: Epipremnum aureum
+                      commonNameLangCode: en
+                      commonNames: "pothos, silver vine, taro vine"
+                      humanPoisonToxic: true
+                      petPoisonToxic: true
+                      humanEdible: false
+                      petEdible: false
+                      plantTypeName: Tropical
+                      PlantTypeDescription: "Tropical plants thrive in consistently warm, humid climates with abundant rainfall."
+                      lightNeedName: Bright indirect
+                      lightNeedDescription: Bright, diffused light
+                      waterNeedName: Tropical
+                      waterNeedDescription: "Tropical plants typically require frequent and abundant water to thrive due to their natural habitat's high rainfall and humidity."
+                      waterNeedDrySoilMM: 40
