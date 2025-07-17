@@ -124,16 +124,8 @@ func main() {
 	mux.Handle("PUT /api/v1/my/plants/{plantID}", cfg.logMW(http.HandlerFunc(cfg.userPlantsUpdateHandler)))
 	mux.Handle("DELETE /api/v1/my/plants/{plantID}", cfg.logMW(http.HandlerFunc(cfg.userPlantsDeleteHandler)))
 
-	// additional tables/columns to add?
-	// pot type, pot date, aquisition date
-
-	// === data endpoints
-	//
-	//
-
+	// listing all plants on the server
 	mux.Handle("GET /api/v1/plants", cfg.logMW(http.HandlerFunc(cfg.usersViewPlantsListHandler)))
-	// /plants
-	// /plants/{plant id}
 
 	serverAddress := fmt.Sprintf("http://%s%s", cfg.localAddr, cfg.port)
 	cfg.sl.Info("Server is now online", "address", serverAddress)
