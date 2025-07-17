@@ -1018,7 +1018,7 @@ paths:
           format: uuid
           example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
     put:
-      operationId: adminLinklight
+      operationId: adminLinkLight
       tags:
         - Admin
       summary: Sets/links a plant species as a type of light need.
@@ -1152,3 +1152,59 @@ paths:
         "204":
           description: >
             Successfully deleted a water need record.
+
+  # linking plant species to water need records
+  /api/v1/admin/water/link/{waterID}:
+    parameters:
+      - name: waterID
+        in: path
+        required: true
+        description: >
+          Specifies the water need record that a plant species is being set to.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+      - name: plant-species-id
+        in: query
+        required: true
+        description: >
+          Specifies the plant species with which to set/unset it's water need record.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    put:
+      operationId: adminLinkWater
+      tags:
+        - Admin
+      summary: Sets/links a plant species to a water need record.
+      description: >
+        Sets/links a plant species from a water need record.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully set/link a plant species to a water need record.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminLinkWaterResponse.yaml"
+    delete:
+      operationId: adminUnlinkWater
+      tags:
+        - Admin
+      summary: Unsets/unlinks a plant species to a water need record.
+      description: >
+        Unsets/unlinks a plant species from a water need record.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully unset/unlink a plant species to a water need record.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminUnlinkWaterResponse.yaml"

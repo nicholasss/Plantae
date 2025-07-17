@@ -1,0 +1,26 @@
+type: object
+required:
+  - waterNeedID
+  - plantSpeciesID
+  - plantSpeciesName
+properties:
+  waterNeedID:
+    type: string
+    format: uuid
+    description: >
+      The uuid of the water need record.
+    example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+  plantSpeciesID:
+    type: string
+    format: uuid
+    description: >
+      The uuid of the plant species being set/linked.
+    example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+  plantSpeciesName:
+    type: string
+    description: >
+      The name of the plant species that was linked.
+    examples:
+      - Epipremnum aureum
+      - Crassula ovata
+      - Monstera deliciosa
