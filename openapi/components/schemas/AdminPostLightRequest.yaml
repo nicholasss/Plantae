@@ -1,0 +1,19 @@
+type: object
+required:
+  - name
+  - description
+properties:
+  name:
+    type: string
+    description: >
+      The name of the type of light that this type of plant needs.
+    examples:
+      - Bright direct
+      - Bright indirect
+  description:
+    type: string
+    description: >
+      The qualitative description of the type of light that this type of plant needs.
+    examples:
+      - Unfiltered sun exposure
+      - Bright, diffused light

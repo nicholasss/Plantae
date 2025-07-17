@@ -1,0 +1,26 @@
+type: object
+required:
+  - id
+  - name
+  - description
+properties:
+  id:
+    type: string
+    format: uuid
+    description: >
+      The uuid of the created light type.
+    example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+  name:
+    type: string
+    description: >
+      The name of the type of light that this type of plant needs.
+    examples:
+      - Bright direct
+      - Bright indirect
+  description:
+    type: string
+    description: >
+      The qualitative description of the type of light that this type of plant needs.
+    examples:
+      - Unfiltered sun exposure
+      - Bright, diffused light

@@ -883,3 +883,171 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/AdminUnlinkPlantTypeResponse.yaml"
+
+  # light type endpoints
+  /api/v1/admin/light:
+    post:
+      operationId: adminPostLight
+      tags:
+        - Admin
+      summary: Create a new type of light need category
+      description: >
+        Creating a new type of light need category for plants.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          Provide the required information in order to create a new light need category.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminPostLightRequest.yaml"
+      responses:
+        "201":
+          description: >
+            Successfully created light need category. The response body will contain the same information as was in the request body.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminPostLightResponse.yaml"
+    get:
+      operationId: adminGetLight
+      tags:
+        - Admin
+      summary: Get all types of light need categories on the server
+      description: >
+        List all types of light need on saved on the server, in order to save them or set a plant to one.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully listed out all light need categories.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminGetLightResponse.yaml"
+              examples:
+                emptyList:
+                  summary: Empty list example
+                  value: []
+                oneItem:
+                  summary: one listed light type
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      name: Bright direct
+                      description: Unfiltered sun exposure
+                twoItems:
+                  summary: two listed light type
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      name: Bright direct
+                      description: Unfiltered sun exposure
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      name: Bright indirect
+                      description: Bright, diffused light
+
+  /api/v1/admin/light/{lightID}:
+    parameters:
+      - name: lightID
+        in: path
+        required: true
+        description: >
+          The uuid of the light record to either update or delete.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    put:
+      operationId: adminPutLight
+      tags:
+        - Admin
+      summary: Update the specified light need category
+      description: >
+        Update a specific light need category.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          Provide the required information in order to update a light need category.
+          Both the name and description need to be supplied in order to update the light need category.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminPostLightRequest.yaml"
+      responses:
+        "204":
+          description: >
+            Successfully updated light need category.
+            There is no body in the response.
+    delete:
+      operationId: adminDeleteLight
+      tags:
+        - Admin
+      summary: Delete the specified light need category
+      description: >
+        Delete a specific light need category.
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: >
+            Successfully deleted a light need category.
+
+  # linking plant species to light need type
+  /api/v1/admin/light/link/{lightID}:
+    parameters:
+      - name: lightID
+        in: path
+        required: true
+        description: >
+          Specifies the light type that a plant species is being set to.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+      - name: plant-species-id
+        in: query
+        required: true
+        description: >
+          Specifies the plant species with which to set/unset it's light need.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    put:
+      operationId: adminLinklight
+      tags:
+        - Admin
+      summary: Sets/links a plant species as a type of light need.
+      description: >
+        Sets/links a plant species from being a type of light need.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully set/link a plant species to be the specified light need.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminLinkLightResponse.yaml"
+    delete:
+      operationId: adminUnlinkLight
+      tags:
+        - Admin
+      summary: Unsets/unlinks a plant species as a light need.
+      description: >
+        Unsets/unlinks a plant species from being a light need.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully unset/unlink a plant species to be the specified light need.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminUnlinkLightResponse.yaml"
