@@ -60,9 +60,9 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [x] Implement plant light need management.
 - [x] Implement plant water need management.
 - [x] Implement language preference with user registration.
-      ~- [ ] Implement basic end-user's plant tracking.~
-      ~- [ ] Implement script to place 5 example plant's data into database.~
-      ~- [ ] Create a backup scheme for the universal plant species data.~
+- [ ] Implement basic end-user's plant tracking.
+- [ ] Implement script to place 5 example plant's data into database.
+- [ ] Create a backup scheme for the universal plant species data.
 
 ### Cleanup efforts
 
@@ -74,4 +74,4 @@ Scripting variables (Bash, Hurl) and PostgreSQL table & column names are in snak
 - [x] Ensure all POST responses are 201 (return body of resource created makes sense to have a 201)
 - [x] Ensure all GET requests do not give a 204 and send an empty table instead.
 - [x] Fix delete queries to update 'updated_at' and 'updated_by'
-      ~- [ ] Return either [] or {} when database return is null/empty~
+- [ ] Return either [] or {} when database return is null/empty
