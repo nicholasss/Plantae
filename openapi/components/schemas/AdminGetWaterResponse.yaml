@@ -1,0 +1,43 @@
+type: array
+items:
+  type: object
+  required:
+    - id
+    - plantType
+    - description
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: >
+        The uuid of the created water need record.
+      example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    plantType:
+      type: string
+      description: >
+        The name of the water need.
+        There are four types of watering need:
+          - Tropical & Temperate --> mm of soil to be dry between watering
+          - Semi-Arid & Arid --> days between watering
+      examples:
+        - Temperate
+        - Semi-Arid
+    description:
+      type: string
+      description: >
+        The qualitative description of the specific plant species' need for water.
+      examples:
+        - Prefers its soil to dry out between watering sessions to avoid root rot.
+        - It is crucial to allow the soil to fully dry between infrequent waterings.
+    drySoilMM:
+      type: integer
+      format: int32
+      examples:
+        - 50
+        - 80
+    drySoilDays:
+      type: integer
+      format: int32
+      examples:
+        - 15
+        - 10

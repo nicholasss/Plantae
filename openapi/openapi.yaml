@@ -884,7 +884,7 @@ paths:
               schema:
                 $ref: "./components/schemas/AdminUnlinkPlantTypeResponse.yaml"
 
-  # light type endpoints
+  # light need endpoints
   /api/v1/admin/light:
     post:
       operationId: adminPostLight
@@ -1051,3 +1051,104 @@ paths:
             application/json:
               schema:
                 $ref: "./components/schemas/AdminUnlinkLightResponse.yaml"
+
+  # water need endpoints
+  /api/v1/admin/water:
+    post:
+      operationId: adminPostWater
+      tags:
+        - Admin
+      summary: Create a new water need record
+      description: >
+        Creating a new type of water need category for plants.
+        There are four types of watering need:
+        - Tropical & Temperate --> mm of soil to be dry between watering
+        - Semi-Arid & Arid --> days between watering
+
+        Each water record is intended to map to a single species, since many plants require different amounts of water and different watering schedules.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: >
+          Provide the required information in order to create a new water need category.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas/AdminPostWaterRequest.yaml"
+      responses:
+        "201":
+          description: >
+            Successfully created water need record. The response body will contain the same information as was in the request body.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminPostWaterResponse.yaml"
+    get:
+      operationId: adminGetWater
+      tags:
+        - Admin
+      summary: View all water need records
+      description: >
+        View all water need records.
+        There are four types of watering need:
+        - Tropical & Temperate --> mm of soil to be dry between watering
+        - Semi-Arid & Arid --> days between watering
+
+        Each water record is intended to map to a single species, since many plants require different amounts of water and different watering schedules.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: >
+            Successfully view all water need records.
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas/AdminGetWaterResponse.yaml"
+              examples:
+                emptyList:
+                  summary: Empty list example
+                  value: []
+                oneItem:
+                  summary: one listed water need record
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantType: Temperate
+                      description: Prefers its soil to dry out between watering sessions to avoid root rot.
+                      drySoilMM: 50
+                twoItems:
+                  summary: two listed water need records
+                  value:
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantType: Temperate
+                      description: Prefers its soil to dry out between watering sessions to avoid root rot.
+                      drySoilMM: 50
+                    - id: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+                      plantType: Semi-Arid
+                      description: It is crucial to allow the soil to fully dry between infrequent waterings.
+                      drySoilDays: 15
+  /api/v1/admin/water/{waterID}:
+    parameters:
+      - name: waterID
+        in: path
+        required: true
+        description: >
+          Specifies the water need record that is being deleted.
+        schema:
+          type: string
+          format: uuid
+          example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+    delete:
+      operationId: adminDeleteWater
+      tags:
+        - Admin
+      summary: Delete the specified water need record
+      description: >
+        Delete a specific water need record.
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: >
+            Successfully deleted a water need record.

@@ -1,0 +1,31 @@
+type: object
+required:
+  - plantType
+  - description
+properties:
+  plantType:
+    type: string
+    description: >
+      The name of the water need.
+    examples:
+      - Temperate
+      - Semi-Arid
+  description:
+    type: string
+    description: >
+      The qualitative description of this plant types need for water.
+    examples:
+      - Prefers its soil to dry out between watering sessions to avoid root rot.
+      - It is crucial to allow the soil to fully dry between infrequent waterings.
+  drySoilMM:
+    type: integer
+    format: int32
+    examples:
+      - 50
+      - 80
+  drySoilDays:
+    type: integer
+    format: int32
+    examples:
+      - 15
+      - 10
